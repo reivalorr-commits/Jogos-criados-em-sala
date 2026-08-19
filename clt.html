@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CLT ESCAPE — Random Words</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #08090d;
+    color: #ddd;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+#top {
+    height: 80px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 35px;
+
+    background: #111318;
+    border-bottom: 1px solid #292d35;
+
+    z-index: 100;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 1000;
+}
+
+.logo span {
+    color: #ff4d4d;
+}
+
+.stats {
+    display: flex;
+    gap: 30px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat small {
+    display: block;
+    color: #666d78;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.stat strong {
+    font-size: 21px;
+}
+
+/* =========================================================
+   GAME
+========================================================= */
+
+#game {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    cursor: text;
+}
+
+#road {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center bottom,
+            #1c222b 0%,
+            #0c0e13 55%,
+            #06070a 100%
+        );
+}
+
+#road::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+
+    width: 6px;
+    height: 100%;
+
+    transform: translateX(-50%);
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            #3c434e 0px,
+            #3c434e 45px,
+            transparent 45px,
+            transparent 95px
+        );
+
+    opacity: .35;
+}
+
+/* =========================================================
+   CLT
+========================================================= */
+
+#clt {
+    position: absolute;
+
+    left: 50%;
+    top: -220px;
+
+    width: 150px;
+    height: 190px;
+
+    transform: translateX(-50%);
+
+    z-index: 15;
+
+    transition:
+        top .15s linear;
+}
+
+#clt.danger {
+    animation: shake .08s infinite;
+}
+
+@keyframes shake {
+    0% {
+        transform:
+            translateX(-50%)
+            rotate(-3deg);
+    }
+
+    50% {
+        transform:
+            translateX(-50%)
+            rotate(3deg);
+    }
+
+    100% {
+        transform:
+            translateX(-50%)
+            rotate(-3deg);
+    }
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #15191f,
+            #292f39
+        );
+
+    border: 3px solid #68717d;
+
+    box-shadow:
+        0 0 45px rgba(255, 40, 40, .35),
+        inset 0 0 25px rgba(255,255,255,.03);
+
+    transform: rotate(-4deg);
+}
+
+.card-title {
+    color: #929aa6;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.card-big {
+    color: #ff4444;
+
+    font-size: 47px;
+    font-weight: 1000;
+
+    text-align: center;
+
+    text-shadow:
+        0 0 20px rgba(255,50,50,.5);
+}
+
+.card-info {
+    color: #727b87;
+    font-size: 9px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   ÁREA DE TEXTO
+========================================================= */
+
+#typingArea {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    width: min(950px, 90%);
+
+    z-index: 30;
+}
+
+#words {
+    font-size: 30px;
+    line-height: 1.8;
+
+    color: #555c66;
+
+    min-height: 160px;
+
+    word-break: break-word;
+}
+
+.word {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.char.correct {
+    color: #e8edf2;
+}
+
+.char.wrong {
+    color: #ff4d4d;
+    text-decoration: underline;
+}
+
+.char.current {
+    color: #ddd;
+
+    border-left: 2px solid #fff;
+
+    animation:
+        cursorBlink .7s infinite;
+}
+
+@keyframes cursorBlink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+/* =========================================================
+   INPUT INVISÍVEL
+========================================================= */
+
+#input {
+    position: fixed;
+
+    left: -1000px;
+    top: -1000px;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    border: 0;
+    outline: 0;
+}
+
+/* =========================================================
+   DISTÂNCIA
+========================================================= */
+
+#distanceBox {
+    position: absolute;
+
+    left: 50%;
+    bottom: 25px;
+
+    transform:
+        translateX(-50%);
+
+    width: 450px;
+    max-width: 80%;
+
+    z-index: 40;
+}
+
+.distanceText {
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #626975;
+
+    font-size: 11px;
+
+    margin-bottom: 6px;
+}
+
+#distanceBar {
+    height: 5px;
+
+    background: #20242b;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+#distanceFill {
+    width: 100%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff3d3d,
+            #ffc233,
+            #45e68b
+        );
+
+    transition:
+        width .15s linear;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#status {
+    position: absolute;
+
+    top: 25px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 50;
+
+    color: #61dc99;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+}
+
+#level {
+    position: absolute;
+
+    right: 25px;
+    top: 20px;
+
+    color: #626975;
+
+    font-size: 12px;
+
+    z-index: 50;
+}
+
+/* =========================================================
+   MENU
+========================================================= */
+
+#menu {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background:
+        rgba(5,6,9,.97);
+}
+
+.menuBox {
+    width: min(700px, 90%);
+}
+
+h1 {
+    margin: 0;
+
+    color: #eee;
+
+    font-size:
+        clamp(45px, 9vw, 90px);
+
+    font-weight: 1000;
+
+    letter-spacing: -5px;
+}
+
+h1 span {
+    color: #ff4d4d;
+}
+
+.subtitle {
+    margin: 15px 0 35px;
+
+    color: #666d78;
+
+    line-height: 1.7;
+}
+
+button {
+    padding:
+        15px 38px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #e9edf2;
+    color: #111;
+
+    font-size: 15px;
+
+    font-weight: 1000;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s,
+        background .15s;
+}
+
+button:hover {
+    background: white;
+
+    transform: scale(1.05);
+}
+
+.result {
+    margin: 25px 0;
+
+    color: #55dd99;
+
+    font-size: 55px;
+
+    font-weight: 1000;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:600px) {
+
+    #top {
+        height: 70px;
+        padding: 0 15px;
+    }
+
+    .logo {
+        font-size: 16px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    .stat strong {
+        font-size: 15px;
+    }
+
+    #words {
+        font-size: 21px;
+    }
+
+    #clt {
+        width: 110px;
+        height: 145px;
+    }
+
+    .card-big {
+        font-size: 32px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     HUD
+===================================================== -->
+
+<header id="top">
+
+    <div class="logo">
+        CLT<span>ESCAPE</span>
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <small>WPM</small>
+            <strong id="wpm">0</strong>
+        </div>
+
+        <div class="stat">
+            <small>Precisão</small>
+            <strong id="accuracy">100%</strong>
+        </div>
+
+        <div class="stat">
+            <small>Combo</small>
+            <strong id="combo">0</strong>
+        </div>
+
+        <div class="stat">
+            <small>Tempo</small>
+            <strong id="time">30</strong>
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     GAME
+===================================================== -->
+
+<main id="game">
+
+    <div id="road"></div>
+
+    <div id="status">
+        🏃 VOCÊ ESTÁ ESCAPANDO!
+    </div>
+
+    <div id="level">
+        NÍVEL <span id="levelNumber">1</span>
+    </div>
+
+
+    <!-- =================================================
+         CLT
+    ================================================= -->
+
+    <div id="clt">
+
+        <div class="card">
+
+            <div class="card-title">
+                MINISTÉRIO DO TRABALHO
+            </div>
+
+            <div class="card-big">
+                CLT
+            </div>
+
+            <div class="card-info">
+                CONTRATO: INDETERMINADO<br>
+                HORÁRIO: 08:00 — 18:00<br>
+                PAUSA: DEPENDE
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PALAVRAS
+    ================================================= -->
+
+    <section id="typingArea">
+
+        <div id="words"></div>
+
+        <input
+            id="input"
+            type="text"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        >
+
+    </section>
+
+
+    <!-- =================================================
+         DISTÂNCIA
+    ================================================= -->
+
+    <div id="distanceBox">
+
+        <div class="distanceText">
+            <span>CLT</span>
+            <span>DISTÂNCIA</span>
+            <span>VOCÊ</span>
+        </div>
+
+        <div id="distanceBar">
+
+            <div id="distanceFill"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         MENU
+    ================================================= -->
+
+    <div id="menu">
+
+        <div class="menuBox">
+
+            <h1>
+                FUJA DA <span>CLT</span>
+            </h1>
+
+            <div class="subtitle">
+
+                Digite as palavras aleatórias.<br>
+                Seja rápido.<br>
+                Não deixe a CLT chegar até você.
+
+            </div>
+
+            <button id="startButton">
+                COMEÇAR A FUGA
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   BANCO DE PALAVRAS
+========================================================= */
+
+const WORDS = [
+
+    "trabalho",
+    "segunda",
+    "sexta",
+    "salario",
+    "chefe",
+    "empresa",
+    "escritorio",
+    "reuniao",
+    "cafe",
+    "boleto",
+    "ferias",
+    "contrato",
+    "emprego",
+    "planilha",
+    "relatorio",
+    "prazo",
+    "projeto",
+    "cliente",
+    "produtividade",
+    "deadline",
+    "computador",
+    "teclado",
+    "internet",
+    "email",
+    "horario",
+    "expediente",
+    "almoco",
+    "ponto",
+    "curriculo",
+    "entrevista",
+    "estagio",
+    "promocao",
+    "demissao",
+    "gerente",
+    "supervisor",
+    "funcionario",
+    "esforco",
+    "resultado",
+    "meta",
+    "bonus",
+    "comissao",
+    "pagamento",
+    "dinheiro",
+    "imposto",
+    "governo",
+    "documento",
+    "assinatura",
+    "trabalhador",
+    "carteira",
+    "descanso",
+    "feriado",
+    "domingo",
+    "sabado",
+    "alarme",
+    "acordar",
+    "transporte",
+    "onibus",
+    "metro",
+    "transito",
+    "atraso",
+    "pressa",
+    "correria",
+    "urgente",
+    "tarefa",
+    "problema",
+    "solucao",
+    "codigo",
+    "programador",
+    "designer",
+    "marketing",
+    "vendas",
+    "negocio",
+    "lucro",
+    "proposta",
+    "excel",
+    "arquivo",
+    "servidor",
+    "senha",
+    "login",
+    "sistema",
+    "atualizacao",
+    "erro",
+    "bug",
+    "correcao",
+    "teste",
+    "entrega",
+    "producao",
+    "cadeira",
+    "mesa",
+    "monitor",
+    "mouse",
+    "cafezinho",
+    "energia",
+    "motivacao",
+    "stress",
+    "cansaco",
+    "sobrevivencia",
+    "liberdade",
+    "fuga"
+
+];
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const game =
+    document.getElementById("game");
+
+const input =
+    document.getElementById("input");
+
+const wordsElement =
+    document.getElementById("words");
+
+const clt =
+    document.getElementById("clt");
+
+const menu =
+    document.getElementById("menu");
+
+const startButton =
+    document.getElementById("startButton");
+
+const wpmElement =
+    document.getElementById("wpm");
+
+const accuracyElement =
+    document.getElementById("accuracy");
+
+const comboElement =
+    document.getElementById("combo");
+
+const timeElement =
+    document.getElementById("time");
+
+const distanceFill =
+    document.getElementById("distanceFill");
+
+const statusElement =
+    document.getElementById("status");
+
+const levelElement =
+    document.getElementById("levelNumber");
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let generatedWords = [];
+
+let currentWord = 0;
+
+let typed = "";
+
+let correctCharacters = 0;
+
+let mistakes = 0;
+
+let combo = 0;
+
+let maxCombo = 0;
+
+let level = 1;
+
+let timeLeft = 30;
+
+let playing = false;
+
+let startTime = null;
+
+let timer = null;
+
+/*
+    100 = CLT longe
+    0   = CLT alcançou
+*/
+
+let distance = 100;
+
+
+/* =========================================================
+   GERAR PALAVRAS
+========================================================= */
+
+function generateWords(amount = 40) {
+
+    generatedWords = [];
+
+    for(let i = 0; i < amount; i++) {
+
+        const randomIndex =
+            Math.floor(
+                Math.random() * WORDS.length
+            );
+
+        generatedWords.push(
+            WORDS[randomIndex]
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MAIS PALAVRAS
+========================================================= */
+
+function generateMoreWords() {
+
+    for(let i = 0; i < 30; i++) {
+
+        const randomIndex =
+            Math.floor(
+                Math.random() * WORDS.length
+            );
+
+        generatedWords.push(
+            WORDS[randomIndex]
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderWords() {
+
+    wordsElement.innerHTML = "";
+
+    generatedWords.forEach(
+        (word, wordIndex) => {
+
+            const wordElement =
+                document.createElement("span");
+
+            wordElement.className =
+                "word";
+
+
+            /*
+                PALAVRA JÁ TERMINADA
+            */
+
+            if(wordIndex < currentWord) {
+
+                wordElement.style.color =
+                    "#65d99a";
+
+                wordElement.textContent =
+                    word;
+
+            }
+
+
+            /*
+                PALAVRA ATUAL
+            */
+
+            else if(
+                wordIndex === currentWord
+            ) {
+
+                for(
+                    let i = 0;
+                    i < word.length;
+                    i++
+                ) {
+
+                    const char =
+                        document.createElement("span");
+
+                    char.className =
+                        "char";
+
+                    char.textContent =
+                        word[i];
+
+
+                    /*
+                        Caractere já digitado
+                    */
+
+                    if(i < typed.length) {
+
+                        if(
+                            typed[i] === word[i]
+                        ) {
+
+                            char.classList.add(
+                                "correct"
+                            );
+
+                        }
+                        else {
+
+                            char.classList.add(
+                                "wrong"
+                            );
+
+                        }
+
+                    }
+
+
+                    /*
+                        Cursor
+                    */
+
+                    if(i === typed.length) {
+
+                        char.classList.add(
+                            "current"
+                        );
+
+                    }
+
+
+                    wordElement.appendChild(
+                        char
+                    );
+
+                }
+
+            }
+
+
+            /*
+                PALAVRA FUTURA
+            */
+
+            else {
+
+                wordElement.textContent =
+                    word;
+
+            }
+
+
+            wordsElement.appendChild(
+                wordElement
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+startButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+function startGame() {
+
+    menu.style.display =
+        "none";
+
+    playing = true;
+
+    currentWord = 0;
+
+    typed = "";
+
+    correctCharacters = 0;
+
+    mistakes = 0;
+
+    combo = 0;
+
+    maxCombo = 0;
+
+    level = 1;
+
+    timeLeft = 30;
+
+    distance = 100;
+
+    startTime = null;
+
+
+    generateWords(40);
+
+    renderWords();
+
+    updateHUD();
+
+
+    setTimeout(
+        focusInput,
+        50
+    );
+
+
+    clearInterval(timer);
+
+    timer =
+        setInterval(
+            tick,
+            1000
+        );
+
+}
+
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+function focusInput() {
+
+    if(!playing)
+        return;
+
+    input.focus();
+
+}
+
+
+/*
+    Clique em qualquer lugar
+    do jogo recupera o foco.
+*/
+
+game.addEventListener(
+    "pointerdown",
+    () => {
+
+        if(playing) {
+
+            focusInput();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   TECLADO
+========================================================= */
+
+input.addEventListener(
+    "keydown",
+    function(event) {
+
+        if(!playing)
+            return;
+
+
+        /* ESC */
+
+        if(event.key === "Escape") {
+
+            endGame(false);
+
+            return;
+
+        }
+
+
+        /* BACKSPACE */
+
+        if(event.key === "Backspace") {
+
+            event.preventDefault();
+
+            if(typed.length > 0) {
+
+                typed =
+                    typed.slice(
+                        0,
+                        -1
+                    );
+
+                renderWords();
+
+            }
+
+            return;
+
+        }
+
+
+        /* ESPAÇO */
+
+        if(event.key === " ") {
+
+            event.preventDefault();
+
+            const current =
+                generatedWords[currentWord];
+
+
+            /*
+                SÓ TERMINA A PALAVRA
+                SE ESTIVER 100% CORRETA.
+            */
+
+            if(
+                typed === current
+            ) {
+
+                completeWord();
+
+            }
+            else {
+
+                /*
+                    Espaço antes da hora
+                    é erro.
+                */
+
+                mistakes++;
+
+                combo = 0;
+
+                distance -= 3;
+
+                distance =
+                    Math.max(
+                        0,
+                        distance
+                    );
+
+                updateHUD();
+
+                renderWords();
+
+
+                if(distance <= 0) {
+
+                    endGame(false);
+
+                }
+
+            }
+
+            return;
+
+        }
+
+
+        /*
+            Ignorar Shift, Ctrl,
+            Alt, Tab etc.
+        */
+
+        if(event.key.length !== 1)
+            return;
+
+
+        if(
+            event.ctrlKey ||
+            event.altKey ||
+            event.metaKey
+        )
+            return;
+
+
+        /*
+            PRIMEIRO CARACTERE
+        */
+
+        if(!startTime) {
+
+            startTime =
+                performance.now();
+
+        }
+
+
+        const current =
+            generatedWords[currentWord];
+
+        const expected =
+            current[
+                typed.length
+            ];
+
+
+        /*
+            ADICIONAR LETRA
+        */
+
+        typed +=
+            event.key;
+
+
+        /*
+            ACERTO
+        */
+
+        if(
+            event.key === expected
+        ) {
+
+            correctCharacters++;
+
+            combo++;
+
+            maxCombo =
+                Math.max(
+                    maxCombo,
+                    combo
+                );
+
+
+            distance +=
+                0.8 +
+                combo * 0.025;
+
+        }
+
+        /*
+            ERRO
+        */
+
+        else {
+
+            mistakes++;
+
+            combo = 0;
+
+            distance -= 2.2;
+
+        }
+
+
+        distance =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    distance
+                )
+            );
+
+
+        renderWords();
+
+        updateHUD();
+
+
+        if(distance <= 0) {
+
+            endGame(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   COMPLETAR PALAVRA
+========================================================= */
+
+function completeWord() {
+
+    const current =
+        generatedWords[currentWord];
+
+
+    /*
+        SEGURANÇA:
+
+        É impossível completar
+        uma palavra incompleta.
+    */
+
+    if(
+        typed !== current
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+        Recompensa.
+    */
+
+    distance +=
+        5 +
+        level * 0.5;
+
+
+    combo++;
+
+    maxCombo =
+        Math.max(
+            maxCombo,
+            combo
+        );
+
+
+    /*
+        Próxima palavra.
+    */
+
+    currentWord++;
+
+    typed = "";
+
+
+    /*
+        A cada 8 palavras,
+        aumenta o nível.
+    */
+
+    if(
+        currentWord % 8 === 0
+    ) {
+
+        level =
+            Math.min(
+                10,
+                level + 1
+            );
+
+    }
+
+
+    /*
+        Gera novas palavras
+        quando necessário.
+    */
+
+    if(
+        currentWord >=
+        generatedWords.length - 10
+    ) {
+
+        generateMoreWords();
+
+    }
+
+
+    distance =
+        Math.min(
+            100,
+            distance
+        );
+
+
+    renderWords();
+
+    updateHUD();
+
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function tick() {
+
+    if(!playing)
+        return;
+
+
+    timeLeft--;
+
+
+    /*
+        A CLT continua avançando
+        automaticamente.
+    */
+
+    distance -=
+        0.8 +
+        level * 0.15;
+
+
+    distance =
+        Math.max(
+            0,
+            distance
+        );
+
+
+    updateHUD();
+
+
+    if(distance <= 0) {
+
+        endGame(false);
+
+        return;
+
+    }
+
+
+    if(timeLeft <= 0) {
+
+        endGame(true);
+
+    }
+
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD() {
+
+    /*
+        WPM
+    */
+
+    let wpm = 0;
+
+    if(startTime) {
+
+        const elapsed =
+            (
+                performance.now() -
+                startTime
+            ) / 60000;
+
+
+        if(elapsed > 0) {
+
+            wpm =
+                correctCharacters /
+                5 /
+                elapsed;
+
+        }
+
+    }
+
+
+    wpmElement.textContent =
+        Math.round(wpm);
+
+
+    /*
+        Precisão
+    */
+
+    const total =
+        correctCharacters +
+        mistakes;
+
+
+    const accuracy =
+        total === 0
+            ? 100
+            : (
+                correctCharacters /
+                total
+            ) * 100;
+
+
+    accuracyElement.textContent =
+        accuracy.toFixed(0) +
+        "%";
+
+
+    comboElement.textContent =
+        combo;
+
+
+    timeElement.textContent =
+        timeLeft;
+
+
+    levelElement.textContent =
+        level;
+
+
+    /*
+        BARRA
+    */
+
+    distanceFill.style.width =
+        distance + "%";
+
+
+    /*
+        POSIÇÃO DA CLT
+    */
+
+    const gameHeight =
+        game.clientHeight;
+
+    const maxTravel =
+        gameHeight * 0.72;
+
+
+    const position =
+        (
+            1 -
+            distance / 100
+        ) *
+        maxTravel;
+
+
+    clt.style.top =
+        (
+            position - 180
+        ) + "px";
+
+
+    /*
+        STATUS
+    */
+
+    if(distance <= 20) {
+
+        clt.classList.add(
+            "danger"
+        );
+
+        statusElement.textContent =
+            "🚨 A CLT ESTÁ QUASE TE PEGANDO!";
+
+        statusElement.style.color =
+            "#ff3d3d";
+
+    }
+
+    else if(distance <= 45) {
+
+        clt.classList.remove(
+            "danger"
+        );
+
+        statusElement.textContent =
+            "⚠️ ELA ESTÁ CHEGANDO!";
+
+        statusElement.style.color =
+            "#ffc533";
+
+    }
+
+    else {
+
+        clt.classList.remove(
+            "danger"
+        );
+
+        statusElement.textContent =
+            "🏃 VOCÊ ESTÁ ESCAPANDO!";
+
+        statusElement.style.color =
+            "#55dd99";
+
+    }
+
+}
+
+
+/* =========================================================
+   ANIMAÇÃO
+========================================================= */
+
+function animationLoop() {
+
+    if(
+        playing &&
+        distance < 25
+    ) {
+
+        const shake =
+            Math.sin(
+                performance.now() / 30
+            ) * 4;
+
+
+        clt.style.marginLeft =
+            shake + "px";
+
+    }
+    else {
+
+        clt.style.marginLeft =
+            "0px";
+
+    }
+
+
+    requestAnimationFrame(
+        animationLoop
+    );
+
+}
+
+animationLoop();
+
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+function endGame(escaped) {
+
+    if(!playing)
+        return;
+
+
+    playing = false;
+
+    clearInterval(timer);
+
+    input.blur();
+
+
+    /*
+        WPM FINAL
+    */
+
+    let finalWPM = 0;
+
+
+    if(startTime) {
+
+        const elapsed =
+            (
+                performance.now() -
+                startTime
+            ) / 60000;
+
+
+        if(elapsed > 0) {
+
+            finalWPM =
+                correctCharacters /
+                5 /
+                elapsed;
+
+        }
+
+    }
+
+
+    /*
+        PRECISÃO FINAL
+    */
+
+    const total =
+        correctCharacters +
+        mistakes;
+
+
+    const accuracy =
+        total === 0
+            ? 100
+            : (
+                correctCharacters /
+                total
+            ) * 100;
+
+
+    menu.style.display =
+        "flex";
+
+
+    /* =====================================================
+       VITÓRIA
+    ===================================================== */
+
+    if(escaped) {
+
+        menu.innerHTML = `
+
+            <div class="menuBox">
+
+                <h1>
+                    VOCÊ <span>ESCAPOU!</span>
+                </h1>
+
+                <div class="subtitle">
+
+                    A CLT ficou para trás. 😂
+
+                </div>
+
+                <div class="result">
+
+                    ${Math.round(finalWPM)} WPM
+
+                </div>
+
+                <div class="subtitle">
+
+                    Precisão:
+                    ${accuracy.toFixed(1)}%
+
+                    <br>
+
+                    Combo máximo:
+                    ${maxCombo}
+
+                </div>
+
+                <button
+                    onclick="location.reload()"
+                >
+                    FUGIR NOVAMENTE
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       DERROTA
+    ===================================================== */
+
+    else {
+
+        menu.innerHTML = `
+
+            <div class="menuBox">
+
+                <h1>
+                    A <span>CLT</span> TE PEGOU
+                </h1>
+
+                <div class="subtitle">
+
+                    Você foi contratado
+                    automaticamente.
+
+                    <br><br>
+
+                    "Precisamos conversar
+                    sobre sua produtividade."
+
+                </div>
+
+                <div
+                    class="result"
+                    style="color:#ff5555"
+                >
+
+                    ${Math.round(finalWPM)} WPM
+
+                </div>
+
+                <div class="subtitle">
+
+                    Precisão:
+                    ${accuracy.toFixed(1)}%
+
+                    <br>
+
+                    Combo máximo:
+                    ${maxCombo}
+
+                </div>
+
+                <button
+                    onclick="location.reload()"
+                >
+                    TENTAR NOVAMENTE
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+generateWords(40);
+
+renderWords();
+
+updateHUD();
+
+</script>
+
+</body>
+</html>

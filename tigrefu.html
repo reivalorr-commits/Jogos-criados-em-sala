@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAIFU BRAINROT CASINO™</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #090611;
+    --panel: #151020;
+    --panel2: #1d162b;
+    --pink: #ff4fa3;
+    --purple: #9d5cff;
+    --cyan: #45e6ff;
+    --gold: #ffd84a;
+    --green: #53e39b;
+    --red: #ff4c5c;
+    --text: #f3edf8;
+    --muted: #8e849c;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            #45206c 0,
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 10% 80%,
+            #241449 0,
+            transparent 30%
+        ),
+        #090611;
+}
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.bg-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: var(--pink);
+
+    box-shadow:
+        0 0 15px var(--pink);
+
+    animation:
+        float 5s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%,100% {
+        transform: translateY(0);
+        opacity: .2;
+    }
+
+    50% {
+        transform: translateY(-80px);
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    height: 78px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background:
+        rgba(10,7,16,.9);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid #30223d;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 1000;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: var(--pink);
+}
+
+.balance {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 17px;
+
+    border-radius: 12px;
+
+    background: #21172f;
+
+    border: 1px solid #432d59;
+
+    color: var(--gold);
+
+    font-weight: 900;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+nav {
+    display: flex;
+    gap: 8px;
+
+    padding: 18px 25px 0;
+
+    max-width: 1300px;
+    margin: auto;
+}
+
+.tab {
+    border: 0;
+
+    padding: 11px 18px;
+
+    border-radius:
+        10px 10px 0 0;
+
+    background: transparent;
+
+    color: var(--muted);
+
+    cursor: pointer;
+
+    font-weight: 800;
+}
+
+.tab.active {
+    background: var(--panel);
+
+    color: white;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+main {
+    width: min(1250px, 94%);
+    margin: auto;
+
+    padding-bottom: 60px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    text-align: center;
+    padding: 40px 10px 25px;
+}
+
+.hero h1 {
+    margin: 0;
+
+    font-size:
+        clamp(42px, 8vw, 90px);
+
+    font-weight: 1000;
+
+    letter-spacing: -6px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #fff,
+            #ff7fbc,
+            #a878ff,
+            #45e6ff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    animation:
+        rainbow 5s linear infinite;
+}
+
+@keyframes rainbow {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+.hero p {
+    color: var(--muted);
+}
+
+/* =========================================================
+   CASINO
+========================================================= */
+
+.casino {
+    display: grid;
+
+    grid-template-columns:
+        1fr 340px;
+
+    gap: 20px;
+}
+
+.panel {
+    background:
+        linear-gradient(
+            145deg,
+            #171121,
+            #100c18
+        );
+
+    border:
+        1px solid #332542;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.25);
+}
+
+.machine {
+    padding: 25px;
+
+    text-align: center;
+}
+
+.machine-title {
+    color: var(--gold);
+
+    font-size: 12px;
+
+    letter-spacing: 3px;
+
+    font-weight: 1000;
+}
+
+.slots {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 12px;
+
+    margin: 25px 0;
+}
+
+.slot {
+    min-height: 220px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #261938,
+            #120c1c
+        );
+
+    border:
+        2px solid #49315d;
+
+    box-shadow:
+        inset 0 0 30px rgba(0,0,0,.4);
+}
+
+.slot.spin {
+    animation:
+        spin .15s infinite;
+}
+
+@keyframes spin {
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.avatar {
+    width: 110px;
+    height: 110px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 45px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4fa3,
+            #8b4dff
+        );
+
+    box-shadow:
+        0 0 35px rgba(255,79,163,.35);
+
+    margin-bottom: 10px;
+}
+
+.slot-name {
+    font-weight: 1000;
+}
+
+.slot-rarity {
+    font-size: 10px;
+    margin-top: 4px;
+    color: var(--gold);
+}
+
+.spin-button {
+    width: 100%;
+
+    padding: 18px;
+
+    border: 0;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff398f,
+            #8b4dff
+        );
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 1000;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 30px rgba(255,57,143,.3);
+
+    transition:
+        transform .15s,
+        filter .15s;
+}
+
+.spin-button:hover {
+    transform: scale(1.025);
+    filter: brightness(1.15);
+}
+
+.spin-button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   SIDE
+========================================================= */
+
+.side {
+    padding: 20px;
+}
+
+.side h3 {
+    margin-top: 0;
+}
+
+.stat-card {
+    padding: 15px;
+
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+
+    background: #21182d;
+
+    border: 1px solid #382749;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 1000;
+}
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+.event {
+    padding: 15px;
+
+    margin-top: 15px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,79,163,.15),
+            rgba(157,92,255,.08)
+        );
+
+    border: 1px solid #633c76;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   COLLECTION
+========================================================= */
+
+.collection {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(170px,1fr));
+
+    gap: 15px;
+}
+
+.waifu-card {
+    position: relative;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    background: var(--panel);
+
+    border: 1px solid #332542;
+
+    text-align: center;
+
+    transition:
+        transform .2s,
+        border .2s;
+}
+
+.waifu-card:hover {
+    transform:
+        translateY(-7px)
+        rotate(-1deg);
+
+    border-color:
+        var(--pink);
+}
+
+.waifu-card .avatar {
+    width: 90px;
+    height: 90px;
+
+    margin: 0 auto 12px;
+
+    font-size: 35px;
+}
+
+.rarity {
+    display: inline-block;
+
+    margin-top: 7px;
+
+    padding: 4px 8px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+
+    font-weight: 1000;
+}
+
+.COMUM {
+    color: #aaa;
+    background: #29292d;
+}
+
+.RARA {
+    color: #55dfff;
+    background: #123642;
+}
+
+.ÉPICA {
+    color: #c17cff;
+    background: #32174c;
+}
+
+.LENDÁRIA {
+    color: #ffd84a;
+    background: #493c13;
+}
+
+.MÍTICA {
+    color: #ff5ea8;
+    background: #4c1631;
+}
+
+/* =========================================================
+   LEADERBOARD
+========================================================= */
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rank {
+    display: grid;
+
+    grid-template-columns:
+        50px 1fr auto;
+
+    align-items: center;
+
+    padding: 14px 18px;
+
+    border-radius: 12px;
+
+    background: #171120;
+
+    border: 1px solid #2d2139;
+}
+
+.rank:first-child {
+    border-color: var(--gold);
+
+    box-shadow:
+        0 0 20px rgba(255,216,74,.1);
+}
+
+.rank-num {
+    color: var(--gold);
+    font-size: 20px;
+    font-weight: 1000;
+}
+
+/* =========================================================
+   JACKPOT
+========================================================= */
+
+.jackpot {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+
+    background:
+        rgba(5,2,10,.85);
+
+    backdrop-filter:
+        blur(8px);
+}
+
+.jackpot.show {
+    display: flex;
+}
+
+.jackpot-box {
+    text-align: center;
+
+    animation:
+        jackpot .5s infinite alternate;
+}
+
+@keyframes jackpot {
+    from {
+        transform:
+            scale(1)
+            rotate(-1deg);
+    }
+
+    to {
+        transform:
+            scale(1.07)
+            rotate(1deg);
+    }
+}
+
+.jackpot-box h2 {
+    margin: 0;
+
+    font-size:
+        clamp(50px,10vw,120px);
+
+    color: var(--gold);
+
+    text-shadow:
+        0 0 40px #ff9d00;
+}
+
+.jackpot-box p {
+    font-size: 24px;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 2000;
+
+    padding: 15px 20px;
+
+    border-radius: 12px;
+
+    background: #241831;
+
+    border: 1px solid #633c76;
+
+    transform:
+        translateY(150px);
+
+    transition:
+        transform .3s;
+
+    font-weight: 800;
+}
+
+#toast.show {
+    transform:
+        translateY(0);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:800px) {
+
+    .casino {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        padding: 0 15px;
+    }
+
+    .logo {
+        font-size: 17px;
+    }
+
+    .balance {
+        font-size: 12px;
+    }
+
+    .slots {
+        gap: 5px;
+    }
+
+    .slot {
+        min-height: 160px;
+    }
+
+    .slot .avatar {
+        width: 75px;
+        height: 75px;
+        font-size: 30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-particles" id="particles"></div>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+    <div class="logo">
+        💎 WAIFU <span>BRAINROT CASINO™</span>
+    </div>
+
+    <div class="balance">
+        🪙
+        <span id="coins">10000</span>
+        WAIFU COINS
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     NAV
+===================================================== -->
+
+<nav>
+
+    <button
+        class="tab active"
+        data-page="casino"
+    >
+        🎰 Cassino
+    </button>
+
+    <button
+        class="tab"
+        data-page="collection"
+    >
+        💖 Coleção
+    </button>
+
+    <button
+        class="tab"
+        data-page="ranking"
+    >
+        🏆 Ranking
+    </button>
+
+</nav>
+
+
+<main>
+
+<!-- =====================================================
+     CASSINO
+===================================================== -->
+
+<section
+    class="page active"
+    id="casino"
+>
+
+    <div class="hero">
+
+        <h1>WAIFU CASINO</h1>
+
+        <p>
+            Aposte personagens. Ganhe aura.
+            Perca tudo. Reclame com o algoritmo.
+        </p>
+
+    </div>
+
+
+    <div class="casino">
+
+        <div class="panel machine">
+
+            <div class="machine-title">
+                ✦ WAIFU SLOT MACHINE 3000 ✦
+            </div>
+
+
+            <div class="slots">
+
+                <div class="slot" id="slot1">
+
+                    <div class="avatar">
+                        🎀
+                    </div>
+
+                    <div class="slot-name">
+                        MIKU
+                    </div>
+
+                    <div class="slot-rarity">
+                        MÍTICA
+                    </div>
+
+                </div>
+
+
+                <div class="slot" id="slot2">
+
+                    <div class="avatar">
+                        🌸
+                    </div>
+
+                    <div class="slot-name">
+                        REM
+                    </div>
+
+                    <div class="slot-rarity">
+                        LENDÁRIA
+                    </div>
+
+                </div>
+
+
+                <div class="slot" id="slot3">
+
+                    <div class="avatar">
+                        ⚔️
+                    </div>
+
+                    <div class="slot-name">
+                        YOR
+                    </div>
+
+                    <div class="slot-rarity">
+                        LENDÁRIA
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="spin-button"
+                id="spin"
+            >
+                🎰 GIRAR — 500 🪙
+            </button>
+
+
+            <div class="event" id="event">
+
+                🧠 O algoritmo está analisando
+                sua quantidade de aura...
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDE
+        ================================================= -->
+
+        <aside class="panel side">
+
+            <h3>
+                📊 ESTATÍSTICAS
+            </h3>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    AURA
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="aura"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    GIROS
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="spins"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    JACKPOTS
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="jackpots"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    WAIFU MAIS VALIOSA
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="best"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     COLEÇÃO
+===================================================== -->
+
+<section
+    class="page"
+    id="collection"
+>
+
+    <div class="hero">
+
+        <h1>COLEÇÃO</h1>
+
+        <p>
+            Colecione personagens e aumente
+            seu patrimônio totalmente fictício.
+        </p>
+
+    </div>
+
+    <div
+        class="collection"
+        id="collectionGrid"
+    ></div>
+
+</section>
+
+
+<!-- =====================================================
+     RANKING
+===================================================== -->
+
+<section
+    class="page"
+    id="ranking"
+>
+
+    <div class="hero">
+
+        <h1>RANKING</h1>
+
+        <p>
+            Os maiores acumuladores de aura
+            da história.
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div
+            class="leaderboard"
+            id="leaderboard"
+        ></div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =====================================================
+     JACKPOT
+===================================================== -->
+
+<div
+    class="jackpot"
+    id="jackpot"
+>
+
+    <div class="jackpot-box">
+
+        <h2>
+            JACKPOT!
+        </h2>
+
+        <p id="jackpotText">
+            AURA ABSURDA 💥
+        </p>
+
+        <button
+            class="spin-button"
+            onclick="closeJackpot()"
+        >
+            CONTINUAR
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   PERSONAGENS
+========================================================= */
+
+const waifus = [
+
+    {
+        name: "Miku",
+        emoji: "🎀",
+        rarity: "MÍTICA",
+        value: 9500
+    },
+
+    {
+        name: "Rem",
+        emoji: "💙",
+        rarity: "LENDÁRIA",
+        value: 8200
+    },
+
+    {
+        name: "Ram",
+        emoji: "🌸",
+        rarity: "ÉPICA",
+        value: 5900
+    },
+
+    {
+        name: "Yor",
+        emoji: "⚔️",
+        rarity: "LENDÁRIA",
+        value: 8500
+    },
+
+    {
+        name: "Marin",
+        emoji: "💖",
+        rarity: "LENDÁRIA",
+        value: 8000
+    },
+
+    {
+        name: "Nino",
+        emoji: "💜",
+        rarity: "MÍTICA",
+        value: 9700
+    },
+
+    {
+        name: "Itsuki",
+        emoji: "🍖",
+        rarity: "ÉPICA",
+        value: 5800
+    },
+
+    {
+        name: "Miku Nakano",
+        emoji: "🎧",
+        rarity: "LENDÁRIA",
+        value: 9100
+    },
+
+    {
+        name: "Ichika",
+        emoji: "🎬",
+        rarity: "ÉPICA",
+        value: 6200
+    },
+
+    {
+        name: "Yotsuba",
+        emoji: "🍀",
+        rarity: "RARA",
+        value: 4300
+    },
+
+    {
+        name: "Chizuru",
+        emoji: "🎭",
+        rarity: "ÉPICA",
+        value: 6400
+    },
+
+    {
+        name: "Aqua",
+        emoji: "💧",
+        rarity: "RARA",
+        value: 2800
+    },
+
+    {
+        name: "Megumin",
+        emoji: "💥",
+        rarity: "LENDÁRIA",
+        value: 8800
+    },
+
+    {
+        name: "Asuna",
+        emoji: "⚔️",
+        rarity: "LENDÁRIA",
+        value: 8600
+    },
+
+    {
+        name: "Zero Two",
+        emoji: "🦋",
+        rarity: "MÍTICA",
+        value: 9900
+    },
+
+    {
+        name: "Power",
+        emoji: "🩸",
+        rarity: "ÉPICA",
+        value: 6700
+    },
+
+    {
+        name: "Makima",
+        emoji: "👁️",
+        rarity: "MÍTICA",
+        value: 9800
+    },
+
+    {
+        name: "Nezuko",
+        emoji: "🎋",
+        rarity: "LENDÁRIA",
+        value: 8300
+    },
+
+    {
+        name: "Shinobu",
+        emoji: "🦋",
+        rarity: "LENDÁRIA",
+        value: 8100
+    },
+
+    {
+        name: "Rias",
+        emoji: "❤️",
+        rarity: "ÉPICA",
+        value: 7000
+    },
+
+    {
+        name: "Kurumi",
+        emoji: "⏰",
+        rarity: "MÍTICA",
+        value: 9600
+    },
+
+    {
+        name: "Holo",
+        emoji: "🐺",
+        rarity: "LENDÁRIA",
+        value: 7900
+    },
+
+    {
+        name: "Emilia",
+        emoji: "❄️",
+        rarity: "LENDÁRIA",
+        value: 8400
+    },
+
+    {
+        name: "Power",
+        emoji: "🩸",
+        rarity: "ÉPICA",
+        value: 6700
+    },
+
+    {
+        name: "Mai",
+        emoji: "🐰",
+        rarity: "ÉPICA",
+        value: 6500
+    },
+
+    {
+        name: "Rikka",
+        emoji: "👁️",
+        rarity: "RARA",
+        value: 3900
+    },
+
+    {
+        name: "Tohru",
+        emoji: "🐉",
+        rarity: "LENDÁRIA",
+        value: 8700
+    },
+
+    {
+        name: "Kaguya",
+        emoji: "🎀",
+        rarity: "ÉPICA",
+        value: 7200
+    },
+
+    {
+        name: "Saber",
+        emoji: "🗡️",
+        rarity: "MÍTICA",
+        value: 9300
+    },
+
+    {
+        name: "Fern",
+        emoji: "🔮",
+        rarity: "RARA",
+        value: 4600
+    }
+
+];
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let coins = 10000;
+
+let aura = 0;
+
+let spins = 0;
+
+let jackpots = 0;
+
+let collection = [];
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const coinsEl =
+    document.getElementById("coins");
+
+const auraEl =
+    document.getElementById("aura");
+
+const spinsEl =
+    document.getElementById("spins");
+
+const jackpotsEl =
+    document.getElementById("jackpots");
+
+const bestEl =
+    document.getElementById("best");
+
+const spinButton =
+    document.getElementById("spin");
+
+const eventEl =
+    document.getElementById("event");
+
+const toast =
+    document.getElementById("toast");
+
+const jackpot =
+    document.getElementById("jackpot");
+
+const jackpotText =
+    document.getElementById("jackpotText");
+
+
+/* =========================================================
+   PARTÍCULAS
+========================================================= */
+
+for(let i = 0; i < 70; i++) {
+
+    const particle =
+        document.createElement("div");
+
+    particle.className =
+        "particle";
+
+    particle.style.left =
+        Math.random() * 100 + "%";
+
+    particle.style.top =
+        Math.random() * 100 + "%";
+
+    particle.style.animationDelay =
+        Math.random() * 5 + "s";
+
+    particle.style.opacity =
+        Math.random();
+
+    document
+        .getElementById("particles")
+        .appendChild(particle);
+
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+document
+    .querySelectorAll(".tab")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(".tab")
+                    .forEach(
+                        b =>
+                            b.classList.remove(
+                                "active"
+                            )
+                    );
+
+                document
+                    .querySelectorAll(".page")
+                    .forEach(
+                        p =>
+                            p.classList.remove(
+                                "active"
+                            )
+                    );
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                document
+                    .getElementById(
+                        button.dataset.page
+                    )
+                    .classList.add(
+                        "active"
+                    );
+
+
+                if(
+                    button.dataset.page ===
+                    "collection"
+                ) {
+
+                    renderCollection();
+
+                }
+
+
+                if(
+                    button.dataset.page ===
+                    "ranking"
+                ) {
+
+                    renderRanking();
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   RANDOM
+========================================================= */
+
+function randomWaifu() {
+
+    return waifus[
+        Math.floor(
+            Math.random() *
+            waifus.length
+        )
+    ];
+
+}
+
+
+/* =========================================================
+   SLOT
+========================================================= */
+
+function setSlot(
+    element,
+    waifu
+) {
+
+    element.innerHTML = `
+
+        <div class="avatar">
+            ${waifu.emoji}
+        </div>
+
+        <div class="slot-name">
+            ${waifu.name}
+        </div>
+
+        <div class="slot-rarity">
+            ${waifu.rarity}
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   GIRO
+========================================================= */
+
+spinButton.addEventListener(
+    "click",
+    spin
+);
+
+
+function spin() {
+
+    const cost = 500;
+
+
+    if(coins < cost) {
+
+        showToast(
+            "💸 Você está BROKE. A aura acabou."
+        );
+
+        return;
+
+    }
+
+
+    coins -= cost;
+
+    spins++;
+
+
+    updateHUD();
+
+
+    spinButton.disabled = true;
+
+
+    const slots = [
+        document.getElementById("slot1"),
+        document.getElementById("slot2"),
+        document.getElementById("slot3")
+    ];
+
+
+    slots.forEach(
+        slot =>
+            slot.classList.add("spin")
+    );
+
+
+    let count = 0;
+
+
+    const animation =
+        setInterval(
+            () => {
+
+                slots.forEach(
+                    slot =>
+                        setSlot(
+                            slot,
+                            randomWaifu()
+                        )
+                );
+
+
+                count++;
+
+
+                if(count >= 18) {
+
+                    clearInterval(
+                        animation
+                    );
+
+
+                    slots.forEach(
+                        slot =>
+                            slot.classList.remove(
+                                "spin"
+                            )
+                    );
+
+
+                    finishSpin();
+
+                }
+
+            },
+            100
+        );
+
+}
+
+
+/* =========================================================
+   RESULTADO
+========================================================= */
+
+function finishSpin() {
+
+    const a =
+        randomWaifu();
+
+    const b =
+        randomWaifu();
+
+    const c =
+        randomWaifu();
+
+
+    setSlot(
+        document.getElementById("slot1"),
+        a
+    );
+
+    setSlot(
+        document.getElementById("slot2"),
+        b
+    );
+
+    setSlot(
+        document.getElementById("slot3"),
+        c
+    );
+
+
+    const result = [
+        a,
+        b,
+        c
+    ];
+
+
+    /*
+        TRÊS IGUAIS
+    */
+
+    if(
+        a.name === b.name &&
+        b.name === c.name
+    ) {
+
+        jackpotResult(
+            a
+        );
+
+        return;
+
+    }
+
+
+    /*
+        DUAS IGUAIS
+    */
+
+    if(
+        a.name === b.name ||
+        b.name === c.name ||
+        a.name === c.name
+    ) {
+
+        const prize =
+            1800 +
+            Math.floor(
+                Math.random() * 2500
+            );
+
+
+        coins += prize;
+
+        aura += 100;
+
+        eventEl.innerHTML =
+            `🔥 DUPLICATA! Você ganhou
+            <b>${prize}</b> moedas e +100 aura.`;
+
+        showToast(
+            "🔥 DUPLA! AURA +100"
+        );
+
+        addCollection(
+            a.name
+        );
+
+    }
+
+    else {
+
+        /*
+            SEM COMBINAÇÃO
+        */
+
+        const consolation =
+            Math.floor(
+                Math.random() * 350
+            );
+
+
+        coins += consolation;
+
+        aura += 10;
+
+
+        eventEl.innerHTML =
+            `😐 Nada demais.
+            Você recebeu ${consolation}
+            moedas por existir.`;
+
+
+        showToast(
+            "🗿 +10 aura por participação"
+        );
+
+    }
+
+
+    /*
+        Evento aleatório
+    */
+
+    randomEvent();
+
+
+    updateHUD();
+
+    spinButton.disabled = false;
+
+}
+
+
+/* =========================================================
+   JACKPOT
+========================================================= */
+
+function jackpotResult(
+    waifu
+) {
+
+    const prize =
+        waifu.value * 3;
+
+
+    coins += prize;
+
+    aura += 1000;
+
+    jackpots++;
+
+
+    addCollection(
+        waifu.name
+    );
+
+
+    updateHUD();
+
+
+    jackpotText.innerHTML =
+        `
+        ${waifu.emoji}
+        ${waifu.name.toUpperCase()}
+        <br>
+        +${prize.toLocaleString()}
+        🪙
+        <br>
+        +1000 AURA
+        `;
+
+
+    jackpot.classList.add(
+        "show"
+    );
+
+
+    spinButton.disabled =
+        false;
+
+
+    createConfetti();
+
+}
+
+
+/* =========================================================
+   FECHAR JACKPOT
+========================================================= */
+
+function closeJackpot() {
+
+    jackpot.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   EVENTOS RANDOM
+========================================================= */
+
+function randomEvent() {
+
+    const events = [
+
+        {
+            text:
+                "🗿 O algoritmo aprovou sua aura.",
+            reward: 0
+        },
+
+        {
+            text:
+                "📈 Miku entrou em alta. +300 aura.",
+            reward: 300
+        },
+
+        {
+            text:
+                "💀 A CLT tentou cobrar seu salário.",
+            reward: -100
+        },
+
+        {
+            text:
+                "🔥 O chat declarou você SIGMA.",
+            reward: 150
+        },
+
+        {
+            text:
+                "🤓 Um NPC comprou sua estratégia.",
+            reward: 75
+        },
+
+        {
+            text:
+                "🚨 AURA DETECTADA PELO SATÉLITE.",
+            reward: 500
+        },
+
+        {
+            text:
+                "🧠 Você acabou de perder 200 pontos de QI.",
+            reward: -200
+        }
+
+    ];
+
+
+    const event =
+        events[
+            Math.floor(
+                Math.random() *
+                events.length
+            )
+        ];
+
+
+    aura += event.reward;
+
+
+    aura =
+        Math.max(
+            0,
+            aura
+        );
+
+
+    eventEl.innerHTML =
+        event.text;
+
+
+    if(event.reward > 0) {
+
+        showToast(
+            `✨ +${event.reward} aura`
+        );
+
+    }
+
+    else if(event.reward < 0) {
+
+        showToast(
+            `💀 ${event.reward} aura`
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   COLEÇÃO
+========================================================= */
+
+function addCollection(
+    name
+) {
+
+    if(
+        !collection.includes(name)
+    ) {
+
+        collection.push(name);
+
+        showToast(
+            `💖 ${name} entrou na coleção!`
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER COLLECTION
+========================================================= */
+
+function renderCollection() {
+
+    const grid =
+        document.getElementById(
+            "collectionGrid"
+        );
+
+
+    grid.innerHTML = "";
+
+
+    waifus.forEach(
+        waifu => {
+
+            const owned =
+                collection.includes(
+                    waifu.name
+                );
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "waifu-card";
+
+
+            card.innerHTML = `
+
+                <div
+                    class="avatar"
+                    style="
+                        filter:
+                        ${owned
+                            ? "none"
+                            : "grayscale(1)"
+                        };
+                        opacity:
+                        ${owned
+                            ? "1"
+                            : ".35"
+                        };
+                    "
+                >
+                    ${owned
+                        ? waifu.emoji
+                        : "?"
+                    }
+                </div>
+
+                <strong>
+                    ${owned
+                        ? waifu.name
+                        : "???"
+                    }
+                </strong>
+
+                <br>
+
+                <span
+                    class="rarity ${waifu.rarity}"
+                >
+                    ${waifu.rarity}
+                </span>
+
+                <div
+                    style="
+                        margin-top:10px;
+                        color:#777;
+                        font-size:11px;
+                    "
+                >
+                    Valor:
+                    ${waifu.value}
+                </div>
+
+            `;
+
+
+            grid.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RANKING
+========================================================= */
+
+function renderRanking() {
+
+    const names = [
+        ["🥇", "Você", aura],
+        ["🥈", "Otaku_420", 87420],
+        ["🥉", "MikuEnjoyer", 72800],
+        ["4", "NinoSupremacy", 69300],
+        ["5", "Gigachad1999", 60120],
+        ["6", "CLT_Manager", 42069],
+        ["7", "Sans", 41820],
+        ["8", "AuraFarmer", 38100],
+        ["9", "NPC_001", 29000],
+        ["10", "SemWaifu", 120]
+    ];
+
+
+    names.sort(
+        (a,b) =>
+            b[2] - a[2]
+    );
+
+
+    const board =
+        document.getElementById(
+            "leaderboard"
+        );
+
+
+    board.innerHTML = "";
+
+
+    names.forEach(
+        (player,index) => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "rank";
+
+
+            row.innerHTML = `
+
+                <div class="rank-num">
+                    ${index + 1}
+                </div>
+
+                <div>
+                    ${player[0]}
+                    ${player[1]}
+                </div>
+
+                <strong>
+                    ${player[2].toLocaleString()}
+                    AURA
+                </strong>
+
+            `;
+
+
+            board.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD() {
+
+    coinsEl.textContent =
+        coins.toLocaleString();
+
+    auraEl.textContent =
+        aura.toLocaleString();
+
+    spinsEl.textContent =
+        spins;
+
+    jackpotsEl.textContent =
+        jackpots;
+
+
+    if(collection.length > 0) {
+
+        let best =
+            waifus
+                .filter(
+                    w =>
+                        collection.includes(
+                            w.name
+                        )
+                )
+                .sort(
+                    (a,b) =>
+                        b.value -
+                        a.value
+                )[0];
+
+
+        bestEl.textContent =
+            best.name;
+
+    }
+    else {
+
+        bestEl.textContent =
+            "—";
+
+    }
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+
+function showToast(
+    message
+) {
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2200
+        );
+
+}
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+function createConfetti() {
+
+    const colors = [
+        "#ff4fa3",
+        "#ffd84a",
+        "#45e6ff",
+        "#9d5cff",
+        "#53e39b"
+    ];
+
+
+    for(let i = 0; i < 120; i++) {
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+
+        piece.style.position =
+            "fixed";
+
+        piece.style.left =
+            "50%";
+
+        piece.style.top =
+            "50%";
+
+        piece.style.width =
+            "8px";
+
+        piece.style.height =
+            "8px";
+
+        piece.style.background =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+        piece.style.zIndex =
+            "3000";
+
+
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+        const velocity =
+            150 +
+            Math.random() *
+            500;
+
+
+        const x =
+            Math.cos(angle) *
+            velocity;
+
+        const y =
+            Math.sin(angle) *
+            velocity;
+
+
+        piece.animate(
+            [
+                {
+                    transform:
+                        "translate(-50%,-50%)",
+                    opacity: 1
+                },
+
+                {
+                    transform:
+                        `translate(
+                            calc(-50% + ${x}px),
+                            calc(-50% + ${y}px)
+                        )
+                        rotate(720deg)`,
+                    opacity: 0
+                }
+            ],
+            {
+                duration:
+                    1200 +
+                    Math.random() * 1000,
+
+                easing:
+                    "cubic-bezier(.1,.8,.2,1)"
+            }
+        );
+
+
+        document.body.appendChild(
+            piece
+        );
+
+
+        setTimeout(
+            () =>
+                piece.remove(),
+            2500
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+updateHUD();
+
+renderCollection();
+
+renderRanking();
+
+</script>
+
+</body>
+</html>

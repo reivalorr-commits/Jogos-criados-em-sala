@@ -1,0 +1,2306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WAIFU RNG POKER</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at center,#174d35,#07150f 70%);
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+button{
+    font:inherit;
+}
+
+.header{
+    height:70px;
+    padding:0 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#050907;
+    border-bottom:1px solid #294b3d;
+}
+
+.logo{
+    font-size:23px;
+    font-weight:1000;
+}
+
+.logo span{
+    color:#ff55aa;
+}
+
+.balance{
+    color:#ffd84a;
+    font-weight:bold;
+}
+
+main{
+    width:min(1250px,95%);
+    margin:auto;
+    padding:20px 0 50px;
+}
+
+.title{
+    text-align:center;
+}
+
+.title h1{
+    font-size:clamp(45px,8vw,80px);
+    margin:10px 0;
+    background:linear-gradient(
+        90deg,
+        #fff,
+        #ff55aa,
+        #9b6cff,
+        #54eaff,
+        #fff
+    );
+    background-size:300%;
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:rainbow 5s linear infinite;
+}
+
+@keyframes rainbow{
+    from{background-position:0}
+    to{background-position:300%}
+}
+
+.title p{
+    color:#91a79b;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:1fr 340px;
+    gap:18px;
+}
+
+.table{
+    min-height:700px;
+    position:relative;
+    border:12px solid #482919;
+    border-radius:50px;
+    background:
+        radial-gradient(circle,#19764d,#0a3926 70%);
+    box-shadow:
+        inset 0 0 80px #0008,
+        0 20px 70px #0008;
+}
+
+.dealer{
+    position:absolute;
+    top:15px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#a8c5b6;
+    font-size:11px;
+    letter-spacing:3px;
+}
+
+.player{
+    position:absolute;
+    width:190px;
+    text-align:center;
+}
+
+.top{
+    top:45px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.left{
+    top:230px;
+    left:15px;
+}
+
+.right{
+    top:230px;
+    right:15px;
+}
+
+.bottom{
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.name{
+    font-weight:1000;
+}
+
+.chips{
+    color:#ffd84a;
+    font-size:12px;
+}
+
+.cards{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    margin-top:7px;
+    min-height:90px;
+}
+
+.card{
+    width:60px;
+    height:85px;
+    background:#fff;
+    color:#111;
+    border-radius:8px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    box-shadow:0 5px 12px #0007;
+}
+
+.red{
+    color:#dc294c;
+}
+
+.back{
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #75234f 0,
+            #75234f 5px,
+            #421633 5px,
+            #421633 10px
+        );
+    color:white;
+    border:3px solid white;
+}
+
+.community{
+    position:absolute;
+    top:255px;
+    left:50%;
+    transform:translateX(-50%);
+    text-align:center;
+}
+
+.communityTitle{
+    font-size:11px;
+    letter-spacing:3px;
+    color:#a8c8b8;
+    margin-bottom:8px;
+}
+
+.communityCards{
+    display:flex;
+    gap:8px;
+}
+
+.pot{
+    position:absolute;
+    top:375px;
+    width:100%;
+    text-align:center;
+    color:#ffd84a;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.status{
+    position:absolute;
+    top:410px;
+    width:100%;
+    text-align:center;
+    color:#c2d6cc;
+}
+
+.controls{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:95%;
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:10px;
+    padding:12px 17px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.15);
+}
+
+.btn:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+.new{
+    background:#237ddd;
+}
+
+.check{
+    background:#355d4a;
+}
+
+.call{
+    background:#287b61;
+}
+
+.bet{
+    background:#8354bd;
+}
+
+.allin{
+    background:linear-gradient(90deg,#ff397f,#ff8b35);
+}
+
+.fold{
+    background:#8d3345;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.panel{
+    background:#0a110eeb;
+    border:1px solid #29493b;
+    border-radius:15px;
+    padding:17px;
+}
+
+.panel h3{
+    margin-top:0;
+    color:#ff63b2;
+}
+
+.stat{
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+    color:#9cafA5;
+}
+
+.stat strong{
+    color:white;
+}
+
+/* INVENTÁRIO */
+
+.inventory{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:7px;
+}
+
+.waifu{
+    position:relative;
+    padding:10px;
+    border-radius:10px;
+    background:#111b16;
+    border:1px solid #294b3c;
+    cursor:pointer;
+    text-align:center;
+    transition:.15s;
+}
+
+.waifu:hover{
+    transform:scale(1.03);
+}
+
+.waifu.selected{
+    border:2px solid #ff5eaa;
+    background:#30152a;
+    box-shadow:0 0 15px #ff55aa55;
+}
+
+.waifuIcon{
+    font-size:28px;
+}
+
+.waifuName{
+    font-size:11px;
+    font-weight:bold;
+}
+
+.rarity{
+    font-size:9px;
+    color:#ffd84a;
+}
+
+.staked{
+    font-size:9px;
+    color:#ff66aa;
+}
+
+/* RNG */
+
+.rng{
+    font-family:Consolas,monospace;
+    font-size:11px;
+}
+
+.rngNumber{
+    padding:12px;
+    background:#030605;
+    border:1px solid #254034;
+    border-radius:10px;
+    margin:10px 0;
+}
+
+.rngValue{
+    color:#52eea2;
+    font-size:21px;
+    font-weight:bold;
+}
+
+.bar{
+    height:11px;
+    background:#17241d;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.fill{
+    width:50%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        #48df97,
+        #ffd447,
+        #ff477e
+    );
+}
+
+.log{
+    max-height:180px;
+    overflow:auto;
+    margin-top:8px;
+}
+
+.log div{
+    border-bottom:1px solid #16231d;
+    padding:5px 0;
+    color:#7e9488;
+}
+
+/* APOSTA */
+
+.betArea{
+    display:grid;
+    gap:8px;
+}
+
+input{
+    padding:10px;
+    background:#08100c;
+    border:1px solid #395747;
+    border-radius:8px;
+    color:white;
+}
+
+.selectedWaifu{
+    min-height:35px;
+    color:#ff72b7;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:#000d;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modalBox{
+    width:min(500px,90%);
+    padding:35px;
+    text-align:center;
+    background:#15111a;
+    border:2px solid #ffd84a;
+    border-radius:20px;
+    box-shadow:0 0 80px #ffd84a33;
+}
+
+.modalBox h2{
+    color:#ffd84a;
+    font-size:40px;
+    margin:0 0 15px;
+}
+
+@media(max-width:900px){
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .table{
+        min-height:720px;
+    }
+
+    .player{
+        width:150px;
+    }
+
+    .card{
+        width:52px;
+        height:76px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        🃏 WAIFU <span>RNG POKER™</span>
+    </div>
+
+    <div class="balance">
+        🪙 <span id="coins">10000</span>
+    </div>
+
+</header>
+
+
+<main>
+
+<div class="title">
+
+    <h1>WAIFU POKER</h1>
+
+    <p>
+        RNG VISÍVEL • WAIFUS COLECIONÁVEIS • BET MODE
+    </p>
+
+</div>
+
+
+<div class="layout">
+
+<!-- MESA -->
+
+<section class="table">
+
+    <div class="dealer">
+        ♠ WAIFU CASINO DEALER ♠
+    </div>
+
+
+    <div class="player top">
+
+        <div class="name">
+            🤓 OTAKU_420
+        </div>
+
+        <div class="chips">
+            🪙 <span id="bot1coins">5000</span>
+        </div>
+
+        <div id="bot1cards" class="cards">
+            <div class="card back">🃏</div>
+            <div class="card back">🃏</div>
+        </div>
+
+    </div>
+
+
+    <div class="player left">
+
+        <div class="name">
+            🗿 GIGACHAD
+        </div>
+
+        <div class="chips">
+            🪙 <span id="bot2coins">5000</span>
+        </div>
+
+        <div id="bot2cards" class="cards">
+            <div class="card back">🃏</div>
+            <div class="card back">🃏</div>
+        </div>
+
+    </div>
+
+
+    <div class="player right">
+
+        <div class="name">
+            💀 SANS
+        </div>
+
+        <div class="chips">
+            🪙 <span id="bot3coins">5000</span>
+        </div>
+
+        <div id="bot3cards" class="cards">
+            <div class="card back">🃏</div>
+            <div class="card back">🃏</div>
+        </div>
+
+    </div>
+
+
+    <div class="community">
+
+        <div class="communityTitle">
+            COMMUNITY CARDS
+        </div>
+
+        <div
+            id="community"
+            class="communityCards"
+        ></div>
+
+    </div>
+
+
+    <div class="pot">
+        POT: 🪙 <span id="pot">0</span>
+    </div>
+
+
+    <div
+        id="status"
+        class="status"
+    >
+        Escolha uma waifu para apostar e comece uma mão.
+    </div>
+
+
+    <div class="player bottom">
+
+        <div class="name">
+            👑 VOCÊ
+        </div>
+
+        <div class="chips">
+            🪙 <span id="playerCoins">10000</span>
+        </div>
+
+        <div id="playerCards" class="cards">
+
+            <div class="card back">🃏</div>
+            <div class="card back">🃏</div>
+
+        </div>
+
+    </div>
+
+
+    <div class="controls">
+
+        <button
+            id="newGame"
+            class="btn new"
+        >
+            🃏 NOVA MÃO
+        </button>
+
+        <button
+            id="check"
+            class="btn check"
+            disabled
+        >
+            CHECK
+        </button>
+
+        <button
+            id="call"
+            class="btn call"
+            disabled
+        >
+            CALL
+        </button>
+
+        <button
+            id="bet"
+            class="btn bet"
+            disabled
+        >
+            BET
+        </button>
+
+        <button
+            id="allin"
+            class="btn allin"
+            disabled
+        >
+            ALL-IN
+        </button>
+
+        <button
+            id="fold"
+            class="btn fold"
+            disabled
+        >
+            FOLD
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+
+<!-- INVENTÁRIO -->
+
+<div class="panel">
+
+    <h3>💖 MINHAS WAIFUS</h3>
+
+    <div
+        id="inventory"
+        class="inventory"
+    ></div>
+
+</div>
+
+
+<!-- APOSTA -->
+
+<div class="panel">
+
+    <h3>🎰 SUA APOSTA</h3>
+
+    <div class="betArea">
+
+        <label>
+            Waifu Coins
+        </label>
+
+        <input
+            id="coinBet"
+            type="number"
+            min="100"
+            value="500"
+        >
+
+        <div>
+            Waifu apostada:
+        </div>
+
+        <div
+            id="selectedWaifu"
+            class="selectedWaifu"
+        >
+            Nenhuma
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- STATUS -->
+
+<div class="panel">
+
+    <h3>📊 STATUS</h3>
+
+    <div class="stat">
+        <span>Mãos</span>
+        <strong id="hands">0</strong>
+    </div>
+
+    <div class="stat">
+        <span>Vitórias</span>
+        <strong id="wins">0</strong>
+    </div>
+
+    <div class="stat">
+        <span>Derrotas</span>
+        <strong id="losses">0</strong>
+    </div>
+
+    <div class="stat">
+        <span>Winrate</span>
+        <strong id="winrate">0%</strong>
+    </div>
+
+</div>
+
+
+<!-- RNG -->
+
+<div class="panel">
+
+    <h3>🎲 RNG VISÍVEL</h3>
+
+    <div class="rng">
+
+        <div>
+            Último sorteio:
+        </div>
+
+        <div
+            id="rngNumber"
+            class="rngNumber"
+        >
+            aguardando...
+        </div>
+
+        <div class="bar">
+            <div
+                id="rngFill"
+                class="fill"
+            ></div>
+        </div>
+
+        <div
+            id="rngLog"
+            class="log"
+        >
+            Nenhum sorteio.
+        </div>
+
+    </div>
+
+</div>
+
+</aside>
+
+</div>
+
+</main>
+
+
+<!-- MODAL -->
+
+<div
+    id="modal"
+    class="modal"
+>
+
+    <div class="modalBox">
+
+        <h2 id="modalTitle">
+            VITÓRIA!
+        </h2>
+
+        <div id="modalText"></div>
+
+        <br>
+
+        <button
+            onclick="closeModal()"
+            class="btn new"
+        >
+            CONTINUAR
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   WAIFUS
+========================================================= */
+
+const WAIFUS = [
+
+    {
+        name:"Miku",
+        emoji:"🎀",
+        rarity:"SSR",
+        value:5000
+    },
+
+    {
+        name:"Rem",
+        emoji:"💙",
+        rarity:"SSR",
+        value:4800
+    },
+
+    {
+        name:"Yor",
+        emoji:"⚔️",
+        rarity:"SSR",
+        value:5200
+    },
+
+    {
+        name:"Marin",
+        emoji:"💖",
+        rarity:"SSR",
+        value:4700
+    },
+
+    {
+        name:"Zero Two",
+        emoji:"🦋",
+        rarity:"LEGENDARY",
+        value:7500
+    },
+
+    {
+        name:"Asuna",
+        emoji:"🗡️",
+        rarity:"SSR",
+        value:5500
+    },
+
+    {
+        name:"Makima",
+        emoji:"👁️",
+        rarity:"LEGENDARY",
+        value:8000
+    },
+
+    {
+        name:"Megumin",
+        emoji:"💥",
+        rarity:"SR",
+        value:3500
+    },
+
+    {
+        name:"Nezuko",
+        emoji:"🎋",
+        rarity:"SR",
+        value:3300
+    },
+
+    {
+        name:"Shinobu",
+        emoji:"🦋",
+        rarity:"SR",
+        value:3600
+    },
+
+    {
+        name:"Emilia",
+        emoji:"❄️",
+        rarity:"SSR",
+        value:4900
+    },
+
+    {
+        name:"Kurumi",
+        emoji:"⏰",
+        rarity:"LEGENDARY",
+        value:8500
+    }
+
+];
+
+
+/* =========================================================
+   INVENTÁRIO
+========================================================= */
+
+let inventory = [
+
+    WAIFUS[0],
+    WAIFUS[1],
+    WAIFUS[3],
+    WAIFUS[7],
+    WAIFUS[8]
+];
+
+let selectedWaifu = null;
+
+
+/* =========================================================
+   ECONOMIA
+========================================================= */
+
+let coins = 10000;
+
+let hands = 0;
+let wins = 0;
+let losses = 0;
+
+let pot = 0;
+
+let deck = [];
+
+let playerCards = [];
+
+let community = [];
+
+let currentBet = 0;
+let playerBet = 0;
+
+let phase = "waiting";
+
+let rngCount = 0;
+
+
+/* =========================================================
+   BOTS
+========================================================= */
+
+const bots = [
+
+    {
+        name:"Otaku_420",
+        coins:5000,
+        waifu:WAIFUS[5]
+    },
+
+    {
+        name:"Gigachad",
+        coins:5000,
+        waifu:WAIFUS[9]
+    },
+
+    {
+        name:"Sans",
+        coins:5000,
+        waifu:WAIFUS[2]
+    }
+
+];
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+/* =========================================================
+   RNG
+========================================================= */
+
+function rng(max){
+
+    let raw;
+
+    if(
+        window.crypto &&
+        crypto.getRandomValues
+    ){
+
+        const arr =
+            new Uint32Array(1);
+
+        crypto.getRandomValues(arr);
+
+        raw = arr[0];
+
+    }else{
+
+        raw =
+            Math.floor(
+                Math.random() *
+                4294967296
+            );
+
+    }
+
+
+    const normalized =
+        raw / 4294967296;
+
+    const result =
+        Math.floor(
+            normalized * max
+        );
+
+
+    rngCount++;
+
+
+    $("rngNumber").innerHTML = `
+        <span class="rngValue">
+            ${raw}
+        </span>
+        <br>
+        resultado:
+        ${result}/${max-1}
+    `;
+
+
+    $("rngFill").style.width =
+        normalized * 100 + "%";
+
+
+    const row =
+        document.createElement("div");
+
+    row.innerHTML =
+        `#${rngCount} → <b>${result}</b> / ${max-1}`;
+
+    $("rngLog").prepend(row);
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   BARALHO
+========================================================= */
+
+const suits = [
+    ["♠","black"],
+    ["♥","red"],
+    ["♦","red"],
+    ["♣","black"]
+];
+
+function createDeck(){
+
+    deck = [];
+
+    let id = 0;
+
+
+    for(
+        const suit of suits
+    ){
+
+        for(
+            let rank=2;
+            rank<=14;
+            rank++
+        ){
+
+            const w =
+                WAIFUS[
+                    id % WAIFUS.length
+                ];
+
+            deck.push({
+
+                rank,
+
+                suit:suit[0],
+
+                color:suit[1],
+
+                waifu:w
+
+            });
+
+            id++;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   SHUFFLE
+========================================================= */
+
+function shuffle(){
+
+    for(
+        let i=deck.length-1;
+        i>0;
+        i--
+    ){
+
+        const j =
+            rng(i+1);
+
+        [
+            deck[i],
+            deck[j]
+        ] =
+        [
+            deck[j],
+            deck[i]
+        ];
+
+    }
+
+}
+
+
+function draw(){
+
+    return deck.pop();
+
+}
+
+
+/* =========================================================
+   RENDER INVENTÁRIO
+========================================================= */
+
+function renderInventory(){
+
+    $("inventory").innerHTML = "";
+
+
+    inventory.forEach(
+        (waifu,index)=>{
+
+            const el =
+                document.createElement("div");
+
+
+            el.className =
+                "waifu" +
+                (
+                    selectedWaifu === waifu
+                    ? " selected"
+                    : ""
+                );
+
+
+            el.innerHTML = `
+
+                <div class="waifuIcon">
+                    ${waifu.emoji}
+                </div>
+
+                <div class="waifuName">
+                    ${waifu.name}
+                </div>
+
+                <div class="rarity">
+                    ${waifu.rarity}
+                </div>
+
+                <div>
+                    🪙 ${waifu.value}
+                </div>
+
+                ${
+                    selectedWaifu === waifu
+                    ?
+                    `<div class="staked">
+                        APOSTADA
+                    </div>`
+                    :
+                    ""
+                }
+
+            `;
+
+
+            el.onclick =
+                () => {
+
+                    if(
+                        phase !== "waiting" &&
+                        phase !== "finished"
+                    ){
+
+                        return;
+
+                    }
+
+
+                    selectedWaifu =
+                        selectedWaifu === waifu
+                        ? null
+                        : waifu;
+
+
+                    renderInventory();
+
+                    updateSelected();
+
+                };
+
+
+            $("inventory")
+                .appendChild(el);
+
+        }
+    );
+
+}
+
+
+function updateSelected(){
+
+    $("selectedWaifu").innerHTML =
+        selectedWaifu
+        ?
+        `
+        ${selectedWaifu.emoji}
+        <b>${selectedWaifu.name}</b>
+        —
+        ${selectedWaifu.rarity}
+        <br>
+        Valor: 🪙 ${selectedWaifu.value}
+        `
+        :
+        "Nenhuma";
+
+}
+
+
+/* =========================================================
+   CARTAS
+========================================================= */
+
+function rankText(r){
+
+    return {
+        14:"A",
+        13:"K",
+        12:"Q",
+        11:"J"
+    }[r] || r;
+
+}
+
+
+function cardHTML(card,hidden=false){
+
+    if(hidden){
+
+        return `
+            <div class="card back">
+                🃏
+            </div>
+        `;
+
+    }
+
+
+    return `
+
+        <div
+            class="card
+            ${card.color==="red"?"red":""}"
+        >
+
+            <div>
+                ${rankText(card.rank)}
+            </div>
+
+            <div>
+                ${card.suit}
+            </div>
+
+            <div style="font-size:11px">
+                ${card.waifu.emoji}
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function renderCards(){
+
+    $("playerCards").innerHTML =
+        playerCards
+        .map(c=>cardHTML(c))
+        .join("");
+
+
+    $("community").innerHTML =
+        community
+        .map(c=>cardHTML(c))
+        .join("");
+
+
+    for(
+        let i=1;
+        i<=3;
+        i++
+    ){
+
+        $(`bot${i}cards`).innerHTML =
+            `
+            <div class="card back">🃏</div>
+            <div class="card back">🃏</div>
+            `;
+
+    }
+
+}
+
+
+/* =========================================================
+   NOVA MÃO
+========================================================= */
+
+$("newGame").onclick =
+    newGame;
+
+
+function newGame(){
+
+    if(
+        phase !== "waiting" &&
+        phase !== "finished"
+    ){
+
+        return;
+
+    }
+
+
+    const bet =
+        Number(
+            $("coinBet").value
+        );
+
+
+    if(
+        !Number.isFinite(bet) ||
+        bet<100
+    ){
+
+        alert(
+            "A aposta mínima é 100 coins."
+        );
+
+        return;
+
+    }
+
+
+    if(coins < bet){
+
+        alert(
+            "Você não possui coins suficientes."
+        );
+
+        return;
+
+    }
+
+
+    if(!selectedWaifu){
+
+        alert(
+            "Escolha uma waifu para apostar."
+        );
+
+        return;
+
+    }
+
+
+    coins -= bet;
+
+    pot = bet;
+
+    playerBet = bet;
+
+    currentBet = bet;
+
+
+    hands++;
+
+
+    createDeck();
+
+    shuffle();
+
+
+    playerCards = [
+        draw(),
+        draw()
+    ];
+
+
+    community = [];
+
+
+    phase = "preflop";
+
+
+    renderCards();
+
+    updateHUD();
+
+    enableControls(true);
+
+
+    $("status").textContent =
+        `
+        Você apostou
+        ${selectedWaifu.emoji}
+        ${selectedWaifu.name}.
+        Sua vez!
+        `;
+
+}
+
+
+/* =========================================================
+   CHECK
+========================================================= */
+
+$("check").onclick =
+    ()=>{
+
+        if(
+            currentBet > playerBet
+        ){
+
+            alert(
+                "Você precisa dar CALL ou BET."
+            );
+
+            return;
+
+        }
+
+
+        botTurn();
+
+    };
+
+
+/* =========================================================
+   CALL
+========================================================= */
+
+$("call").onclick =
+    ()=>{
+
+        const amount =
+            currentBet-playerBet;
+
+
+        if(amount<=0){
+
+            botTurn();
+
+            return;
+
+        }
+
+
+        if(coins<amount){
+
+            allin();
+
+            return;
+
+        }
+
+
+        coins -= amount;
+
+        playerBet += amount;
+
+        pot += amount;
+
+
+        botTurn();
+
+    };
+
+
+/* =========================================================
+   BET
+========================================================= */
+
+$("bet").onclick =
+    ()=>{
+
+        const increase =
+            Math.max(
+                100,
+                Number(
+                    $("coinBet").value
+                )
+            );
+
+
+        const newBet =
+            currentBet +
+            increase;
+
+
+        const amount =
+            newBet-playerBet;
+
+
+        if(coins<amount){
+
+            alert(
+                "Coins insuficientes."
+            );
+
+            return;
+
+        }
+
+
+        coins -= amount;
+
+        playerBet = newBet;
+
+        currentBet = newBet;
+
+        pot += amount;
+
+
+        $("status").textContent =
+            `
+            🔥 BET!
+            Nova aposta:
+            🪙 ${newBet}
+            `;
+
+
+        botTurn();
+
+    };
+
+
+/* =========================================================
+   ALL IN
+========================================================= */
+
+$("allin").onclick =
+    allin;
+
+
+function allin(){
+
+    const amount =
+        coins;
+
+
+    if(amount<=0){
+
+        return;
+
+    }
+
+
+    coins = 0;
+
+    playerBet += amount;
+
+    pot += amount;
+
+    currentBet =
+        Math.max(
+            currentBet,
+            playerBet
+        );
+
+
+    $("status").textContent =
+        "💀 ALL-IN!";
+
+
+    botTurn();
+
+}
+
+
+/* =========================================================
+   FOLD
+========================================================= */
+
+$("fold").onclick =
+    ()=>{
+
+        phase = "finished";
+
+        losses++;
+
+        enableControls(false);
+
+        updateHUD();
+
+
+        $("status").textContent =
+            "💀 Você foldou.";
+
+    };
+
+
+/* =========================================================
+   BOT
+========================================================= */
+
+function botTurn(){
+
+    enableControls(false);
+
+
+    setTimeout(
+        ()=>{
+
+            /*
+             * RNG visível também decide
+             * o comportamento dos bots.
+             */
+
+            bots.forEach(
+                bot=>{
+
+                    const decision =
+                        rng(100);
+
+
+                    if(
+                        decision < 20
+                    ){
+
+                        return;
+
+                    }
+
+
+                    const amount =
+                        Math.min(
+                            currentBet || 100,
+                            bot.coins
+                        );
+
+
+                    bot.coins -= amount;
+
+                    pot += amount;
+
+                }
+            );
+
+
+            nextPhase();
+
+        },
+        600
+    );
+
+}
+
+
+/* =========================================================
+   FASES
+========================================================= */
+
+function nextPhase(){
+
+    playerBet = 0;
+
+    currentBet = 0;
+
+
+    if(
+        phase==="preflop"
+    ){
+
+        community.push(
+            draw(),
+            draw(),
+            draw()
+        );
+
+        phase="flop";
+
+    }
+
+    else if(
+        phase==="flop"
+    ){
+
+        community.push(
+            draw()
+        );
+
+        phase="turn";
+
+    }
+
+    else if(
+        phase==="turn"
+    ){
+
+        community.push(
+            draw()
+        );
+
+        phase="river";
+
+    }
+
+    else{
+
+        showdown();
+
+        return;
+
+    }
+
+
+    renderCards();
+
+    enableControls(true);
+
+    updateHUD();
+
+}
+
+
+/* =========================================================
+   AVALIADOR
+========================================================= */
+
+function evaluate(cards){
+
+    if(cards.length<5){
+
+        return {
+            score:0,
+            name:"Carta Alta"
+        };
+
+    }
+
+
+    const ranks =
+        cards
+        .map(c=>c.rank)
+        .sort((a,b)=>b-a);
+
+
+    const counts={};
+
+
+    ranks.forEach(
+        r=>{
+            counts[r] =
+                (counts[r]||0)+1;
+        }
+    );
+
+
+    const groups =
+        Object.values(counts)
+        .sort((a,b)=>b-a);
+
+
+    const flush =
+        cards.every(
+            c=>c.suit===cards[0].suit
+        );
+
+
+    const unique =
+        [...new Set(ranks)];
+
+
+    if(unique.includes(14))
+        unique.push(1);
+
+
+    let straight=false;
+
+
+    for(
+        let i=0;
+        i<=unique.length-5;
+        i++
+    ){
+
+        if(
+            unique[i]-
+            unique[i+4]===4
+        ){
+
+            straight=true;
+
+        }
+
+    }
+
+
+    if(straight&&flush)
+        return {
+            score:8,
+            name:"Straight Flush"
+        };
+
+
+    if(groups[0]===4)
+        return {
+            score:7,
+            name:"Quadra"
+        };
+
+
+    if(
+        groups[0]===3 &&
+        groups[1]>=2
+    )
+        return {
+            score:6,
+            name:"Full House"
+        };
+
+
+    if(flush)
+        return {
+            score:5,
+            name:"Flush"
+        };
+
+
+    if(straight)
+        return {
+            score:4,
+            name:"Straight"
+        };
+
+
+    if(groups[0]===3)
+        return {
+            score:3,
+            name:"Trinca"
+        };
+
+
+    if(
+        groups[0]===2 &&
+        groups[1]===2
+    )
+        return {
+            score:2,
+            name:"Dois Pares"
+        };
+
+
+    if(groups[0]===2)
+        return {
+            score:1,
+            name:"Par"
+        };
+
+
+    return {
+        score:0,
+        name:"Carta Alta"
+    };
+
+}
+
+
+/* =========================================================
+   MELHOR MÃO
+========================================================= */
+
+function bestFive(cards){
+
+    if(cards.length<=5)
+        return evaluate(cards);
+
+
+    let best={
+        score:-1,
+        name:""
+    };
+
+
+    for(let a=0;a<cards.length;a++)
+    for(let b=a+1;b<cards.length;b++)
+    for(let c=b+1;c<cards.length;c++)
+    for(let d=c+1;d<cards.length;d++)
+    for(let e=d+1;e<cards.length;e++){
+
+        const result =
+            evaluate([
+                cards[a],
+                cards[b],
+                cards[c],
+                cards[d],
+                cards[e]
+            ]);
+
+
+        if(
+            result.score >
+            best.score
+        ){
+
+            best=result;
+
+        }
+
+    }
+
+
+    return best;
+
+}
+
+
+/* =========================================================
+   SHOWDOWN
+========================================================= */
+
+function showdown(){
+
+    phase="finished";
+
+
+    const player =
+        bestFive([
+            ...playerCards,
+            ...community
+        ]);
+
+
+    /*
+       RNG decide desempates quando
+       duas mãos possuem a mesma categoria.
+    */
+
+    const tieBreak =
+        rng(1000000);
+
+
+    const botScore =
+        bots.map(
+            bot=>{
+
+                return {
+                    result:bestFive([
+                        ...community,
+                        {
+                            rank:rng(13)+2,
+                            suit:"♠",
+                            color:"black",
+                            waifu:bot.waifu
+                        },
+                        {
+                            rank:rng(13)+2,
+                            suit:"♥",
+                            color:"red",
+                            waifu:bot.waifu
+                        }
+                    ]),
+                    bot
+                };
+
+            }
+        );
+
+
+    let bestBot =
+        botScore[0];
+
+
+    botScore.forEach(
+        x=>{
+
+            if(
+                x.result.score >
+                bestBot.result.score
+            ){
+
+                bestBot=x;
+
+            }
+
+        }
+    );
+
+
+    /*
+       Para deixar a demonstração do RNG
+       transparente, o desempate é mostrado.
+    */
+
+    let playerWins =
+        player.score >
+        bestBot.result.score;
+
+
+    if(
+        player.score ===
+        bestBot.result.score
+    ){
+
+        playerWins =
+            tieBreak % 2 === 0;
+
+    }
+
+
+    if(playerWins){
+
+        wins++;
+
+        coins += pot;
+
+
+        /*
+         * A waifu apostada é mantida
+         * e recebe uma pequena recompensa
+         * fictícia de coleção.
+         */
+
+        showModal(
+            "🏆 VOCÊ GANHOU!",
+            `
+            Sua mão:
+            <b>${player.name}</b>
+
+            <br><br>
+
+            Você ganhou:
+            🪙 ${pot}
+
+            <br><br>
+
+            💖
+            ${selectedWaifu.name}
+            continua na sua coleção!
+
+            <br><br>
+
+            RNG desempate:
+            ${tieBreak}
+            `
+        );
+
+    }
+
+    else{
+
+        losses++;
+
+
+        /*
+         * A waifu apostada é transferida
+         * para o vencedor.
+         */
+
+        const lost =
+            selectedWaifu;
+
+
+        inventory =
+            inventory.filter(
+                w=>w!==lost
+            );
+
+
+        const receiver =
+            bestBot.bot;
+
+
+        receiver.waifu =
+            lost;
+
+
+        showModal(
+            "💀 VOCÊ PERDEU!",
+            `
+            ${receiver.name}
+            venceu com:
+
+            <br>
+
+            <b>
+            ${bestBot.result.name}
+            </b>
+
+            <br><br>
+
+            Você perdeu:
+
+            <br>
+
+            💖
+            <b>${lost.name}</b>
+
+            <br><br>
+
+            A waifu agora pertence ao
+            adversário.
+
+            <br><br>
+
+            RNG desempate:
+            ${tieBreak}
+            `
+        );
+
+
+        selectedWaifu=null;
+
+    }
+
+
+    enableControls(false);
+
+    renderInventory();
+
+    updateSelected();
+
+    updateHUD();
+
+}
+
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+
+function enableControls(value){
+
+    [
+        "check",
+        "call",
+        "bet",
+        "allin",
+        "fold"
+    ].forEach(
+        id=>{
+            $(id).disabled=!value;
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+    $("coins").textContent =
+        coins.toLocaleString();
+
+    $("playerCoins").textContent =
+        coins.toLocaleString();
+
+    $("pot").textContent =
+        pot.toLocaleString();
+
+    $("hands").textContent =
+        hands;
+
+    $("wins").textContent =
+        wins;
+
+    $("losses").textContent =
+        losses;
+
+
+    const total =
+        wins+losses;
+
+
+    $("winrate").textContent =
+        total
+        ?
+        Math.round(
+            wins/total*100
+        )+"%"
+        :
+        "0%";
+
+
+    bots.forEach(
+        (bot,index)=>{
+
+            $(
+                `bot${index+1}coins`
+            ).textContent =
+                bot.coins.toLocaleString();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function showModal(
+    title,
+    text
+){
+
+    $("modalTitle").innerHTML =
+        title;
+
+    $("modalText").innerHTML =
+        text;
+
+    $("modal")
+        .classList.add("show");
+
+}
+
+
+function closeModal(){
+
+    $("modal")
+        .classList.remove("show");
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+renderInventory();
+
+updateSelected();
+
+updateHUD();
+
+enableControls(false);
+
+</script>
+
+</body>
+</html>

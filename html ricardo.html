@@ -1,0 +1,731 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>R I C A R D O  M I L O S  //  U L T R A</title>
+
+    <style>
+                * {
+                    box-sizing: border-box;
+                }
+
+                html, body {
+                    margin: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    font-family: Arial, Helvetica, sans-serif;
+                    color: white;
+                }
+
+                body {
+                    background: radial-gradient(circle at 20% 20%, #ff00ff, transparent 25%), radial-gradient(circle at 80% 30%, #00ffff, transparent 25%), radial-gradient(circle at 50% 90%, #ffff00, transparent 30%), linear-gradient(135deg, #110022, #001122, #220011);
+                    animation: backgroundChaos 4s infinite alternate;
+                }
+
+                @keyframes backgroundChaos {
+                    0% {
+                        filter: hue-rotate(0deg);
+                    }
+
+                    100% {
+                        filter: hue-rotate(180deg);
+                    }
+                }
+
+                /* =========================
+           FUNDO
+        ========================= */
+
+                .grid {
+                    position: fixed;
+                    inset: -50%;
+                    background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+                    background-size: 50px 50px;
+                    transform: rotate(15deg);
+                    animation: gridMove 3s linear infinite;
+                    pointer-events: none;
+                }
+
+                @keyframes gridMove {
+                    from {
+                        transform: rotate(15deg) translate(0,0);
+                    }
+
+                    to {
+                        transform: rotate(15deg) translate(50px,50px);
+                    }
+                }
+
+                .scanlines {
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    z-index: 1000;
+                    background: repeating-linear-gradient( to bottom, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 4px );
+                }
+
+                /* =========================
+           CONTAINER
+        ========================= */
+
+                .container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 5;
+                }
+
+                /* =========================
+           TÍTULO
+        ========================= */
+
+                .title {
+                    position: absolute;
+                    top: 20px;
+                    text-align: center;
+                    font-size: clamp(28px, 6vw, 80px);
+                    font-weight: 900;
+                    letter-spacing: 10px;
+                    color: #fff;
+                    text-shadow: 4px 0 #ff00ff, -4px 0 #00ffff, 0 0 30px #fff;
+                    animation: titleShake .15s infinite, titleColor 1s infinite alternate;
+                }
+
+                @keyframes titleShake {
+                    0% {
+                        transform: translate(0,0) rotate(0deg);
+                    }
+
+                    25% {
+                        transform: translate(2px,-2px) rotate(.5deg);
+                    }
+
+                    50% {
+                        transform: translate(-2px,2px) rotate(-.5deg);
+                    }
+
+                    75% {
+                        transform: translate(1px,2px) rotate(.3deg);
+                    }
+
+                    100% {
+                        transform: translate(0,0);
+                    }
+                }
+
+                @keyframes titleColor {
+                    from {
+                        filter: hue-rotate(0deg);
+                    }
+
+                    to {
+                        filter: hue-rotate(360deg);
+                    }
+                }
+
+                /* =========================
+           RICARDO
+        ========================= */
+
+                .ricardo {
+                    position: relative;
+                    width: min(430px, 70vw);
+                    height: min(500px, 65vh);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: ricardoFloat 1.7s infinite alternate ease-in-out, ricardoSpin 6s infinite linear;
+                    z-index: 10;
+                }
+
+                    .ricardo img {
+                        max-width: 100%;
+                        max-height: 100%;
+                        object-fit: contain;
+                        border-radius: 30px;
+                        border: 8px solid white;
+                        box-shadow: 0 0 10px #fff, 0 0 30px #ff00ff, 0 0 60px #00ffff, 0 0 100px #ffff00;
+                        animation: imageChaos .8s infinite alternate;
+                    }
+
+                @keyframes ricardoFloat {
+                    from {
+                        transform: translateY(-15px) rotate(-3deg);
+                    }
+
+                    to {
+                        transform: translateY(15px) rotate(3deg);
+                    }
+                }
+
+                @keyframes ricardoSpin {
+                    0% {
+                        filter: hue-rotate(0deg);
+                    }
+
+                    100% {
+                        filter: hue-rotate(360deg);
+                    }
+                }
+
+                @keyframes imageChaos {
+                    from {
+                        transform: scale(1);
+                    }
+
+                    to {
+                        transform: scale(1.04) skewX(2deg);
+                    }
+                }
+
+                /* =========================
+           TEXTO
+        ========================= */
+
+                .meme-text {
+                    position: absolute;
+                    bottom: 100px;
+                    font-size: clamp(20px, 4vw, 50px);
+                    font-weight: 900;
+                    text-align: center;
+                    text-transform: uppercase;
+                    animation: textBounce .4s infinite alternate;
+                    text-shadow: 3px 3px #000, -3px -3px #ff00ff, 3px -3px #00ffff;
+                }
+
+                @keyframes textBounce {
+                    from {
+                        transform: scale(1) rotate(-2deg);
+                    }
+
+                    to {
+                        transform: scale(1.15) rotate(2deg);
+                    }
+                }
+
+                /* =========================
+           PAINEL DE VOLUME
+        ========================= */
+
+                .volume-panel {
+                    position: absolute;
+                    left: 20px;
+                    bottom: 20px;
+                    width: min(440px, calc(100vw - 40px));
+                    padding: 20px;
+                    background: rgba(0,0,0,.85);
+                    border: 3px solid #00ffff;
+                    box-shadow: 0 0 15px #00ffff, inset 0 0 20px rgba(255,0,255,.3);
+                    backdrop-filter: blur(10px);
+                    z-index: 50;
+                }
+
+                    .volume-panel h2 {
+                        margin: 0 0 10px;
+                        color: #00ffff;
+                        font-size: 18px;
+                    }
+
+                .integral {
+                    background: #050505;
+                    border: 2px dashed #ff00ff;
+                    padding: 12px;
+                    font-family: "Courier New", monospace;
+                    color: #fff;
+                    text-align: center;
+                    margin-bottom: 12px;
+                    box-shadow: 0 0 10px #ff00ff;
+                }
+
+                .answer-row {
+                    display: flex;
+                    gap: 8px;
+                }
+
+                    .answer-row input {
+                        flex: 1;
+                        background: black;
+                        border: 2px solid #fff;
+                        color: #00ff00;
+                        padding: 10px;
+                        font-family: monospace;
+                        font-size: 16px;
+                    }
+
+                    .answer-row button {
+                        background: #ff00ff;
+                        border: 0;
+                        color: white;
+                        font-weight: bold;
+                        padding: 10px 15px;
+                        cursor: pointer;
+                        transition: .2s;
+                    }
+
+                        .answer-row button:hover {
+                            transform: scale(1.1) rotate(-2deg);
+                            background: #00ffff;
+                            color: black;
+                        }
+
+                #volume {
+                    width: 100%;
+                    margin-top: 15px;
+                    accent-color: #ff00ff;
+                }
+
+                    #volume:disabled {
+                        filter: grayscale(1);
+                        opacity: .3;
+                    }
+
+                /* =========================
+           STATUS
+        ========================= */
+
+                #status {
+                    margin-top: 10px;
+                    font-family: monospace;
+                    font-size: 13px;
+                    color: #ff5555;
+                }
+
+                /* =========================
+           BOTÃO CAÓTICO
+        ========================= */
+
+                .chaos-button {
+                    position: absolute;
+                    right: 30px;
+                    top: 30px;
+                    padding: 15px 20px;
+                    background: #ff0000;
+                    color: white;
+                    border: 4px solid white;
+                    font-weight: 900;
+                    cursor: pointer;
+                    z-index: 100;
+                    animation: buttonSpin 1s infinite alternate;
+                }
+
+                @keyframes buttonSpin {
+                    from {
+                        transform: rotate(-5deg) scale(1);
+                    }
+
+                    to {
+                        transform: rotate(5deg) scale(1.1);
+                    }
+                }
+
+                /* =========================
+           PARTÍCULAS
+        ========================= */
+
+                .particle {
+                    position: fixed;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 2;
+                    animation: particleFly linear forwards;
+                }
+
+                @keyframes particleFly {
+                    from {
+                        transform: translate(0,0) scale(1);
+                        opacity: 1;
+                    }
+
+                    to {
+                        transform: translate( calc(-50vw + 100vw * var(--x)), calc(-50vh + 100vh * var(--y)) ) scale(0);
+                        opacity: 0;
+                    }
+                }
+
+                /* =========================
+           CONTADOR
+        ========================= */
+
+                .counter {
+                    position: absolute;
+                    right: 25px;
+                    bottom: 25px;
+                    background: black;
+                    padding: 12px 20px;
+                    border: 2px solid yellow;
+                    color: yellow;
+                    font-family: monospace;
+                    z-index: 60;
+                }
+
+                /* =========================
+           RESPONSIVO
+        ========================= */
+
+                @media(max-width:700px) {
+
+                    .title {
+                        letter-spacing: 3px;
+                    }
+
+                    .chaos-button {
+                        top: 100px;
+                        right: 10px;
+                    }
+
+                    .volume-panel {
+                        transform: scale(.9);
+                        transform-origin: bottom left;
+                    }
+
+                    .meme-text {
+                        bottom: 140px;
+                    }
+                }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid"></div>
+    <div class="scanlines"></div>
+
+    <div class="container">
+
+        <div class="title">
+            RICARDO MILOS
+        </div>
+
+        <button class="chaos-button" id="chaosButton">
+            NÃO CLIQUE
+        </button>
+
+        <div class="ricardo">
+            <img src="https://i.kym-cdn.com/photos/images/newsfeed/001/678/635/f60.jpg"
+                 alt="Ricardo Milos">
+        </div>
+
+        <div class="meme-text" id="memeText">
+            💃 SYSTEM OVERLOAD 💃
+        </div>
+
+        <div class="volume-panel">
+
+            <h2>
+                🔊 CONTROLE DE VOLUME ULTRA-SECRETO
+            </h2>
+
+            <div class="integral">
+
+                Resolva para desbloquear:
+
+                <br><br>
+
+                ∫₀⁴ 3x² dx
+
+                <br><br>
+
+                <small>
+                    Digite somente o resultado.
+                </small>
+
+            </div>
+
+            <div class="answer-row">
+
+                <input id="answer"
+                       type="number"
+                       placeholder="resultado...">
+
+                <button id="unlock">
+                    DESBLOQUEAR
+                </button>
+
+            </div>
+
+            <input id="volume"
+                   type="range"
+                   min="0"
+                   max="1"
+                   step="0.01"
+                   value="0.5"
+                   disabled>
+
+            <div id="status">
+                🔒 Volume bloqueado. A matemática exige respeito.
+            </div>
+
+        </div>
+
+        <div class="counter">
+            RICARDO POWER:
+            <span id="counter">0</span>
+        </div>
+
+    </div>
+
+    <!--
+        Áudio externo.
+        O navegador normalmente exige uma interação do usuário
+        antes de permitir áudio.
+    -->
+    <audio id="audio"
+           loop
+           preload="auto">
+        <source src="https://www.myinstants.com/media/sounds/ricardo-milos.mp3"
+                type="audio/mpeg">
+    </audio>
+
+    <script>
+
+        /* ==========================================
+           SISTEMA DE ÁUDIO
+        ========================================== */
+
+        const audio = document.getElementById("audio");
+        const volume = document.getElementById("volume");
+
+        audio.volume = 0.5;
+
+        volume.addEventListener("input", () => {
+
+            audio.volume = volume.value;
+
+        });
+
+
+        /* ==========================================
+           INTEGRAL
+           ∫₀⁴ 3x² dx
+           = [x³]₀⁴
+           = 64
+        ========================================== */
+
+        const answer = document.getElementById("answer");
+        const unlock = document.getElementById("unlock");
+        const status = document.getElementById("status");
+
+        unlock.addEventListener("click", () => {
+
+            const value = Number(answer.value);
+
+            if (value === 64) {
+
+                volume.disabled = false;
+
+                status.innerHTML =
+                    "🔓 CORRETO. O RICARDO APROVOU SUA MATEMÁTICA.";
+
+                status.style.color = "#00ff00";
+
+                audio.play().catch(() => { });
+
+                document.body.style.animation =
+                    "backgroundChaos .3s infinite alternate";
+
+                for (let i = 0; i < 50; i++) {
+                    createParticle();
+                }
+
+            } else {
+
+                status.innerHTML =
+                    "❌ ERRADO. RICARDO ESTÁ DESAPONTADO.";
+
+                status.style.color = "#ff0000";
+
+                document.body.animate(
+                    [
+                        { transform: "translateX(0)" },
+                        { transform: "translateX(-15px)" },
+                        { transform: "translateX(15px)" },
+                        { transform: "translateX(0)" }
+                    ],
+                    {
+                        duration: 300
+                    }
+                );
+
+            }
+
+        });
+
+
+        /* ==========================================
+           BOTÃO "NÃO CLIQUE"
+        ========================================== */
+
+        const chaosButton =
+            document.getElementById("chaosButton");
+
+        chaosButton.addEventListener("mouseenter", () => {
+
+            const x =
+                Math.random() * (window.innerWidth - 180);
+
+            const y =
+                Math.random() * (window.innerHeight - 100);
+
+            chaosButton.style.left = x + "px";
+            chaosButton.style.top = y + "px";
+            chaosButton.style.right = "auto";
+
+        });
+
+
+        chaosButton.addEventListener("click", () => {
+
+            document.body.style.filter =
+                "invert(1) hue-rotate(180deg)";
+
+            document.getElementById("memeText").innerText =
+                "VOCÊ REALMENTE CLICOU 💀";
+
+            for (let i = 0; i < 150; i++) {
+                createParticle();
+            }
+
+        });
+
+
+        /* ==========================================
+           PARTÍCULAS
+        ========================================== */
+
+        function createParticle() {
+
+            const particle =
+                document.createElement("div");
+
+            particle.className = "particle";
+
+            const colors = [
+                "#ff00ff",
+                "#00ffff",
+                "#ffff00",
+                "#ff0000",
+                "#00ff00"
+            ];
+
+            particle.style.background =
+                colors[
+                Math.floor(Math.random() * colors.length)
+                ];
+
+            particle.style.left =
+                Math.random() * 100 + "vw";
+
+            particle.style.top =
+                Math.random() * 100 + "vh";
+
+            particle.style.setProperty(
+                "--x",
+                Math.random()
+            );
+
+            particle.style.setProperty(
+                "--y",
+                Math.random()
+            );
+
+            particle.style.animationDuration =
+                (1 + Math.random() * 4) + "s";
+
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 5000);
+        }
+
+
+        /* ==========================================
+           PARTÍCULAS AUTOMÁTICAS
+        ========================================== */
+
+        setInterval(() => {
+
+            createParticle();
+
+        }, 150);
+
+
+        /* ==========================================
+           CONTADOR ABSURDO
+        ========================================== */
+
+        let power = 0;
+
+        setInterval(() => {
+
+            power += Math.floor(
+                Math.random() * 900
+            ) + 100;
+
+            document.getElementById("counter")
+                .innerText =
+                power.toLocaleString("pt-BR");
+
+        }, 100);
+
+
+        /* ==========================================
+           TEXTO ALEATÓRIO
+        ========================================== */
+
+        const texts = [
+
+            "💃 SYSTEM OVERLOAD 💃",
+            "🔥 RICARDO MODE 🔥",
+            "🗿 ABSOLUTE CINEMA 🗿",
+            "💀 VOCÊ NÃO ESTÁ PREPARADO 💀",
+            "⚠️ MUITO RICARDO ⚠️",
+            "🕺 MATEMÁTICA APROVADA 🕺",
+            "🌈 ULTRA MILOS 🌈",
+            "🚨 PERIGO: RICARDO 🚨"
+
+        ];
+
+        setInterval(() => {
+
+            const text =
+                texts[
+                Math.floor(
+                    Math.random() * texts.length
+                )
+                ];
+
+            document.getElementById("memeText")
+                .innerText = text;
+
+        }, 700);
+
+
+        /* ==========================================
+           CLIQUE NA IMAGEM
+        ========================================== */
+
+        document
+            .querySelector(".ricardo img")
+            .addEventListener("click", () => {
+
+                for (let i = 0; i < 100; i++) {
+                    createParticle();
+                }
+
+                audio.play().catch(() => { });
+
+            });
+
+    </script>
+
+</body>
+</html>

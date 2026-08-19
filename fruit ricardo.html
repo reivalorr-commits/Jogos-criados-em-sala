@@ -1,0 +1,1800 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width,
+    initial-scale=1.0,
+    maximum-scale=1.0,
+    user-scalable=no">
+
+    <title>RICARDO NINJA — NÃO CLIQUE NA MIKU</title>
+
+    <style>
+
+                /* =========================================================
+           RESET
+        ========================================================= */
+
+                * {
+                    box-sizing: border-box;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -webkit-tap-highlight-color: transparent;
+                }
+
+                html,
+                body {
+                    margin: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    font-family: Arial, Helvetica, sans-serif;
+                    background: #050510;
+                    color: white;
+                }
+
+
+                /* =========================================================
+           FUNDO
+        ========================================================= */
+
+                body {
+                    background: radial-gradient( circle at 15% 20%, rgba(255,0,150,.30), transparent 25% ), radial-gradient( circle at 85% 75%, rgba(0,120,255,.30), transparent 25% ), radial-gradient( circle at 50% 50%, rgba(150,0,255,.12), transparent 40% ), linear-gradient( 135deg, #050008, #09001b, #00111d );
+                }
+
+
+                    /* Grade animada */
+
+                    body::before {
+                        content: "";
+                        position: fixed;
+                        inset: -100%;
+                        pointer-events: none;
+                        z-index: 0;
+                        background-image: linear-gradient( rgba(255,255,255,.035) 1px, transparent 1px ), linear-gradient( 90deg, rgba(255,255,255,.035) 1px, transparent 1px );
+                        background-size: 50px 50px;
+                        transform: rotate(12deg);
+                        animation: gridMove 6s linear infinite;
+                    }
+
+
+                @keyframes gridMove {
+
+                    from {
+                        transform: rotate(12deg) translate(0,0);
+                    }
+
+                    to {
+                        transform: rotate(12deg) translate(50px,50px);
+                    }
+                }
+
+
+                /* =========================================================
+           HUD
+        ========================================================= */
+
+                #hud {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 82px;
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    z-index: 1000;
+                    background: linear-gradient( rgba(0,0,0,.95), rgba(0,0,0,.70) );
+                    border-bottom: 2px solid rgba(255,255,255,.18);
+                    backdrop-filter: blur(12px);
+                }
+
+
+                .stat {
+                    min-width: 70px;
+                    text-align: center;
+                }
+
+
+                .stat-label {
+                    font-size: 10px;
+                    letter-spacing: 1px;
+                    opacity: .55;
+                    text-transform: uppercase;
+                }
+
+
+                .stat-value {
+                    margin-top: 3px;
+                    font-size: 25px;
+                    font-weight: 1000;
+                    text-shadow: 0 0 15px currentColor;
+                }
+
+
+                #score {
+                    color: #00ffcc;
+                }
+
+                #combo {
+                    color: #ffd000;
+                }
+
+                #time {
+                    color: #ff5577;
+                }
+
+                #lives {
+                    color: #ff3355;
+                }
+
+
+                /* =========================================================
+           ÁREA DO JOGO
+        ========================================================= */
+
+                #game {
+                    position: fixed;
+                    top: 82px;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    overflow: hidden;
+                    z-index: 10;
+                    cursor: crosshair;
+                }
+
+
+                /* =========================================================
+           ALVOS
+        ========================================================= */
+
+                .target {
+                    position: absolute;
+                    width: 110px;
+                    height: 110px;
+                    border-radius: 50%;
+                    overflow: visible;
+                    cursor: crosshair;
+                    border: 4px solid white;
+                    box-shadow: 0 0 12px white, 0 0 25px var(--glow), 0 0 50px var(--glow);
+                    animation: targetPulse .45s infinite alternate;
+                    z-index: 50;
+                    touch-action: none;
+                    transition: transform .12s, opacity .12s;
+                }
+
+
+                    .target img {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 50%;
+                        pointer-events: none;
+                        background: #111;
+                    }
+
+
+                    .target::before {
+                        content: "";
+                        position: absolute;
+                        inset: -8px;
+                        border-radius: 50%;
+                        border: 2px solid rgba(255,255,255,.4);
+                        animation: ringSpin 1s linear infinite;
+                        pointer-events: none;
+                        z-index: 3;
+                    }
+
+
+                @keyframes targetPulse {
+
+                    from {
+                        transform: scale(1);
+                    }
+
+                    to {
+                        transform: scale(1.08);
+                    }
+                }
+
+
+                @keyframes ringSpin {
+
+                    from {
+                        transform: rotate(0deg);
+                    }
+
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
+
+                .target.ricardo {
+                    --glow: #ff00cc;
+                    border-color: #ff00cc;
+                }
+
+
+                .target.miku {
+                    --glow: #009dff;
+                    border-color: #35baff;
+                }
+
+
+                /* =========================================================
+           LABEL DO ALVO
+        ========================================================= */
+
+                .target-label {
+                    position: absolute;
+                    left: 50%;
+                    bottom: -29px;
+                    transform: translateX(-50%);
+                    white-space: nowrap;
+                    padding: 4px 8px;
+                    border-radius: 6px;
+                    background: rgba(0,0,0,.85);
+                    border: 1px solid rgba(255,255,255,.3);
+                    font-size: 10px;
+                    font-weight: 1000;
+                    pointer-events: none;
+                    z-index: 10;
+                }
+
+
+                /* =========================================================
+           POPUPS
+        ========================================================= */
+
+                .popup {
+                    position: fixed;
+                    pointer-events: none;
+                    z-index: 5000;
+                    font-size: 28px;
+                    font-weight: 1000;
+                    text-shadow: 0 0 10px currentColor, 3px 3px 0 #000;
+                    animation: popupMove .75s forwards;
+                }
+
+
+                @keyframes popupMove {
+
+                    0% {
+                        transform: translate(-50%,0) scale(.5);
+                        opacity: 0;
+                    }
+
+                    20% {
+                        transform: translate(-50%,-20px) scale(1.25);
+                        opacity: 1;
+                    }
+
+                    100% {
+                        transform: translate(-50%,-100px) scale(1);
+                        opacity: 0;
+                    }
+                }
+
+
+                /* =========================================================
+           PARTÍCULAS
+        ========================================================= */
+
+                .particle {
+                    position: fixed;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 6000;
+                    animation: explode .7s forwards;
+                }
+
+
+                @keyframes explode {
+
+                    to {
+                        transform: translate( calc( (var(--x) - .5) * 450px ), calc( (var(--y) - .5) * 450px ) ) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+
+
+                /* =========================================================
+           FLASH
+        ========================================================= */
+
+                #flash {
+                    position: fixed;
+                    inset: 0;
+                    z-index: 4000;
+                    pointer-events: none;
+                    opacity: 0;
+                    transition: opacity .08s;
+                }
+
+
+                    #flash.good {
+                        background: radial-gradient( circle, rgba(0,255,170,.35), transparent 65% );
+                    }
+
+
+                    #flash.bad {
+                        background: radial-gradient( circle, rgba(255,0,50,.45), transparent 65% );
+                    }
+
+
+                /* =========================================================
+           DIFICULDADE
+        ========================================================= */
+
+                #difficulty {
+                    position: fixed;
+                    left: 50%;
+                    bottom: 12px;
+                    transform: translateX(-50%);
+                    z-index: 1000;
+                    padding: 7px 14px;
+                    border-radius: 20px;
+                    background: rgba(0,0,0,.65);
+                    border: 1px solid rgba(255,255,255,.15);
+                    font-family: monospace;
+                    font-size: 11px;
+                    opacity: .7;
+                    pointer-events: none;
+                }
+
+
+                /* =========================================================
+           MENU
+        ========================================================= */
+
+                #menu {
+                    position: fixed;
+                    inset: 0;
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    background: radial-gradient( circle, rgba(35,0,70,.92), rgba(0,0,0,.98) );
+                    text-align: center;
+                }
+
+
+                .menu-box {
+                    width: min(600px, 94vw);
+                    padding: 40px 30px;
+                    border-radius: 25px;
+                    border: 2px solid #ff00cc;
+                    background: rgba(10,5,25,.94);
+                    box-shadow: 0 0 80px rgba(255,0,200,.3);
+                    animation: menuFloat 2s infinite alternate;
+                }
+
+
+                @keyframes menuFloat {
+
+                    from {
+                        transform: translateY(-5px);
+                    }
+
+                    to {
+                        transform: translateY(5px);
+                    }
+                }
+
+
+                .menu-box h1 {
+                    margin: 0;
+                    font-size: clamp( 38px, 9vw, 80px );
+                    line-height: .9;
+                    font-weight: 1000;
+                    color: #ff00cc;
+                    text-shadow: 4px 4px #00ccff, 0 0 30px #ff00cc;
+                }
+
+
+                .instructions {
+                    margin: 25px 0;
+                    line-height: 1.8;
+                    color: rgba(255,255,255,.85);
+                }
+
+
+                .rules {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 12px;
+                    margin: 20px 0;
+                }
+
+
+                .rule {
+                    padding: 15px;
+                    border-radius: 12px;
+                    background: rgba(255,255,255,.05);
+                    border: 1px solid rgba(255,255,255,.12);
+                }
+
+
+                    .rule.good {
+                        color: #ff00cc;
+                    }
+
+
+                    .rule.bad {
+                        color: #42bfff;
+                    }
+
+
+                #startButton {
+                    padding: 16px 40px;
+                    border: 0;
+                    border-radius: 12px;
+                    background: linear-gradient( 90deg, #ff00aa, #7200ff );
+                    color: white;
+                    font-size: 17px;
+                    font-weight: 1000;
+                    cursor: pointer;
+                    box-shadow: 0 0 30px rgba(255,0,180,.5);
+                    transition: transform .15s;
+                }
+
+
+                    #startButton:hover {
+                        transform: scale(1.08);
+                    }
+
+
+                    #startButton:active {
+                        transform: scale(.95);
+                    }
+
+
+                #bestScore {
+                    margin-top: 20px;
+                    opacity: .6;
+                    font-family: monospace;
+                }
+
+
+                /* =========================================================
+           ERRO DE IMAGEM
+        ========================================================= */
+
+                .image-error {
+                    position: absolute;
+                    inset: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 10px;
+                    border-radius: 50%;
+                    background: #111;
+                    color: white;
+                    font-size: 11px;
+                    font-weight: bold;
+                }
+
+
+                /* =========================================================
+           RESPONSIVO
+        ========================================================= */
+
+                @media(max-width:600px) {
+
+                    #hud {
+                        height: 68px;
+                    }
+
+                    #game {
+                        top: 68px;
+                    }
+
+                    .stat-value {
+                        font-size: 19px;
+                    }
+
+                    .stat-label {
+                        font-size: 8px;
+                    }
+
+                    .target {
+                        width: 88px;
+                        height: 88px;
+                    }
+
+                    .menu-box {
+                        padding: 28px 20px;
+                    }
+
+                    .rules {
+                        grid-template-columns: 1fr;
+                    }
+                }
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =======================================================
+         HUD
+    ======================================================== -->
+
+    <div id="hud">
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Pontos
+            </div>
+
+            <div id="score"
+                 class="stat-value">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Combo
+            </div>
+
+            <div id="combo"
+                 class="stat-value">
+                x0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Tempo
+            </div>
+
+            <div id="time"
+                 class="stat-value">
+                60
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Vidas
+            </div>
+
+            <div id="lives"
+                 class="stat-value">
+                ❤️❤️❤️
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         ÁREA DO JOGO
+    ======================================================== -->
+
+    <div id="game"></div>
+
+
+    <div id="difficulty">
+        DIFICULDADE: 1
+    </div>
+
+
+    <!-- =======================================================
+         FLASH
+    ======================================================== -->
+
+    <div id="flash"></div>
+
+
+    <!-- =======================================================
+         MENU
+    ======================================================== -->
+
+    <div id="menu">
+
+        <div class="menu-box">
+
+            <h1 id="menuTitle">
+                RICARDO<br>
+                NINJA
+            </h1>
+
+
+            <div class="instructions"
+                 id="instructions">
+
+                <strong>
+                    TESTE SEUS REFLEXOS.
+                </strong>
+
+                <br>
+
+                Acerte o Ricardo.
+
+                <br>
+
+                Não clique na Miku.
+
+            </div>
+
+
+            <div class="rules">
+
+                <div class="rule good">
+
+                    🎯 RICARDO
+
+                    <br><br>
+
+                    +10 pontos
+
+                    <br>
+
+                    + COMBO
+
+                </div>
+
+
+                <div class="rule bad">
+
+                    🚫 MIKU
+
+                    <br><br>
+
+                    -1 VIDA
+
+                    <br>
+
+                    RESET DO COMBO
+
+                </div>
+
+            </div>
+
+
+            <button id="startButton">
+                COMEÇAR O CAOS
+            </button>
+
+
+            <div id="bestScore">
+                RECORDE: 0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================================================
+           IMAGENS
+        ========================================================= */
+
+        /*
+            RICARDO MILOS
+
+            Se quiser trocar a imagem,
+            altere somente esta URL.
+        */
+
+        const RICARDO_IMAGE =
+            "https://i.kym-cdn.com/photos/images/newsfeed/001/678/635/f60.jpg";
+
+
+        /*
+            MIKU NAKANO
+
+            URL direta verificada no Wikimedia Commons.
+
+            É uma foto de cosplay da Miku Nakano.
+        */
+
+        const MIKU_IMAGE =
+            "https://live.staticflickr.com/65535/48486570416_26be1e3ab7_o.jpg";
+
+
+        /* =========================================================
+           ELEMENTOS
+        ========================================================= */
+
+        const game =
+            document.getElementById("game");
+
+        const menu =
+            document.getElementById("menu");
+
+        const startButton =
+            document.getElementById("startButton");
+
+        const scoreElement =
+            document.getElementById("score");
+
+        const comboElement =
+            document.getElementById("combo");
+
+        const timeElement =
+            document.getElementById("time");
+
+        const livesElement =
+            document.getElementById("lives");
+
+        const difficultyElement =
+            document.getElementById("difficulty");
+
+        const flash =
+            document.getElementById("flash");
+
+        const menuTitle =
+            document.getElementById("menuTitle");
+
+        const instructions =
+            document.getElementById("instructions");
+
+        const bestScoreElement =
+            document.getElementById("bestScore");
+
+
+        /* =========================================================
+           ESTADO
+        ========================================================= */
+
+        let score = 0;
+
+        let combo = 0;
+
+        let lives = 3;
+
+        let timeLeft = 60;
+
+        let difficulty = 1;
+
+        let playing = false;
+
+        let timer = null;
+
+        let spawnTimer = null;
+
+        let bestScore =
+            Number(
+                localStorage.getItem(
+                    "ricardoNinjaBest"
+                )
+            ) || 0;
+
+
+        bestScoreElement.textContent =
+            "RECORDE: " +
+            bestScore;
+
+
+        /* =========================================================
+           PRÉ-CARREGAMENTO
+        ========================================================= */
+
+        function preloadImage(url) {
+
+            return new Promise(
+                resolve => {
+
+                    const img =
+                        new Image();
+
+                    img.onload =
+                        () => resolve(true);
+
+                    img.onerror =
+                        () => resolve(false);
+
+                    img.src =
+                        url;
+
+                }
+            );
+
+        }
+
+
+        /* =========================================================
+           COMEÇAR
+        ========================================================= */
+
+        startButton.addEventListener(
+            "click",
+            startGame
+        );
+
+
+        async function startGame() {
+
+            score = 0;
+
+            combo = 0;
+
+            lives = 3;
+
+            timeLeft = 60;
+
+            difficulty = 1;
+
+            playing = true;
+
+
+            clearInterval(timer);
+
+            clearTimeout(spawnTimer);
+
+
+            game.innerHTML = "";
+
+
+            menu.style.display =
+                "none";
+
+
+            updateHUD();
+
+
+            /*
+                Verifica se as imagens
+                estão acessíveis antes de
+                começar.
+            */
+
+            const [
+                ricardoOK,
+                mikuOK
+            ] = await Promise.all([
+
+                preloadImage(
+                    RICARDO_IMAGE
+                ),
+
+                preloadImage(
+                    MIKU_IMAGE
+                )
+
+            ]);
+
+
+            if (!playing)
+                return;
+
+
+            if (!ricardoOK) {
+
+                console.warn(
+                    "Imagem do Ricardo não carregou."
+                );
+
+            }
+
+
+            if (!mikuOK) {
+
+                console.warn(
+                    "Imagem da Miku não carregou."
+                );
+
+            }
+
+
+            spawn();
+
+            scheduleSpawn();
+
+
+            timer =
+                setInterval(
+                    gameTick,
+                    1000
+                );
+
+        }
+
+
+        /* =========================================================
+           RELÓGIO
+        ========================================================= */
+
+        function gameTick() {
+
+            if (!playing)
+                return;
+
+
+            timeLeft--;
+
+
+            difficulty =
+                1 +
+                Math.floor(
+                    score / 100
+                );
+
+
+            updateHUD();
+
+
+            if (timeLeft <= 0) {
+
+                endGame();
+
+            }
+
+        }
+
+
+        /* =========================================================
+           SPAWN CONTROLADO
+        ========================================================= */
+
+        function scheduleSpawn() {
+
+            if (!playing)
+                return;
+
+
+            const delay =
+                Math.max(
+                    280,
+                    1150 -
+                    difficulty * 75
+                );
+
+
+            spawnTimer =
+                setTimeout(
+                    () => {
+
+                        spawn();
+
+                        scheduleSpawn();
+
+                    },
+                    delay
+                );
+
+        }
+
+
+        /* =========================================================
+           CRIAR ALVO
+        ========================================================= */
+
+        function spawn() {
+
+            if (!playing)
+                return;
+
+
+            const target =
+                document.createElement(
+                    "div"
+                );
+
+
+            target.className =
+                "target";
+
+
+            /*
+                70% Ricardo
+                30% Miku
+            */
+
+            const isRicardo =
+                Math.random() < .70;
+
+
+            const type =
+                isRicardo
+                    ? "ricardo"
+                    : "miku";
+
+
+            target.classList.add(
+                type
+            );
+
+
+            target.dataset.type =
+                type;
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.draggable =
+                false;
+
+
+            if (type === "ricardo") {
+
+                image.src =
+                    RICARDO_IMAGE;
+
+                image.alt =
+                    "Ricardo Milos";
+
+            }
+
+            else {
+
+                image.src =
+                    MIKU_IMAGE;
+
+                image.alt =
+                    "Miku Nakano";
+
+            }
+
+
+            /*
+                Se a imagem falhar,
+                mostra um fallback visual.
+            */
+
+            image.onerror =
+                () => {
+
+                    image.style.display =
+                        "none";
+
+
+                    const error =
+                        document.createElement(
+                            "div"
+                        );
+
+                    error.className =
+                        "image-error";
+
+                    error.textContent =
+                        type === "ricardo"
+                            ? "RICARDO"
+                            : "MIKU";
+
+                    target.appendChild(
+                        error
+                    );
+
+                };
+
+
+            target.appendChild(
+                image
+            );
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+
+            label.className =
+                "target-label";
+
+
+            label.textContent =
+                type === "ricardo"
+                    ? "🎯 CLIQUE!"
+                    : "🚫 NÃO CLIQUE";
+
+
+            target.appendChild(
+                label
+            );
+
+
+            /*
+                Tamanho.
+            */
+
+            const size =
+                Math.max(
+                    62,
+                    110 -
+                    difficulty * 4
+                );
+
+
+            target.style.width =
+                size + "px";
+
+            target.style.height =
+                size + "px";
+
+
+            /*
+                Posição.
+            */
+
+            const maxX =
+                Math.max(
+                    0,
+                    game.clientWidth -
+                    size
+                );
+
+
+            const maxY =
+                Math.max(
+                    0,
+                    game.clientHeight -
+                    size -
+                    35
+                );
+
+
+            const x =
+                Math.random() *
+                maxX;
+
+
+            const y =
+                Math.random() *
+                maxY;
+
+
+            target.style.left =
+                x + "px";
+
+
+            target.style.top =
+                y + "px";
+
+
+            /*
+                Tempo de vida.
+            */
+
+            const lifetime =
+                Math.max(
+                    400,
+                    1550 -
+                    difficulty * 80
+                );
+
+
+            /*
+                Clique/toque.
+            */
+
+            target.addEventListener(
+                "pointerdown",
+                event => {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    hitTarget(
+                        target,
+                        event.clientX,
+                        event.clientY
+                    );
+
+                }
+            );
+
+
+            game.appendChild(
+                target
+            );
+
+
+            /*
+                Remove sozinho.
+            */
+
+            setTimeout(
+                () => {
+
+                    if (
+                        target.parentNode
+                    ) {
+
+                        target.remove();
+
+                    }
+
+                },
+                lifetime
+            );
+
+        }
+
+
+        /* =========================================================
+           ACERTAR ALVO
+        ========================================================= */
+
+        function hitTarget(
+            target,
+            x,
+            y
+        ) {
+
+            if (!playing)
+                return;
+
+
+            const type =
+                target.dataset.type;
+
+
+            /*
+                ========================================
+                RICARDO
+                ========================================
+            */
+
+            if (type === "ricardo") {
+
+                combo++;
+
+
+                const multiplier =
+                    Math.min(
+                        5,
+                        1 +
+                        Math.floor(
+                            combo / 5
+                        )
+                    );
+
+
+                const points =
+                    10 *
+                    multiplier;
+
+
+                score += points;
+
+
+                createPopup(
+                    x,
+                    y,
+                    "+" + points,
+                    "#00ffcc"
+                );
+
+
+                if (combo >= 3) {
+
+                    createPopup(
+                        x,
+                        y - 40,
+                        "🔥 COMBO x" +
+                        combo,
+                        "#ffd000"
+                    );
+
+                }
+
+
+                burst(
+                    x,
+                    y,
+                    "#ff00cc"
+                );
+
+
+                flashScreen(
+                    "good"
+                );
+
+
+                target.style.transform =
+                    "scale(1.7)";
+
+
+                target.style.opacity =
+                    "0";
+
+
+                setTimeout(
+                    () => {
+
+                        target.remove();
+
+                    },
+                    120
+                );
+
+
+                /*
+                    Combos grandes podem
+                    gerar um alvo extra.
+                */
+
+                if (
+                    combo >= 5 &&
+                    Math.random() < .25
+                ) {
+
+                    spawn();
+
+                }
+
+            }
+
+
+            /*
+                ========================================
+                MIKU
+                ========================================
+            */
+
+            else {
+
+                lives--;
+
+                combo = 0;
+
+
+                createPopup(
+                    x,
+                    y,
+                    "💀 NÃO!",
+                    "#ff2244"
+                );
+
+
+                createPopup(
+                    x,
+                    y - 40,
+                    "ERA A MIKU!",
+                    "#48baff"
+                );
+
+
+                burst(
+                    x,
+                    y,
+                    "#48baff"
+                );
+
+
+                flashScreen(
+                    "bad"
+                );
+
+
+                target.style.transform =
+                    "scale(1.8) rotate(20deg)";
+
+
+                target.style.opacity =
+                    "0";
+
+
+                setTimeout(
+                    () => {
+
+                        target.remove();
+
+                    },
+                    150
+                );
+
+
+                if (lives <= 0) {
+
+                    endGame();
+
+                }
+
+            }
+
+
+            updateHUD();
+
+        }
+
+
+        /* =========================================================
+           CLIQUE NO FUNDO = MISS
+        ========================================================= */
+
+        game.addEventListener(
+            "pointerdown",
+            event => {
+
+                if (
+                    !playing ||
+                    event.target !== game
+                ) {
+
+                    return;
+
+                }
+
+
+                combo = 0;
+
+
+                createPopup(
+                    event.clientX,
+                    event.clientY,
+                    "MISS!",
+                    "#777"
+                );
+
+
+                updateHUD();
+
+            }
+        );
+
+
+        /* =========================================================
+           HUD
+        ========================================================= */
+
+        function updateHUD() {
+
+            scoreElement.textContent =
+                score.toLocaleString(
+                    "pt-BR"
+                );
+
+
+            comboElement.textContent =
+                "x" + combo;
+
+
+            timeElement.textContent =
+                timeLeft;
+
+
+            livesElement.textContent =
+                "❤️".repeat(
+                    Math.max(
+                        0,
+                        lives
+                    )
+                );
+
+
+            difficultyElement.textContent =
+                "DIFICULDADE: " +
+                difficulty;
+
+        }
+
+
+        /* =========================================================
+           POPUP
+        ========================================================= */
+
+        function createPopup(
+            x,
+            y,
+            text,
+            color
+        ) {
+
+            if (!text)
+                return;
+
+
+            const popup =
+                document.createElement(
+                    "div"
+                );
+
+
+            popup.className =
+                "popup";
+
+
+            popup.textContent =
+                text;
+
+
+            popup.style.left =
+                x + "px";
+
+
+            popup.style.top =
+                y + "px";
+
+
+            popup.style.color =
+                color;
+
+
+            document.body.appendChild(
+                popup
+            );
+
+
+            setTimeout(
+                () => {
+
+                    popup.remove();
+
+                },
+                750
+            );
+
+        }
+
+
+        /* =========================================================
+           EXPLOSÃO
+        ========================================================= */
+
+        function burst(
+            x,
+            y,
+            color
+        ) {
+
+            for (
+                let i = 0;
+                i < 20;
+                i++
+            ) {
+
+                const particle =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                particle.className =
+                    "particle";
+
+
+                particle.style.left =
+                    x + "px";
+
+
+                particle.style.top =
+                    y + "px";
+
+
+                particle.style.background =
+                    color;
+
+
+                particle.style.boxShadow =
+                    "0 0 10px " +
+                    color;
+
+
+                particle.style.setProperty(
+                    "--x",
+                    Math.random()
+                );
+
+
+                particle.style.setProperty(
+                    "--y",
+                    Math.random()
+                );
+
+
+                document.body.appendChild(
+                    particle
+                );
+
+
+                setTimeout(
+                    () => {
+
+                        particle.remove();
+
+                    },
+                    700
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           FLASH
+        ========================================================= */
+
+        function flashScreen(
+            type
+        ) {
+
+            flash.className =
+                type;
+
+
+            flash.style.opacity =
+                ".8";
+
+
+            setTimeout(
+                () => {
+
+                    flash.style.opacity =
+                        "0";
+
+                },
+                100
+            );
+
+        }
+
+
+        /* =========================================================
+           GAME OVER
+        ========================================================= */
+
+        function endGame() {
+
+            if (!playing)
+                return;
+
+
+            playing = false;
+
+
+            clearInterval(
+                timer
+            );
+
+
+            clearTimeout(
+                spawnTimer
+            );
+
+
+            game.innerHTML =
+                "";
+
+
+            const newRecord =
+                score > bestScore;
+
+
+            if (newRecord) {
+
+                bestScore =
+                    score;
+
+
+                localStorage.setItem(
+                    "ricardoNinjaBest",
+                    bestScore
+                );
+
+            }
+
+
+            menu.style.display =
+                "flex";
+
+
+            menuTitle.innerHTML =
+                "GAME<br>OVER";
+
+
+            instructions.innerHTML = `
+
+            <strong>
+                PONTUAÇÃO FINAL
+            </strong>
+
+            <br><br>
+
+            <span
+                style="
+                    display:block;
+                    font-size:48px;
+                    font-weight:1000;
+                    color:#00ffcc;
+                    text-shadow:
+                        0 0 20px #00ffcc;
+                "
+            >
+                ${score.toLocaleString("pt-BR")}
+            </span>
+
+            <br>
+
+            ${newRecord
+                    ? "🏆 NOVO RECORDE!"
+                    : "Boa tentativa, ninja."
+                }
+
+        `;
+
+
+            startButton.textContent =
+                "JOGAR NOVAMENTE";
+
+
+            bestScoreElement.textContent =
+                newRecord
+                    ? "🏆 NOVO RECORDE: " +
+                    bestScore
+
+                    : "RECORDE: " +
+                    bestScore;
+
+
+            /*
+                Reset visual do menu.
+            */
+
+            document.querySelector(
+                ".rules"
+            ).innerHTML = `
+
+            <div class="rule good">
+
+                🎯 RICARDO
+
+                <br><br>
+
+                ACERTE
+
+            </div>
+
+            <div class="rule bad">
+
+                🚫 MIKU
+
+                <br><br>
+
+                NÃO CLIQUE
+
+            </div>
+
+        `;
+
+        }
+
+
+        /* =========================================================
+           INICIALIZAÇÃO
+        ========================================================= */
+
+        updateHUD();
+
+    </script>
+
+</body>
+</html>

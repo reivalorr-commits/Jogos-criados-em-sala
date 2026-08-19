@@ -1,0 +1,1385 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>THE QUINTESSENTIAL AURA FARM</title>
+
+    <style>
+                * {
+                    box-sizing: border-box;
+                }
+
+                html, body {
+                    margin: 0;
+                    min-height: 100%;
+                    font-family: Arial, Helvetica, sans-serif;
+                    color: white;
+                    background: #080814;
+                }
+
+                body {
+                    overflow-x: hidden;
+                }
+
+                    /* =========================
+           FUNDO
+        ========================= */
+
+                    body::before {
+                        content: "";
+                        position: fixed;
+                        inset: 0;
+                        z-index: -3;
+                        background: radial-gradient(circle at 15% 20%, #ff4fa3 0%, transparent 25%), radial-gradient(circle at 85% 20%, #6655ff 0%, transparent 25%), radial-gradient(circle at 50% 90%, #00cfff 0%, transparent 25%), linear-gradient(135deg, #10091f, #090b20);
+                        animation: hue 10s linear infinite;
+                    }
+
+                @keyframes hue {
+                    0% {
+                        filter: hue-rotate(0deg);
+                    }
+
+                    100% {
+                        filter: hue-rotate(360deg);
+                    }
+                }
+
+                .grid {
+                    position: fixed;
+                    inset: -100%;
+                    z-index: -2;
+                    background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+                    background-size: 45px 45px;
+                    transform: rotate(12deg);
+                    animation: grid 8s linear infinite;
+                }
+
+                @keyframes grid {
+                    from {
+                        transform: rotate(12deg) translate(0,0);
+                    }
+
+                    to {
+                        transform: rotate(12deg) translate(45px,45px);
+                    }
+                }
+
+                /* =========================
+           HEADER
+        ========================= */
+
+                header {
+                    text-align: center;
+                    padding: 35px 20px 10px;
+                }
+
+                    header h1 {
+                        margin: 0;
+                        font-size: clamp(30px, 6vw, 75px);
+                        font-weight: 1000;
+                        letter-spacing: 4px;
+                        text-transform: uppercase;
+                        background: linear-gradient( 90deg, #ff6cae, #ffd1e5, #70dfff, #ffffff, #ff6cae );
+                        background-size: 300%;
+                        -webkit-background-clip: text;
+                        color: transparent;
+                        animation: rainbowText 4s linear infinite;
+                    }
+
+                @keyframes rainbowText {
+                    from {
+                        background-position: 0%;
+                    }
+
+                    to {
+                        background-position: 300%;
+                    }
+                }
+
+                .subtitle {
+                    opacity: .8;
+                    margin-top: 10px;
+                    font-size: 14px;
+                }
+
+                /* =========================
+           STATUS GLOBAL
+        ========================= */
+
+                .global-panel {
+                    width: min(1100px, 94%);
+                    margin: 20px auto;
+                    padding: 20px;
+                    border: 1px solid rgba(255,255,255,.2);
+                    background: rgba(10,10,25,.75);
+                    backdrop-filter: blur(15px);
+                    border-radius: 20px;
+                    box-shadow: 0 0 30px rgba(150,100,255,.2);
+                }
+
+                .global-title {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 20px;
+                    flex-wrap: wrap;
+                }
+
+                .global-aura {
+                    font-size: 30px;
+                    font-weight: 900;
+                    color: #ffd76a;
+                    text-shadow: 0 0 20px #ffb300;
+                }
+
+                .level {
+                    color: #9bdcff;
+                }
+
+                /* =========================
+           IRMÃS
+        ========================= */
+
+                .characters {
+                    width: min(1200px, 95%);
+                    margin: 30px auto 100px;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+                    gap: 20px;
+                }
+
+                .card {
+                    position: relative;
+                    overflow: hidden;
+                    border-radius: 25px;
+                    padding: 22px;
+                    min-height: 390px;
+                    background: linear-gradient( 145deg, rgba(255,255,255,.12), rgba(255,255,255,.025) );
+                    border: 2px solid var(--color);
+                    box-shadow: 0 0 20px var(--glow);
+                    transition: .25s;
+                }
+
+                    .card:hover {
+                        transform: translateY(-10px) scale(1.02);
+                        box-shadow: 0 0 45px var(--glow);
+                    }
+
+                    .card::before {
+                        content: "";
+                        position: absolute;
+                        width: 200px;
+                        height: 200px;
+                        border-radius: 50%;
+                        background: var(--color);
+                        opacity: .15;
+                        filter: blur(50px);
+                        top: -70px;
+                        right: -70px;
+                    }
+
+                /* =========================
+           AVATAR
+        ========================= */
+
+                .avatar {
+                    width: 120px;
+                    height: 120px;
+                    margin: auto;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 60px;
+                    background: radial-gradient( circle, rgba(255,255,255,.5), var(--color) );
+                    border: 5px solid white;
+                    box-shadow: 0 0 30px var(--glow);
+                    user-select: none;
+                    animation: float 2s ease-in-out infinite alternate;
+                }
+
+                @keyframes float {
+                    from {
+                        transform: translateY(-5px);
+                    }
+
+                    to {
+                        transform: translateY(5px);
+                    }
+                }
+
+                .name {
+                    text-align: center;
+                    margin-top: 15px;
+                    font-size: 25px;
+                    font-weight: 1000;
+                }
+
+                .title {
+                    text-align: center;
+                    opacity: .7;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+
+                /* =========================
+           AURA
+        ========================= */
+
+                .aura-number {
+                    text-align: center;
+                    font-size: 35px;
+                    margin: 15px 0;
+                    font-weight: 1000;
+                    color: var(--color);
+                    text-shadow: 0 0 15px var(--glow);
+                }
+
+                .bar {
+                    height: 16px;
+                    background: rgba(0,0,0,.5);
+                    border-radius: 20px;
+                    overflow: hidden;
+                    border: 1px solid rgba(255,255,255,.2);
+                }
+
+                .bar-fill {
+                    width: 0%;
+                    height: 100%;
+                    background: linear-gradient( 90deg, var(--color), white, var(--color) );
+                    background-size: 200%;
+                    box-shadow: 0 0 15px var(--glow);
+                    transition: width .2s;
+                    animation: barMove 1s linear infinite;
+                }
+
+                @keyframes barMove {
+                    from {
+                        background-position: 0%;
+                    }
+
+                    to {
+                        background-position: 200%;
+                    }
+                }
+
+                /* =========================
+           BOTÃO
+        ========================= */
+
+                .farm {
+                    width: 100%;
+                    margin-top: 18px;
+                    padding: 13px;
+                    border: 0;
+                    border-radius: 12px;
+                    background: var(--color);
+                    color: white;
+                    font-weight: 1000;
+                    cursor: pointer;
+                    box-shadow: 0 0 15px var(--glow);
+                    transition: .15s;
+                }
+
+                    .farm:hover {
+                        transform: scale(1.05);
+                    }
+
+                    .farm:active {
+                        transform: scale(.92);
+                    }
+
+                /* =========================
+           MULTIPLICADOR
+        ========================= */
+
+                .multiplier {
+                    text-align: center;
+                    margin-top: 12px;
+                    font-family: monospace;
+                    color: #ffe681;
+                }
+
+                /* =========================
+           RANKING
+        ========================= */
+
+                .ranking {
+                    width: min(1100px, 94%);
+                    margin: 20px auto 40px;
+                    background: rgba(0,0,0,.5);
+                    border-radius: 20px;
+                    padding: 20px;
+                }
+
+                    .ranking h2 {
+                        margin-top: 0;
+                    }
+
+                .rank-row {
+                    display: grid;
+                    grid-template-columns: 45px 1fr 150px;
+                    gap: 10px;
+                    align-items: center;
+                    padding: 12px;
+                    margin: 6px 0;
+                    border-radius: 10px;
+                    background: rgba(255,255,255,.05);
+                }
+
+                    .rank-row:first-of-type {
+                        background: rgba(255,215,0,.15);
+                    }
+
+                .rank-number {
+                    font-size: 22px;
+                }
+
+                /* =========================
+           EVENTO
+        ========================= */
+
+                .event {
+                    position: fixed;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%) scale(0);
+                    width: min(500px, 90%);
+                    padding: 35px;
+                    border-radius: 25px;
+                    background: linear-gradient( 135deg, #18182d, #25103a );
+                    border: 3px solid #fff;
+                    box-shadow: 0 0 80px #ff00ff;
+                    text-align: center;
+                    z-index: 100;
+                    transition: .3s;
+                }
+
+                    .event.active {
+                        transform: translate(-50%, -50%) scale(1);
+                    }
+
+                    .event h2 {
+                        font-size: 35px;
+                        margin-top: 0;
+                    }
+
+                    .event button {
+                        border: 0;
+                        padding: 12px 25px;
+                        border-radius: 10px;
+                        background: white;
+                        cursor: pointer;
+                        font-weight: bold;
+                    }
+
+                /* =========================
+           COMBO
+        ========================= */
+
+                .combo {
+                    position: fixed;
+                    right: 20px;
+                    top: 20px;
+                    padding: 12px 18px;
+                    border-radius: 15px;
+                    background: rgba(0,0,0,.7);
+                    border: 1px solid #fff;
+                    z-index: 50;
+                    font-family: monospace;
+                }
+
+                /* =========================
+           EXPLOSÃO
+        ========================= */
+
+                .particle {
+                    position: fixed;
+                    pointer-events: none;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    z-index: 200;
+                    animation: explode 1s forwards;
+                }
+
+                @keyframes explode {
+                    to {
+                        transform: translate( calc((var(--x) - .5) * 700px), calc((var(--y) - .5) * 700px) ) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+
+                /* =========================
+           FOOTER
+        ========================= */
+
+                footer {
+                    text-align: center;
+                    opacity: .4;
+                    padding: 20px;
+                }
+
+                /* =========================
+           MOBILE
+        ========================= */
+
+                @media(max-width:600px) {
+
+                    .characters {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .rank-row {
+                        grid-template-columns: 35px 1fr 100px;
+                    }
+
+                    .combo {
+                        top: auto;
+                        bottom: 10px;
+                        right: 10px;
+                    }
+                }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid"></div>
+
+    <header>
+
+        <h1>
+            ✦ QUINTESSENTIAL AURA FARM ✦
+        </h1>
+
+        <div class="subtitle">
+            五等分の花嫁 // SISTEMA DEFINITIVO DE FARM DE AURA
+        </div>
+
+    </header>
+
+    <div class="combo">
+        🔥 COMBO:
+        <span id="combo">0</span>x
+    </div>
+
+    <section class="global-panel">
+
+        <div class="global-title">
+
+            <div>
+                <div class="level">
+                    NÍVEL DE AURA
+                </div>
+
+                <div class="global-aura">
+                    <span id="globalAura">0</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="level">
+                    RANK GLOBAL
+                </div>
+
+                <div class="global-aura">
+                    <span id="rank">NOVATO</span>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PERSONAGENS
+    ========================= -->
+
+    <section class="characters">
+
+        <!-- ICHIKA -->
+
+        <article class="card"
+                 data-name="Ichika"
+                 data-value="0"
+                 style="
+            --color:#f1d14b;
+            --glow:#ffca28;
+        ">
+
+            <div class="avatar">
+                🎬
+            </div>
+
+            <div class="name">
+                Ichika
+            </div>
+
+            <div class="title">
+                AURA DA ATRIZ
+            </div>
+
+            <div class="aura-number">
+                <span class="value">0</span>
+            </div>
+
+            <div class="bar">
+                <div class="bar-fill"></div>
+            </div>
+
+            <div class="multiplier">
+                MULTIPLICADOR:
+                <span class="multi">1.0</span>x
+            </div>
+
+            <button class="farm">
+                FARMAR AURA ✦
+            </button>
+
+        </article>
+
+
+        <!-- NINO -->
+
+        <article class="card"
+                 data-name="Nino"
+                 data-value="0"
+                 style="
+            --color:#bd5cff;
+            --glow:#c000ff;
+        ">
+
+            <div class="avatar">
+                🎧
+            </div>
+
+            <div class="name">
+                Nino
+            </div>
+
+            <div class="title">
+                AURA DA RAINHA
+            </div>
+
+            <div class="aura-number">
+                <span class="value">0</span>
+            </div>
+
+            <div class="bar">
+                <div class="bar-fill"></div>
+            </div>
+
+            <div class="multiplier">
+                MULTIPLICADOR:
+                <span class="multi">1.0</span>x
+            </div>
+
+            <button class="farm">
+                FARMAR AURA ✦
+            </button>
+
+        </article>
+
+
+        <!-- MIKU -->
+
+        <article class="card"
+                 data-name="Miku"
+                 data-value="0"
+                 style="
+            --color:#49a9ff;
+            --glow:#008cff;
+        ">
+
+            <div class="avatar">
+                🎧
+            </div>
+
+            <div class="name">
+                Miku
+            </div>
+
+            <div class="title">
+                AURA DA HISTORIADORA
+            </div>
+
+            <div class="aura-number">
+                <span class="value">0</span>
+            </div>
+
+            <div class="bar">
+                <div class="bar-fill"></div>
+            </div>
+
+            <div class="multiplier">
+                MULTIPLICADOR:
+                <span class="multi">1.0</span>x
+            </div>
+
+            <button class="farm">
+                FARMAR AURA ✦
+            </button>
+
+        </article>
+
+
+        <!-- YOTSUBA -->
+
+        <article class="card"
+                 data-name="Yotsuba"
+                 data-value="0"
+                 style="
+            --color:#56e36b;
+            --glow:#00ff55;
+        ">
+
+            <div class="avatar">
+                🍀
+            </div>
+
+            <div class="name">
+                Yotsuba
+            </div>
+
+            <div class="title">
+                AURA DA ENERGIA
+            </div>
+
+            <div class="aura-number">
+                <span class="value">0</span>
+            </div>
+
+            <div class="bar">
+                <div class="bar-fill"></div>
+            </div>
+
+            <div class="multiplier">
+                MULTIPLICADOR:
+                <span class="multi">1.0</span>x
+            </div>
+
+            <button class="farm">
+                FARMAR AURA ✦
+            </button>
+
+        </article>
+
+
+        <!-- ITSUKI -->
+
+        <article class="card"
+                 data-name="Itsuki"
+                 data-value="0"
+                 style="
+            --color:#ff6666;
+            --glow:#ff3030;
+        ">
+
+            <div class="avatar">
+                ⭐
+            </div>
+
+            <div class="name">
+                Itsuki
+            </div>
+
+            <div class="title">
+                AURA DA DISCIPLINA
+            </div>
+
+            <div class="aura-number">
+                <span class="value">0</span>
+            </div>
+
+            <div class="bar">
+                <div class="bar-fill"></div>
+            </div>
+
+            <div class="multiplier">
+                MULTIPLICADOR:
+                <span class="multi">1.0</span>x
+            </div>
+
+            <button class="farm">
+                FARMAR AURA ✦
+            </button>
+
+        </article>
+
+    </section>
+
+
+    <!-- =========================
+         RANKING
+    ========================= -->
+
+    <section class="ranking">
+
+        <h2>
+            🏆 RANKING DE AURA
+        </h2>
+
+        <div id="rankingList"></div>
+
+    </section>
+
+
+    <footer>
+        THE QUINTESSENTIAL AURA FARM — sistema completamente científico™
+    </footer>
+
+
+    <!-- EVENTO -->
+
+    <div class="event" id="event">
+
+        <h2 id="eventTitle">
+            🔥 EVENTO
+        </h2>
+
+        <p id="eventText">
+            Algo aconteceu.
+        </p>
+
+        <button onclick="closeEvent()">
+            ACEITAR O DESTINO
+        </button>
+
+    </div>
+
+
+    <script>
+
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
+
+const cards =
+    [...document.querySelectorAll(".card")];
+
+let globalAura = 0;
+
+let combo = 0;
+
+let comboTimer = null;
+
+let eventActive = false;
+
+
+/* =====================================================
+   FARM MANUAL
+===================================================== */
+
+cards.forEach(card => {
+
+    const button =
+        card.querySelector(".farm");
+
+    button.addEventListener("click", () => {
+
+        const multiplier =
+            parseFloat(
+                card.querySelector(".multi").textContent
+            );
+
+        const amount =
+            Math.floor(
+                (10 + Math.random() * 20)
+                * multiplier
+                * (1 + combo * .05)
+            );
+
+        addAura(card, amount);
+
+        combo++;
+
+        clearTimeout(comboTimer);
+
+        comboTimer = setTimeout(() => {
+
+            combo = 0;
+
+        }, 1500);
+
+        updateCombo();
+
+        burst(button);
+
+        if(Math.random() < .04) {
+
+            randomEvent();
+
+        }
+
+    });
+
+});
+
+
+/* =====================================================
+   ADICIONAR AURA
+===================================================== */
+
+function addAura(card, amount) {
+
+    let value =
+        Number(card.dataset.value);
+
+    value += amount;
+
+    card.dataset.value = value;
+
+    globalAura += amount;
+
+    updateCard(card);
+
+    updateGlobal();
+
+}
+
+
+/* =====================================================
+   ATUALIZAR CARTÃO
+===================================================== */
+
+function updateCard(card) {
+
+    const value =
+        Number(card.dataset.value);
+
+    card.querySelector(".value")
+        .textContent =
+        Math.floor(value).toLocaleString("pt-BR");
+
+    /*
+       A barra usa uma escala logarítmica.
+       Assim ela nunca fica permanentemente cheia.
+    */
+
+    const percentage =
+        Math.min(
+            100,
+            Math.log10(value + 1) * 18
+        );
+
+    card.querySelector(".bar-fill")
+        .style.width =
+        percentage + "%";
+
+}
+
+
+/* =====================================================
+   AURA AUTOMÁTICA
+===================================================== */
+
+setInterval(() => {
+
+    cards.forEach(card => {
+
+        const base =
+            1 + Math.random() * 4;
+
+        const multiplier =
+            parseFloat(
+                card.querySelector(".multi")
+                    .textContent
+            );
+
+        addAura(
+            card,
+            base * multiplier
+        );
+
+    });
+
+}, 1000);
+
+
+/* =====================================================
+   MULTIPLICADORES
+===================================================== */
+
+setInterval(() => {
+
+    cards.forEach(card => {
+
+        const value =
+            Number(card.dataset.value);
+
+        const multiplier =
+            Math.min(
+                9.9,
+                1 +
+                Math.log10(value + 1) * .35
+            );
+
+        card.querySelector(".multi")
+            .textContent =
+            multiplier.toFixed(1);
+
+    });
+
+}, 1000);
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+function updateGlobal() {
+
+    document.getElementById("globalAura")
+        .textContent =
+        Math.floor(globalAura)
+            .toLocaleString("pt-BR");
+
+    let rank;
+
+    if(globalAura < 1000) {
+        rank = "NPC";
+    }
+
+    else if(globalAura < 10000) {
+        rank = "INICIANTE";
+    }
+
+    else if(globalAura < 100000) {
+        rank = "FARMER";
+    }
+
+    else if(globalAura < 1000000) {
+        rank = "AURA MASTER";
+    }
+
+    else if(globalAura < 10000000) {
+        rank = "DEUS DA AURA";
+    }
+
+    else {
+        rank = "FUNDADOR DO UNIVERSO";
+    }
+
+    document.getElementById("rank")
+        .textContent = rank;
+
+}
+
+
+/* =====================================================
+   COMBO
+===================================================== */
+
+function updateCombo() {
+
+    document.getElementById("combo")
+        .textContent = combo;
+
+}
+
+
+/* =====================================================
+   RANKING
+===================================================== */
+
+function updateRanking() {
+
+    const sorted =
+        [...cards].sort(
+            (a,b) =>
+                Number(b.dataset.value) -
+                Number(a.dataset.value)
+        );
+
+    const list =
+        document.getElementById("rankingList");
+
+    list.innerHTML = "";
+
+    sorted.forEach((card, index) => {
+
+        const name =
+            card.dataset.name;
+
+        const value =
+            Number(card.dataset.value);
+
+        const row =
+            document.createElement("div");
+
+        row.className = "rank-row";
+
+        row.innerHTML = `
+
+            <div class="rank-number">
+                ${
+                    index === 0 ? "🥇" :
+                    index === 1 ? "🥈" :
+                    index === 2 ? "🥉" :
+                    "#" + (index + 1)
+                }
+            </div>
+
+            <div>
+                <strong>${name}</strong>
+            </div>
+
+            <div>
+                ${Math.floor(value)
+                    .toLocaleString("pt-BR")}
+                aura
+            </div>
+
+        `;
+
+        list.appendChild(row);
+
+    });
+
+}
+
+
+/* =====================================================
+   RANKING AUTOMÁTICO
+===================================================== */
+
+setInterval(updateRanking, 250);
+
+
+/* =====================================================
+   EVENTOS ALEATÓRIOS
+===================================================== */
+
+function randomEvent() {
+
+    if(eventActive)
+        return;
+
+    eventActive = true;
+
+    const events = [
+
+        {
+            title:
+                "🔥 AURA EXPLOSIVA",
+
+            text:
+                "Uma das irmãs entrou em modo absoluto. Todas ganharam +500 aura.",
+
+            action: () => {
+
+                cards.forEach(card => {
+
+                    addAura(card, 500);
+
+                });
+
+            }
+        },
+
+        {
+            title:
+                "💙 MOMENTO MIKU",
+
+            text:
+                "A concentração atingiu níveis históricos. Miku ganhou +2.500 aura.",
+
+            action: () => {
+
+                const miku =
+                    cards.find(
+                        c => c.dataset.name === "Miku"
+                    );
+
+                addAura(miku, 2500);
+
+            }
+        },
+
+        {
+            title:
+                "💜 NINO MODE",
+
+            text:
+                "A confiança ultrapassou todos os limites. Nino recebeu +3.000 aura.",
+
+            action: () => {
+
+                const nino =
+                    cards.find(
+                        c => c.dataset.name === "Nino"
+                    );
+
+                addAura(nino, 3000);
+
+            }
+        },
+
+        {
+            title:
+                "🍀 YOTSUBA TURBO",
+
+            text:
+                "Yotsuba começou a correr sem motivo. +4.000 aura.",
+
+            action: () => {
+
+                const yotsuba =
+                    cards.find(
+                        c => c.dataset.name === "Yotsuba"
+                    );
+
+                addAura(yotsuba, 4000);
+
+            }
+        },
+
+        {
+            title:
+                "⭐ AULA EXTRA",
+
+            text:
+                "Itsuki decidiu estudar. Milagrosamente, isso gerou +3.500 aura.",
+
+            action: () => {
+
+                const itsuki =
+                    cards.find(
+                        c => c.dataset.name === "Itsuki"
+                    );
+
+                addAura(itsuki, 3500);
+
+            }
+        }
+
+    ];
+
+    const event =
+        events[
+            Math.floor(
+                Math.random() * events.length
+            )
+        ];
+
+    document.getElementById("eventTitle")
+        .textContent =
+        event.title;
+
+    document.getElementById("eventText")
+        .textContent =
+        event.text;
+
+    document
+        .getElementById("event")
+        .classList.add("active");
+
+    window.currentEvent =
+        event;
+
+}
+
+
+/* =====================================================
+   FECHAR EVENTO
+===================================================== */
+
+function closeEvent() {
+
+    if(window.currentEvent) {
+
+        window.currentEvent.action();
+
+    }
+
+    document
+        .getElementById("event")
+        .classList.remove("active");
+
+    eventActive = false;
+
+    for(let i = 0; i < 80; i++) {
+
+        createParticle();
+
+    }
+
+}
+
+
+/* =====================================================
+   EFEITO DE EXPLOSÃO
+===================================================== */
+
+function burst(element) {
+
+    const rect =
+        element.getBoundingClientRect();
+
+    for(let i = 0; i < 12; i++) {
+
+        const particle =
+            document.createElement("div");
+
+        particle.className =
+            "particle";
+
+        particle.style.left =
+            rect.left +
+            rect.width / 2 +
+            "px";
+
+        particle.style.top =
+            rect.top +
+            rect.height / 2 +
+            "px";
+
+        particle.style.background =
+            getComputedStyle(
+                element.parentElement
+            ).getPropertyValue("--color");
+
+        particle.style.setProperty(
+            "--x",
+            Math.random()
+        );
+
+        particle.style.setProperty(
+            "--y",
+            Math.random()
+        );
+
+        document.body.appendChild(
+            particle
+        );
+
+        setTimeout(() => {
+
+            particle.remove();
+
+        }, 1000);
+
+    }
+
+}
+
+
+/* =====================================================
+   PARTÍCULAS DE EVENTO
+===================================================== */
+
+function createParticle() {
+
+    const particle =
+        document.createElement("div");
+
+    particle.className =
+        "particle";
+
+    particle.style.left =
+        "50vw";
+
+    particle.style.top =
+        "50vh";
+
+    particle.style.background =
+        [
+            "#ff4fa3",
+            "#49a9ff",
+            "#56e36b",
+            "#ff6666",
+            "#bd5cff",
+            "#ffffff"
+        ][
+            Math.floor(
+                Math.random() * 6
+            )
+        ];
+
+    particle.style.setProperty(
+        "--x",
+        Math.random()
+    );
+
+    particle.style.setProperty(
+        "--y",
+        Math.random()
+    );
+
+    document.body.appendChild(
+        particle
+    );
+
+    setTimeout(() => {
+
+        particle.remove();
+
+    }, 1000);
+
+}
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+cards.forEach(updateCard);
+
+updateGlobal();
+
+updateRanking();
+
+updateCombo();
+
+
+/* =====================================================
+   EVENTOS ALEATÓRIOS AUTOMÁTICOS
+===================================================== */
+
+setInterval(() => {
+
+    if(Math.random() < .18) {
+
+        randomEvent();
+
+    }
+
+}, 10000);
+
+
+/* =====================================================
+   AURA OVERDRIVE
+===================================================== */
+
+setInterval(() => {
+
+    if(globalAura > 50000) {
+
+        document.body.style.filter =
+            "saturate(1.4)";
+
+    }
+
+    if(globalAura > 500000) {
+
+        document.body.style.filter =
+            "saturate(2) hue-rotate(10deg)";
+
+    }
+
+    if(globalAura > 5000000) {
+
+        document.body.style.filter =
+            "saturate(3) contrast(1.2)";
+
+    }
+
+}, 1000);
+
+    </script>
+
+</body>
+</html>
