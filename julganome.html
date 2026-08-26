@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Instituto Nacional de Análise Nominal</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    :root {
+        --blue: #2563eb;
+        --dark-blue: #0f172a;
+        --cyan: #06b6d4;
+        --green: #16a34a;
+        --yellow: #eab308;
+        --red: #dc2626;
+        --gray: #64748b;
+        --light: #f1f5f9;
+        --border: #cbd5e1;
+    }
+
+    body {
+        margin: 0;
+        background:
+            linear-gradient(#ffffff 0%, #f8fafc 100%);
+        color: #0f172a;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* HEADER */
+
+    header {
+        background: #ffffff;
+        border-bottom: 1px solid var(--border);
+        padding: 18px 30px;
+    }
+
+    .header-inner {
+        max-width: 1150px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .institution {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .logo {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--dark-blue);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-size: 25px;
+        font-weight: bold;
+        border: 4px double white;
+        outline: 2px solid var(--dark-blue);
+    }
+
+    .institution-name {
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+    .institution-sub {
+        font-size: 11px;
+        color: var(--gray);
+        margin-top: 4px;
+    }
+
+    .status {
+        font-size: 11px;
+        color: var(--green);
+        font-weight: bold;
+        padding: 7px 12px;
+        border: 1px solid #86efac;
+        background: #f0fdf4;
+        border-radius: 6px;
+    }
+
+    /* MAIN */
+
+    main {
+        max-width: 1150px;
+        margin: auto;
+        padding: 45px 20px 80px;
+    }
+
+    .title-area {
+        margin-bottom: 35px;
+    }
+
+    .title-area h1 {
+        font-size: 34px;
+        margin: 0 0 10px;
+        letter-spacing: -1px;
+    }
+
+    .title-area p {
+        color: var(--gray);
+        max-width: 700px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* SEARCH */
+
+    .research-box {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 15px #0f172a08;
+        margin-bottom: 30px;
+    }
+
+    .research-label {
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    input {
+        flex: 1;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 15px;
+        font-size: 17px;
+        outline: none;
+        transition: .2s;
+    }
+
+    input:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px #2563eb18;
+    }
+
+    button {
+        border: none;
+        background: var(--blue);
+        color: white;
+        padding: 0 25px;
+        border-radius: 7px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    /* RESULT */
+
+    #results {
+        display: none;
+    }
+
+    .research-id {
+        color: var(--gray);
+        font-size: 11px;
+        margin-bottom: 15px;
+        font-family: monospace;
+    }
+
+    .name-result {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 30px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .name-result::before {
+        content: "PEER REVIEWED";
+        position: absolute;
+        right: -45px;
+        top: 15px;
+        transform: rotate(35deg);
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 9px;
+        font-weight: bold;
+        padding: 7px 55px;
+    }
+
+    .name-label {
+        color: var(--gray);
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    #resultName {
+        font-size: 48px;
+        margin: 7px 0 0;
+        letter-spacing: -2px;
+    }
+
+    #scientificName {
+        color: var(--blue);
+        font-family: Georgia, serif;
+        font-style: italic;
+        font-size: 14px;
+    }
+
+    /* GRID */
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 22px;
+        box-shadow: 0 3px 10px #0f172a05;
+    }
+
+    .card-title {
+        color: var(--gray);
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: .8px;
+        margin-bottom: 15px;
+    }
+
+    .big-number {
+        font-size: 38px;
+        font-weight: 800;
+        color: var(--dark-blue);
+    }
+
+    .unit {
+        color: var(--gray);
+        font-size: 12px;
+    }
+
+    .interpretation {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--gray);
+    }
+
+    /* GAUGE */
+
+    .gauge {
+        height: 14px;
+        background: #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 15px 0 8px;
+    }
+
+    .gauge-fill {
+        height: 100%;
+        width: 0;
+        border-radius: inherit;
+        transition: width 1.2s ease;
+        background: linear-gradient(
+            90deg,
+            #22c55e,
+            #eab308,
+            #ef4444
+        );
+    }
+
+    .gauge-values {
+        display: flex;
+        justify-content: space-between;
+        color: var(--gray);
+        font-size: 10px;
+    }
+
+    /* GRAPH */
+
+    .graph-card {
+        grid-column: span 2;
+    }
+
+    .graph {
+        height: 220px;
+        position: relative;
+        border-left: 1px solid #94a3b8;
+        border-bottom: 1px solid #94a3b8;
+        margin-top: 20px;
+        overflow: hidden;
+        background:
+            repeating-linear-gradient(
+                to right,
+                transparent 0,
+                transparent 49px,
+                #e2e8f0 50px
+            ),
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 39px,
+                #e2e8f0 40px
+            );
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* STATS */
+
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .stats-table td {
+        padding: 11px 5px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .stats-table td:last-child {
+        text-align: right;
+        font-weight: bold;
+    }
+
+    /* ANALYSIS */
+
+    .analysis {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .analysis h2 {
+        margin: 0 0 15px;
+        font-size: 18px;
+    }
+
+    #analysisText {
+        color: #334155;
+        line-height: 1.7;
+        font-size: 14px;
+    }
+
+    .warning {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 15px;
+        color: #854d0e;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* LOADING */
+
+    #loading {
+        display: none;
+        text-align: center;
+        padding: 50px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #dbeafe;
+        border-top-color: var(--blue);
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* FOOTER */
+
+    footer {
+        border-top: 1px solid var(--border);
+        padding: 25px;
+        text-align: center;
+        color: var(--gray);
+        font-size: 10px;
+        line-height: 1.6;
+    }
+
+    @media(max-width: 800px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .graph-card {
+            grid-column: span 1;
+        }
+
+        .input-row {
+            flex-direction: column;
+        }
+
+        button {
+            height: 50px;
+        }
+
+        .header-inner {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #resultName {
+            font-size: 35px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+
+        <div class="institution">
+
+            <div class="logo">IN</div>
+
+            <div>
+                <div class="institution-name">
+                    INSTITUTO NACIONAL DE ANÁLISE NOMINAL
+                </div>
+
+                <div class="institution-sub">
+                    Centro Brasileiro de Estudos Avançados em Nomenclatura Humana
+                </div>
+            </div>
+
+        </div>
+
+        <div class="status">
+            ● SISTEMA OPERACIONAL
+        </div>
+
+    </div>
+</header>
+
+<main>
+
+    <div class="title-area">
+
+        <h1>Análise Científica de Nomes</h1>
+
+        <p>
+            Sistema experimental desenvolvido para avaliar propriedades
+            fonéticas, comportamentais e psicossociais hipoteticamente
+            associadas à estrutura nominal de indivíduos.
+        </p>
+
+    </div>
+
+    <div class="research-box">
+
+        <div class="research-label">
+            Identificação do indivíduo
+        </div>
+
+        <div class="input-row">
+
+            <input
+                id="nameInput"
+                type="text"
+                placeholder="Digite um nome..."
+                maxlength="30"
+            >
+
+            <button onclick="analyze()">
+                ANALISAR
+            </button>
+
+        </div>
+
+    </div>
+
+    <div id="loading">
+
+        <div class="spinner"></div>
+
+        <strong>Processando amostra nominal...</strong>
+
+        <div style="font-size:11px;color:#64748b;margin-top:8px;">
+            Executando 14 modelos matemáticos...
+        </div>
+
+    </div>
+
+    <section id="results">
+
+        <div class="research-id" id="researchId">
+            ID DO ESTUDO: --
+        </div>
+
+        <div class="name-result">
+
+            <div class="name-label">
+                Amostra analisada
+            </div>
+
+            <div id="resultName">
+                --
+            </div>
+
+            <div id="scientificName">
+                nomenclatura desconhecida
+            </div>
+
+        </div>
+
+        <div class="grid">
+
+            <!-- AURA -->
+
+            <div class="card">
+
+                <div class="card-title">
+                    Índice de Aura
+                </div>
+
+                <div class="big-number">
+                    <span id="aura">0</span>
+                    <span class="unit">/100</span>
+                </div>
+
+                <div class="gauge">
+                    <div class="gauge-fill" id="auraBar"></div>
+                </div>
+
+                <div class="interpretation" id="auraText">
+                    aguardando análise
+                </div>
+
+            </div>
+
+            <!-- NPC -->
+
+            <div class="card">
+
+                <div class="card-title">
+                    Probabilidade de NPC
+                </div>
+
+                <div class="big-number">
+                    <span id="npc">0</span>%
+                </div>
+
+                <div class="gauge">
+                    <div class="gauge-fill" id="npcBar"></div>
+                </div>
+
+                <div class="interpretation" id="npcText">
+                    aguardando análise
+                </div>
+
+            </div>
+
+            <!-- STEALTH -->
+
+            <div class="card">
+
+                <div class="card-title">
+                    Potencial de Stealth
+                </div>
+
+                <div class="big-number">
+                    <span id="stealth">0</span>%
+                </div>
+
+                <div class="gauge">
+                    <div class="gauge-fill" id="stealthBar"></div>
+                </div>
+
+                <div class="interpretation">
+                    capacidade estimada de passar despercebido
+                </div>
+
+            </div>
+
+            <!-- GRAPH -->
+
+            <div class="card graph-card">
+
+                <div class="card-title">
+                    Perfil Fonético-Comportamental
+                </div>
+
+                <div class="graph">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+
+            </div>
+
+            <!-- CLASSIFICATION -->
+
+            <div class="card">
+
+                <div class="card-title">
+                    Classificação
+                </div>
+
+                <div
+                    id="classification"
+                    style="
+                        font-size:22px;
+                        font-weight:800;
+                        margin:15px 0;
+                    "
+                >
+                    --
+                </div>
+
+                <div
+                    id="classificationDesc"
+                    class="interpretation"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TABLE -->
+
+        <div class="card" style="margin-bottom:20px;">
+
+            <div class="card-title">
+                Parâmetros estatísticos
+            </div>
+
+            <table class="stats-table">
+
+                <tr>
+                    <td>Densidade consonantal</td>
+                    <td id="consonants">--</td>
+                </tr>
+
+                <tr>
+                    <td>Complexidade silábica estimada</td>
+                    <td id="syllables">--</td>
+                </tr>
+
+                <tr>
+                    <td>Índice de presença</td>
+                    <td id="presence">--</td>
+                </tr>
+
+                <tr>
+                    <td>Potencial de liderança</td>
+                    <td id="leadership">--</td>
+                </tr>
+
+                <tr>
+                    <td>Risco de ser chamado pelo professor</td>
+                    <td id="teacherRisk">--</td>
+                </tr>
+
+                <tr>
+                    <td>Coeficiente de vergonha ao ouvir o próprio nome</td>
+                    <td id="shame">--</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+        <!-- ANALYSIS -->
+
+        <div class="analysis">
+
+            <h2>Conclusão do estudo</h2>
+
+            <div id="analysisText">
+                --
+            </div>
+
+        </div>
+
+        <div class="warning">
+
+            ⚠ <strong>Nota metodológica:</strong>
+            Este estudo utiliza modelos matemáticos altamente avançados,
+            cuja existência é questionável. Os resultados possuem aparência
+            científica, mas não devem ser utilizados para decisões acadêmicas,
+            médicas, financeiras, jurídicas ou para escolher nomes de bebês.
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+
+    INSTITUTO NACIONAL DE ANÁLISE NOMINAL © 2026<br>
+    Departamento de Estatística Nominal • Laboratório de Fonética Aplicada •
+    Núcleo de Aura Experimental
+
+</footer>
+
+<script>
+
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function hashName(name) {
+
+    let hash = 0;
+
+    for (let i = 0; i < name.length; i++) {
+        hash =
+            ((hash << 5) - hash) +
+            name.charCodeAt(i);
+
+        hash |= 0;
+    }
+
+    return Math.abs(hash);
+}
+
+function analyze() {
+
+    const input =
+        document.getElementById("nameInput");
+
+    const name =
+        input.value.trim();
+
+    if (!name) {
+        input.focus();
+        return;
+    }
+
+    document.getElementById("results").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+
+    setTimeout(() => {
+
+        calculate(name);
+
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("results").style.display = "block";
+
+        window.scrollTo({
+            top: 250,
+            behavior: "smooth"
+        });
+
+    }, 1200);
+}
+
+function calculate(name) {
+
+    const seed = hashName(name);
+
+    // Métricas determinísticas:
+    // o mesmo nome tende a produzir os mesmos resultados.
+
+    const aura =
+        (seed * 17 + name.length * 13) % 101;
+
+    const npc =
+        (seed * 31 + name.length * 7) % 101;
+
+    const stealth =
+        (seed * 43 + name.length * 19) % 101;
+
+    const presence =
+        (aura * .63 + (100 - npc) * .37);
+
+    const leadership =
+        (aura * .55 + stealth * .20 + presence * .25);
+
+    const teacherRisk =
+        (name.length * 9 + seed % 70) % 101;
+
+    const shame =
+        (seed * 23 + name.length * 11) % 101;
+
+    const vowels =
+        (name.match(/[aeiouáéíóúãõâêô]/gi) || []).length;
+
+    const consonants =
+        name.replace(/[^a-záéíóúãõâêôç]/gi, "").length - vowels;
+
+    const complexity =
+        ((name.length * 13 + seed) % 97) + 3;
+
+    document.getElementById("resultName").textContent =
+        name.toUpperCase();
+
+    document.getElementById("scientificName").textContent =
+        "Nominalis " +
+        name.toLowerCase().replace(/\s/g, "-");
+
+    document.getElementById("researchId").textContent =
+        "ID DO ESTUDO: INAN-" +
+        String(seed).padStart(8, "0");
+
+    animateNumber("aura", aura);
+    animateNumber("npc", npc);
+    animateNumber("stealth", stealth);
+
+    document.getElementById("auraBar").style.width =
+        aura + "%";
+
+    document.getElementById("npcBar").style.width =
+        npc + "%";
+
+    document.getElementById("stealthBar").style.width =
+        stealth + "%";
+
+    document.getElementById("auraText").textContent =
+        getAuraText(aura);
+
+    document.getElementById("npcText").textContent =
+        getNpcText(npc);
+
+    document.getElementById("consonants").textContent =
+        consonants + " unidades fonéticas";
+
+    document.getElementById("syllables").textContent =
+        complexity + "%";
+
+    document.getElementById("presence").textContent =
+        Math.round(presence) + "/100";
+
+    document.getElementById("leadership").textContent =
+        Math.round(leadership) + "%";
+
+    document.getElementById("teacherRisk").textContent =
+        Math.round(teacherRisk) + "%";
+
+    document.getElementById("shame").textContent =
+        Math.round(shame) + "%";
+
+    const classification =
+        getClassification(aura, npc, stealth);
+
+    document.getElementById("classification").textContent =
+        classification.title;
+
+    document.getElementById("classificationDesc").textContent =
+        classification.desc;
+
+    document.getElementById("analysisText").innerHTML =
+        generateAnalysis(
+            name,
+            aura,
+            npc,
+            stealth,
+            presence,
+            leadership,
+            teacherRisk
+        );
+
+    drawGraph(
+        aura,
+        npc,
+        stealth,
+        presence,
+        leadership
+    );
+}
+
+function animateNumber(id, target) {
+
+    const element =
+        document.getElementById(id);
+
+    let current = 0;
+
+    const interval =
+        setInterval(() => {
+
+            current += Math.ceil(target / 20);
+
+            if (current >= target) {
+                current = target;
+                clearInterval(interval);
+            }
+
+            element.textContent = current;
+
+        }, 25);
+}
+
+function getAuraText(value) {
+
+    if (value >= 85)
+        return "Presença nominal extremamente elevada.";
+
+    if (value >= 65)
+        return "Aura acima da média populacional.";
+
+    if (value >= 45)
+        return "Aura considerada estatisticamente normal.";
+
+    if (value >= 25)
+        return "Baixa emissão de aura detectada.";
+
+    return "O laboratório recomenda desenvolver uma aura.";
+}
+
+function getNpcText(value) {
+
+    if (value >= 85)
+        return "Comportamento altamente compatível com NPC.";
+
+    if (value >= 65)
+        return "Alguns padrões de NPC foram identificados.";
+
+    if (value >= 40)
+        return "Comportamento parcialmente independente.";
+
+    return "Baixa compatibilidade com comportamento NPC.";
+}
+
+function getClassification(aura, npc, stealth) {
+
+    if (aura >= 85 && npc < 40) {
+
+        return {
+            title: "PROTAGONISTA",
+            desc: "Padrões associados a indivíduos que parecem ter uma missão principal."
+        };
+
+    }
+
+    if (npc >= 85) {
+
+        return {
+            title: "NPC AVANÇADO",
+            desc: "Alta tendência a permanecer parado em locais estratégicos."
+        };
+
+    }
+
+    if (stealth >= 85) {
+
+        return {
+            title: "OPERADOR FANTASMA",
+            desc: "O indivíduo apresenta baixa detectabilidade social."
+        };
+
+    }
+
+    if (aura < 25) {
+
+        return {
+            title: "FIGURANTE",
+            desc: "Presença estatisticamente compatível com personagem de fundo."
+        };
+
+    }
+
+    return {
+        title: "CIDADÃO PADRÃO",
+        desc: "Nenhuma anomalia nominal significativa foi encontrada."
+    };
+}
+
+function generateAnalysis(
+    name,
+    aura,
+    npc,
+    stealth,
+    presence,
+    leadership,
+    teacherRisk
+) {
+
+    let text = "";
+
+    text += `
+        A análise da amostra <strong>${name}</strong> indica um
+        perfil nominal com índice de aura de <strong>${aura}/100</strong>.
+    `;
+
+    if (aura > 75) {
+
+        text += `
+            A intensidade encontrada está acima do intervalo observado
+            na maioria dos indivíduos analisados. Pesquisadores classificam
+            este resultado como <strong>presença nominal elevada</strong>.
+        `;
+
+    } else if (aura < 30) {
+
+        text += `
+            O índice encontra-se abaixo da média. Os dados sugerem uma
+            emissão de presença nominal relativamente discreta.
+        `;
+
+    } else {
+
+        text += `
+            O resultado encontra-se dentro da faixa considerada
+            estatisticamente normal pelo modelo experimental.
+        `;
+    }
+
+    text += `
+        <br><br>
+        A probabilidade de comportamento NPC foi estimada em
+        <strong>${npc}%</strong>, enquanto o potencial de stealth
+        apresentou índice de <strong>${stealth}%</strong>.
+    `;
+
+    if (teacherRisk > 75) {
+
+        text += `
+            <br><br>
+            ⚠ O modelo identificou um risco elevado de o indivíduo ser
+            chamado pelo professor justamente quando não estiver prestando
+            atenção.
+        `;
+
+    }
+
+    if (leadership > 80) {
+
+        text += `
+            <br><br>
+            O índice de liderança encontra-se excepcionalmente elevado.
+            Existe uma probabilidade estatística não verificada de que
+            esta pessoa seja escolhida para organizar o trabalho em grupo.
+        `;
+
+    }
+
+    text += `
+        <br><br>
+        <strong>Conclusão:</strong> o nome apresenta características
+        suficientemente interessantes para justificar aproximadamente
+        17 segundos adicionais de investigação científica.
+    `;
+
+    return text;
+}
+
+function drawGraph(
+    aura,
+    npc,
+    stealth,
+    presence,
+    leadership
+) {
+
+    const canvas =
+        document.getElementById("graphCanvas");
+
+    const rect =
+        canvas.parentElement.getBoundingClientRect();
+
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    ctx.scale(2, 2);
+
+    const width = rect.width;
+    const height = rect.height;
+
+    const values = [
+        aura,
+        npc,
+        stealth,
+        presence,
+        leadership
+    ];
+
+    const points = [];
+
+    values.forEach((value, i) => {
+
+        const x =
+            (i / (values.length - 1)) *
+            (width - 20) + 10;
+
+        const y =
+            height - (value / 100) *
+            (height - 20) - 10;
+
+        points.push({x, y});
+
+    });
+
+    // Área
+
+    ctx.beginPath();
+
+    ctx.moveTo(points[0].x, height);
+
+    points.forEach(point => {
+        ctx.lineTo(point.x, point.y);
+    });
+
+    ctx.lineTo(points[points.length - 1].x, height);
+    ctx.closePath();
+
+    const gradient =
+        ctx.createLinearGradient(0, 0, 0, height);
+
+    gradient.addColorStop(0, "#2563eb55");
+    gradient.addColorStop(1, "#2563eb05");
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Linha
+
+    ctx.beginPath();
+
+    points.forEach((point, index) => {
+
+        if (index === 0)
+            ctx.moveTo(point.x, point.y);
+        else
+            ctx.lineTo(point.x, point.y);
+
+    });
+
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Pontos
+
+    points.forEach(point => {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            point.x,
+            point.y,
+            5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+
+        ctx.strokeStyle = "#2563eb";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+    });
+
+    // Labels
+
+    const labels = [
+        "AURA",
+        "NPC",
+        "STEALTH",
+        "PRESENÇA",
+        "LIDERANÇA"
+    ];
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "10px Arial";
+
+    labels.forEach((label, i) => {
+
+        ctx.fillText(
+            label,
+            points[i].x - 20,
+            height - 3
+        );
+
+    });
+}
+
+document
+    .getElementById("nameInput")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+            analyze();
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
