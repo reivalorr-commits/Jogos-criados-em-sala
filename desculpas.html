@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GERADOR DE DESCULPAS™</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        color: white;
+        overflow-x: hidden;
+        background:
+            radial-gradient(circle at 20% 20%, #ff00cc55, transparent 30%),
+            radial-gradient(circle at 80% 30%, #00ffff44, transparent 30%),
+            radial-gradient(circle at 50% 90%, #7a00ff55, transparent 35%),
+            #090014;
+        animation: backgroundPulse 8s infinite alternate;
+    }
+
+    @keyframes backgroundPulse {
+        from { filter: hue-rotate(0deg); }
+        to { filter: hue-rotate(35deg); }
+    }
+
+    .container {
+        width: min(900px, 92%);
+        margin: auto;
+        padding: 50px 0;
+        text-align: center;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 2px solid #00ffff;
+        border-radius: 999px;
+        color: #00ffff;
+        font-weight: bold;
+        letter-spacing: 2px;
+        box-shadow: 0 0 20px #00ffff66;
+        margin-bottom: 15px;
+    }
+
+    h1 {
+        font-size: clamp(42px, 9vw, 90px);
+        line-height: .85;
+        margin: 10px 0;
+        text-transform: uppercase;
+        font-weight: 1000;
+        font-style: italic;
+        text-shadow:
+            4px 4px 0 #ff00cc,
+            -4px -4px 0 #00ffff,
+            0 0 35px #ff00cc;
+        animation: titleShake 2s infinite;
+    }
+
+    @keyframes titleShake {
+        0%, 92%, 100% { transform: rotate(-1deg); }
+        94% { transform: rotate(1deg) scale(1.02); }
+        96% { transform: rotate(-1deg); }
+    }
+
+    .subtitle {
+        opacity: .8;
+        font-size: 18px;
+        margin-bottom: 35px;
+    }
+
+    .counter-box {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+    .stat {
+        min-width: 150px;
+        padding: 15px 25px;
+        border-radius: 18px;
+        background: #ffffff0d;
+        border: 1px solid #ffffff30;
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-number {
+        font-size: 35px;
+        font-weight: 900;
+        color: #00ffff;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: .6;
+    }
+
+    .excuse-card {
+        position: relative;
+        min-height: 260px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 45px;
+        margin: 20px 0;
+        border-radius: 30px;
+        background:
+            linear-gradient(135deg, #ffffff12, #ffffff04);
+        border: 2px solid #ffffff25;
+        box-shadow:
+            0 0 50px #ff00cc22,
+            inset 0 0 40px #00ffff08;
+        backdrop-filter: blur(15px);
+        overflow: hidden;
+    }
+
+    .excuse-card::before {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: #ff00cc;
+        filter: blur(100px);
+        opacity: .15;
+        top: -100px;
+        left: -100px;
+    }
+
+    .level {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        font-weight: 900;
+        color: #ffcc00;
+        font-size: 14px;
+    }
+
+    .emoji {
+        font-size: 55px;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 0 15px #ffffff66);
+    }
+
+    #excuse {
+        font-size: clamp(22px, 4vw, 38px);
+        font-weight: 900;
+        line-height: 1.15;
+        max-width: 750px;
+        text-shadow: 0 0 20px #ffffff22;
+    }
+
+    .severity {
+        margin-top: 20px;
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        opacity: .6;
+    }
+
+    button {
+        border: none;
+        cursor: pointer;
+        color: white;
+        font-weight: 1000;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: .15s;
+    }
+
+    #generate {
+        position: relative;
+        padding: 23px 45px;
+        border-radius: 18px;
+        font-size: 20px;
+        background: linear-gradient(90deg, #ff006e, #7a00ff, #00c8ff);
+        background-size: 200% 100%;
+        box-shadow:
+            0 10px 35px #ff006e55,
+            0 0 30px #7a00ff55;
+        animation: buttonGradient 2s linear infinite;
+    }
+
+    @keyframes buttonGradient {
+        0% { background-position: 0%; }
+        100% { background-position: 200%; }
+    }
+
+    #generate:hover {
+        transform: scale(1.07) translateY(-3px);
+        box-shadow:
+            0 15px 50px #ff006e88,
+            0 0 50px #00c8ff66;
+    }
+
+    #generate:active {
+        transform: scale(.94);
+    }
+
+    .progress-container {
+        margin: 30px auto;
+        max-width: 650px;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 12px;
+        opacity: .7;
+    }
+
+    .progress {
+        height: 12px;
+        border-radius: 20px;
+        background: #ffffff12;
+        overflow: hidden;
+        border: 1px solid #ffffff20;
+    }
+
+    #progressBar {
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #00ffff, #ff00cc, #ffcc00);
+        box-shadow: 0 0 20px #ff00cc;
+        transition: width .4s ease;
+    }
+
+    .share {
+        margin-top: 25px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: .4s;
+    }
+
+    .share.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    #copy {
+        padding: 12px 20px;
+        border-radius: 12px;
+        background: #ffffff12;
+        border: 1px solid #ffffff30;
+    }
+
+    #copy:hover {
+        background: #ffffff25;
+        transform: scale(1.04);
+    }
+
+    .history {
+        margin-top: 45px;
+        text-align: left;
+    }
+
+    .history h2 {
+        text-align: center;
+        font-size: 18px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    #historyList {
+        display: grid;
+        gap: 10px;
+    }
+
+    .history-item {
+        padding: 15px 18px;
+        border-left: 3px solid #ff00cc;
+        background: #ffffff08;
+        border-radius: 0 12px 12px 0;
+        animation: slideIn .3s ease;
+    }
+
+    .history-item span {
+        display: block;
+        color: #00ffff;
+        font-size: 11px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .flash {
+        animation: flash .3s ease;
+    }
+
+    @keyframes flash {
+        0% { transform: scale(1); }
+        40% {
+            transform: scale(1.04);
+            filter: brightness(1.8);
+        }
+        100% { transform: scale(1); }
+    }
+
+    .shake {
+        animation: shake .35s ease;
+    }
+
+    @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        20% { transform: translateX(-8px) rotate(-1deg); }
+        40% { transform: translateX(8px) rotate(1deg); }
+        60% { transform: translateX(-5px); }
+        80% { transform: translateX(5px); }
+    }
+
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        top: -20px;
+        pointer-events: none;
+        animation: fall linear forwards;
+        z-index: 999;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(110vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    footer {
+        margin-top: 60px;
+        font-size: 11px;
+        opacity: .3;
+    }
+
+    @media(max-width: 600px) {
+        .excuse-card {
+            padding: 35px 20px;
+        }
+
+        #generate {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="badge">⚠ SISTEMA 100% CIENTÍFICO</div>
+
+    <h1>GERADOR<br>DE DESCULPAS</h1>
+
+    <div class="subtitle">
+        Para quando você precisa justificar algo que obviamente não tem justificativa.
+    </div>
+
+    <div class="counter-box">
+        <div class="stat">
+            <div class="stat-number" id="counter">0</div>
+            <div class="stat-label">Desculpas geradas</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="credibility">100%</div>
+            <div class="stat-label">Credibilidade</div>
+        </div>
+    </div>
+
+    <div class="excuse-card" id="card">
+
+        <div class="level" id="level">
+            NÍVEL 0 / 100
+        </div>
+
+        <div class="emoji" id="emoji">🤨</div>
+
+        <div id="excuse">
+            Clique no botão para cometer um erro.
+        </div>
+
+        <div class="severity" id="severity">
+            aguardando uma desculpa...
+        </div>
+
+    </div>
+
+    <div class="progress-container">
+
+        <div class="progress-label">
+            <span>NÍVEL DE ABSURDO</span>
+            <span id="progressText">0%</span>
+        </div>
+
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+
+    </div>
+
+    <button id="generate">
+        🚨 GERAR DESCULPA
+    </button>
+
+    <div class="share" id="share">
+        <button id="copy">📋 COPIAR DESCULPA</button>
+    </div>
+
+    <div class="history">
+        <h2>📜 Histórico de crimes</h2>
+        <div id="historyList"></div>
+    </div>
+
+    <footer>
+        GERADOR DE DESCULPAS™ — nenhuma desculpa aqui deve ser utilizada em ambiente profissional.
+    </footer>
+
+</div>
+
+<script>
+
+const subjects = [
+    "meu computador",
+    "meu celular",
+    "a internet",
+    "o Wi-Fi",
+    "o arquivo",
+    "o PDF",
+    "meu cérebro",
+    "meu despertador",
+    "o Google",
+    "o navegador",
+    "meu mouse",
+    "o teclado",
+    "a nuvem",
+    "o servidor",
+    "a impressora"
+];
+
+const problems = [
+    "parou de funcionar",
+    "entrou em modo de segurança",
+    "teve uma crise existencial",
+    "decidiu não colaborar",
+    "ficou extremamente lento",
+    "apagou tudo sozinho",
+    "começou a reiniciar",
+    "perdeu a conexão com a realidade",
+    "entrou em conflito com outro dispositivo",
+    "ficou preso em uma atualização"
+];
+
+const causes = [
+    "devido a uma atualização",
+    "por causa de uma falha temporária",
+    "depois de uma oscilação de energia",
+    "por um problema misterioso",
+    "devido a uma incompatibilidade",
+    "após uma sincronização mal-sucedida",
+    "por motivos que a ciência ainda não explicou",
+    "devido a uma instabilidade quântica",
+    "por causa de uma configuração que eu definitivamente não alterei"
+];
+
+const weird = [
+    "aparentemente",
+    "segundo o sistema",
+    "de acordo com especialistas",
+    "segundo uma pesquisa que acabei de inventar",
+    "tecnicamente",
+    "em teoria",
+    "até onde eu sei",
+    "segundo meu advogado",
+    "segundo fontes próximas ao acontecimento"
+];
+
+const emojis = [
+    "🤨", "😐", "😬", "🫠", "💀",
+    "😭", "🤡", "🚨", "🔥", "☠️",
+    "🧠", "📉", "💻", "🗿", "👽"
+];
+
+const severityNames = [
+    "desculpa plausível",
+    "ligeiramente suspeita",
+    "começando a complicar",
+    "ninguém está acreditando",
+    "perdeu completamente a credibilidade",
+    "situação crítica",
+    "isso definitivamente não aconteceu",
+    "nível de delírio elevado",
+    "autoridades foram notificadas",
+    "não tente explicar isso",
+    "crime contra a lógica"
+];
+
+let count = 0;
+let lastExcuse = "";
+
+const excuseElement = document.getElementById("excuse");
+const counterElement = document.getElementById("counter");
+const credibilityElement = document.getElementById("credibility");
+const levelElement = document.getElementById("level");
+const emojiElement = document.getElementById("emoji");
+const severityElement = document.getElementById("severity");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const card = document.getElementById("card");
+const historyList = document.getElementById("historyList");
+const share = document.getElementById("share");
+
+function random(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+function generateExcuse(level) {
+
+    // Níveis iniciais: desculpas normais
+    if (level <= 15) {
+        return `${random(weird)}, ${random(subjects)} ${random(problems)} ${random(causes)}.`;
+    }
+
+    // Começa a ficar suspeito
+    if (level <= 30) {
+        return `${random(weird)}, ${random(subjects)} ${random(problems)} ${random(causes)}, e por isso eu não consegui resolver a situação a tempo.`;
+    }
+
+    if (level <= 45) {
+        return `${random(subjects)} ${random(problems)} ${random(causes)}. Eu tentei resolver, mas ${random(subjects)} também acabou ${random(problems)}.`;
+    }
+
+    // Absurdo moderado
+    if (level <= 60) {
+        return `Eu estava tentando resolver tudo quando ${random(subjects)} ${random(problems)} ${random(causes)}. Nesse momento, aparentemente, ${random(subjects)} entrou em conflito com ${random(subjects)}.`;
+    }
+
+    if (level <= 75) {
+        return `Segundo ${random(weird)}, ${random(subjects)} ${random(problems)} ${random(causes)}. Isso causou uma reação em cadeia envolvendo ${random(subjects)}, ${random(subjects)} e, inexplicavelmente, um documento que eu nunca tinha aberto.`;
+    }
+
+    // Aqui já não existe mais volta
+    if (level <= 90) {
+        return `Eu tinha tudo sob controle, até ${random(subjects)} ${random(problems)} ${random(causes)}. O problema se espalhou para ${random(subjects)} e ${random(subjects)}. Depois disso, o sistema solicitou uma reinicialização espiritual.`;
+    }
+
+    // Níveis finais
+    if (level <= 99) {
+        return `Às ${Math.floor(Math.random() * 12) + 8}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}, ${random(subjects)} ${random(problems)} ${random(causes)}. Isso ativou um protocolo automático que envolveu ${random(subjects)}, três arquivos desaparecidos e uma pessoa que eu não conheço.`;
+    }
+
+    // NÍVEL 100
+    return `Eu não posso explicar exatamente o que aconteceu. Às 03:17, ${random(subjects)} ${random(problems)} ${random(causes)}. Em seguida, o sistema detectou uma anomalia, chamou um servidor que não existe, apagou uma pasta chamada "NÃO ABRIR", e aparentemente isso está relacionado a um incidente ocorrido em 2007.`;
+}
+
+function generate() {
+
+    count++;
+
+    // Limita em 100
+    const level = Math.min(count, 100);
+
+    lastExcuse = generateExcuse(level);
+
+    excuseElement.textContent = lastExcuse;
+
+    counterElement.textContent = count;
+
+    levelElement.textContent = `NÍVEL ${level} / 100`;
+
+    emojiElement.textContent = emojis[Math.min(
+        Math.floor(level / 7),
+        emojis.length - 1
+    )];
+
+    severityElement.textContent =
+        severityNames[Math.min(
+            Math.floor(level / 10),
+            severityNames.length - 1
+        )];
+
+    const percentage = level;
+
+    progressBar.style.width = percentage + "%";
+    progressText.textContent = percentage + "%";
+
+    // A credibilidade despenca
+    let credibility = Math.max(
+        0,
+        Math.round(100 - Math.pow(level, 1.35) / 5)
+    );
+
+    credibilityElement.textContent = credibility + "%";
+
+    card.classList.remove("flash", "shake");
+
+    void card.offsetWidth;
+
+    if (level >= 70) {
+        card.classList.add("shake");
+    } else {
+        card.classList.add("flash");
+    }
+
+    addHistory(level, lastExcuse);
+
+    share.classList.add("visible");
+
+    if (level % 10 === 0 || level === 100) {
+        confetti();
+    }
+
+    // Depois do nível 100, continua gerando
+    // mas mantém o nível visual em 100.
+    if (count >= 100) {
+        levelElement.textContent = "☢ NÍVEL MÁXIMO — 100 / 100";
+    }
+}
+
+function addHistory(level, text) {
+
+    const item = document.createElement("div");
+
+    item.className = "history-item";
+
+    item.innerHTML = `
+        <span>NÍVEL ${level}</span>
+        ${text}
+    `;
+
+    historyList.prepend(item);
+
+    // Mantém histórico razoável
+    while (historyList.children.length > 8) {
+        historyList.removeChild(historyList.lastChild);
+    }
+}
+
+function confetti() {
+
+    const colors = [
+        "#ff00cc",
+        "#00ffff",
+        "#ffcc00",
+        "#7a00ff",
+        "#00ff66"
+    ];
+
+    for (let i = 0; i < 70; i++) {
+
+        const piece = document.createElement("div");
+
+        piece.className = "confetti";
+
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background =
+            random(colors);
+
+        piece.style.animationDuration =
+            (Math.random() * 2 + 2) + "s";
+
+        piece.style.animationDelay =
+            Math.random() * .5 + "s";
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => {
+            piece.remove();
+        }, 4000);
+    }
+}
+
+document.getElementById("generate")
+    .addEventListener("click", generate);
+
+document.getElementById("copy")
+    .addEventListener("click", async () => {
+
+        if (!lastExcuse) return;
+
+        try {
+
+            await navigator.clipboard.writeText(lastExcuse);
+
+            const button = document.getElementById("copy");
+
+            button.textContent = "✅ COPIADO!";
+
+            setTimeout(() => {
+                button.textContent = "📋 COPIAR DESCULPA";
+            }, 1500);
+
+        } catch {
+
+            alert(lastExcuse);
+
+        }
+    });
+
+</script>
+
+</body>
+</html>
