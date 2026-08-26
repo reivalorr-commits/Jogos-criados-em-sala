@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobinder — Swipe ou Sofra</title>
+<style>
+:root{
+  --bg:#0b0b0e; --panel:#15151b; --panel2:#1d1d25; --line:#2a2a35;
+  --text:#f6f4fa; --muted:#a19eaa; --pink:#ff4458; --green:#00d084;
+  --gold:#ffcc00; --blue:#00b8ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; color:var(--text);
+  font-family:Inter,Arial,sans-serif; overflow-x:hidden;
+  background:
+    radial-gradient(circle at 10% 10%,#ff44581c,transparent 28%),
+    radial-gradient(circle at 90% 80%,#00d08418,transparent 25%),
+    var(--bg);
+}
+header{
+  height:76px; border-bottom:1px solid var(--line); background:#0b0b0ed9;
+  backdrop-filter:blur(18px); display:flex; align-items:center; justify-content:center;
+  position:sticky; top:0; z-index:20;
+}
+.header-inner{width:min(1180px,94%);display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:26px;font-weight:1000;letter-spacing:-1px}.logo span{color:var(--pink)}
+.counter{font-family:monospace;color:var(--muted);font-size:12px}
+.counter b{color:var(--gold);font-size:16px}
+main{width:min(1180px,94%);margin:auto;padding:32px 0 50px}
+.hero{text-align:center;margin-bottom:24px}.hero h1{margin:0;font-size:clamp(34px,6vw,66px);letter-spacing:-3px}
+.hero p{color:var(--muted);margin:10px auto;max-width:720px}
+.layout{display:grid;grid-template-columns:260px 1fr 260px;gap:20px;align-items:start}
+.panel{background:#111117;border:1px solid var(--line);border-radius:20px;padding:18px}
+.panel h3{margin:0 0 14px;font-size:11px;letter-spacing:2px;color:#777;text-transform:uppercase}
+.stat{padding:14px 0;border-bottom:1px solid var(--line)}.stat:last-child{border:0}
+.stat b{display:block;font-size:26px}.stat small{color:var(--muted)}
+.swipe-area{display:flex;flex-direction:column;align-items:center}
+.card-wrap{position:relative;width:min(100%,460px);height:570px}
+.card{
+  position:absolute;inset:0;border-radius:28px;overflow:hidden;cursor:grab;user-select:none;
+  background:linear-gradient(160deg,#272733,#111117);border:1px solid #3a3a48;
+  box-shadow:0 28px 80px #0008;touch-action:none;
+}
+.card:active{cursor:grabbing}
+.top{height:52%;position:relative;padding:24px;background:
+ radial-gradient(circle at 80% 15%,#ff44585c,transparent 25%),
+ linear-gradient(135deg,#282839,#14141c)}
+.company-mark{
+  width:74px;height:74px;border-radius:22px;background:#fff1;display:grid;place-items:center;
+  font-size:32px;border:1px solid #fff2
+}
+.badge{position:absolute;top:24px;right:24px;padding:8px 11px;border-radius:999px;background:#0008;font-size:10px;font-weight:900;letter-spacing:1px}
+.nope,.like{position:absolute;top:35px;padding:8px 15px;border:4px solid;font-size:28px;font-weight:1000;opacity:0;border-radius:10px;z-index:5;transform:rotate(-12deg)}
+.nope{left:24px;color:var(--pink);border-color:var(--pink)}.like{right:24px;color:var(--green);border-color:var(--green);transform:rotate(12deg)}
+.card-body{padding:24px}.role{font-size:30px;font-weight:1000;line-height:.98;letter-spacing:-1px}.company{color:var(--muted);margin-top:8px}
+.salary{margin-top:18px;font-size:13px;color:var(--gold);font-family:monospace}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin:17px 0}.tag{padding:7px 9px;border-radius:8px;background:#fff1;color:#ccc;font-size:10px}
+.desc{font-size:14px;line-height:1.55;color:#d1ced8}.desc b{color:#ff9ca6}
+.buttons{display:flex;gap:16px;margin-top:20px}.action{width:58px;height:58px;border-radius:50%;border:1px solid var(--line);background:#16161d;color:white;font-size:23px;cursor:pointer;transition:.18s}.action:hover{transform:translateY(-4px) scale(1.06)}
+.reject{color:var(--pink)}.super{color:var(--blue)}.accept{color:var(--green)}
+.progress{width:min(100%,460px);height:8px;background:#22222b;border-radius:99px;margin:18px 0 6px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,var(--pink),var(--gold));width:0%;transition:.3s}
+.swipe-text{font-size:11px;color:#777}
+.choice{padding:13px;border:1px solid var(--line);background:#0d0d12;border-radius:12px;margin-bottom:9px;font-size:12px}
+.choice b{display:block;font-size:10px;color:#777;text-transform:uppercase;margin-bottom:5px}
+.footer-note{text-align:center;color:#555;font-size:10px;margin-top:30px;letter-spacing:1px}
+.match{
+ position:fixed;inset:0;background:#08080bd9;backdrop-filter:blur(16px);display:none;
+ z-index:50;place-items:center;padding:20px
+}
+.match.show{display:grid}.match-box{text-align:center;width:min(480px,100%);padding:42px;border:1px solid #343441;border-radius:28px;background:linear-gradient(160deg,#20171d,#111117);box-shadow:0 0 100px #ff445833}
+.match h2{font-size:50px;margin:0}.match p{color:var(--muted);line-height:1.6}.match button{border:0;background:var(--pink);color:white;font-weight:900;padding:15px 25px;border-radius:12px;cursor:pointer}
+@media(max-width:950px){.layout{grid-template-columns:1fr 1fr}.swipe-area{grid-column:1/-1;grid-row:1}.panel{min-height:auto}}
+@media(max-width:600px){header{height:64px}.layout{grid-template-columns:1fr}.swipe-area{grid-column:auto}.card-wrap{height:540px}.hero h1{letter-spacing:-2px}.panel{display:none}.top{height:48%}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">JOB<span>INDER</span>™</div><div class="counter">VAGAS ANALISADAS: <b id="count">0</b>/100</div></div></header>
+
+<main>
+  <section class="hero">
+    <h1>ENCONTRE O PIOR EMPREGO DA SUA VIDA</h1>
+    <p>100 vagas cuidadosamente selecionadas para testar o limite entre “preciso de dinheiro” e “a dignidade ainda existe”. Arraste para a esquerda ou direita. Nenhuma escolha é boa.</p>
+  </section>
+
+  <div class="layout">
+    <aside class="panel">
+      <h3>Seu perfil profissional</h3>
+      <div class="stat"><b id="matches">0</b><small>empregos aceitos</small></div>
+      <div class="stat"><b id="rejected">0</b><small>vagas recusadas</small></div>
+      <div class="stat"><b id="desperation">12%</b><small>nível de desespero</small></div>
+      <div class="stat"><b>∞</b><small>arrependimentos disponíveis</small></div>
+    </aside>
+
+    <section class="swipe-area">
+      <div class="card-wrap" id="cardWrap"></div>
+      <div class="buttons">
+        <button class="action reject" onclick="swipe(-1)">✕</button>
+        <button class="action super" onclick="swipe(0, true)">★</button>
+        <button class="action accept" onclick="swipe(1)">♥</button>
+      </div>
+      <div class="progress"><div id="bar"></div></div>
+      <div class="swipe-text">← recusar sem ler &nbsp; • &nbsp; aceitar e se arrepender →</div>
+    </section>
+
+    <aside class="panel">
+      <h3>Termos da plataforma</h3>
+      <div class="choice"><b>Direita</b>“Posso tentar, mas minha família não pode saber.”</div>
+      <div class="choice"><b>Esquerda</b>“Ainda tenho amor-próprio suficiente.”</div>
+      <div class="choice"><b>Superlike</b>“Isso vai render uma história absurda.”</div>
+      <div class="choice"><b>Aviso jurídico</b>As vagas são fictícias. Infelizmente, a inspiração não é.</div>
+    </aside>
+  </div>
+  <div class="footer-note">JOBINDER™ // MATCHING ALGORITHM POWERED BY DESESPERO v1.0</div>
+</main>
+
+<div class="match" id="match"><div class="match-box"><div style="font-size:60px">💼💘</div><h2>DEU MATCH!</h2><p id="matchText"></p><button onclick="closeMatch()">ACEITAR MEU DESTINO</button></div></div>
+
+<script>
+const jobs = [
+["Estagiário de Engenharia do Excel","Planilhas & Filhos LTDA","R$ 750 + experiência","📊","Domínio avançado de Excel, VBA, Python, AutoCAD e telepatia.","Seg–Sex, 08h às 18h. 2h de almoço não remuneradas."],
+["Assistente de CEO","Visionary Unicorn Corp.","R$ 1.400 + café frio","🦄","Você agenda reuniões, responde clientes e ocasionalmente finge ser o CEO.","Disponibilidade 24/7 é considerada diferencial."],
+["Analista de Nada","Confidencial","A combinar","🕵️","Precisamos de alguém proativo para descobrir o que exatamente esta vaga faz.","CLT emocional, PJ financeiro."],
+["Engenheiro Júnior Sênior","Mega Solutions","R$ 2.100","🏗️","5 anos de experiência para cargo júnior. Pós-graduação desejável.","Três entrevistas, teste técnico e uma prova de caráter."],
+["Social Media Multifunções","Startup em Crescimento","R$ 1.600","📱","Criar posts, vídeos, anúncios, fotos, editar podcast e eventualmente cuidar do cachorro do CEO.","Benefício: ambiente jovem."],
+["Assistente de Sobrevivência","Grupo Horizonte","R$ 1.520","🧯","Capacidade de trabalhar sob pressão, incêndio e mudanças de prioridade a cada 11 minutos.","Banco de horas infinito."],
+["Especialista em Café","Café & Planilhas","R$ 1.412","☕","Fazer café, comprar café e analisar indicadores de consumo de café.","6 meses de experiência obrigatória."],
+["Trainee Vitalício","Corporação Alpha","R$ 1.800","🎓","Programa de desenvolvimento sem prazo de desenvolvimento.","Possibilidade de efetivação desde 2017."],
+["Digitador de Dados Manuscritos","Arquivo Moderno","R$ 1.650","⌨️","Transformar 14 mil folhas escaneadas em planilhas até sexta.","Sexta de qual semana não foi especificado."],
+["Gerente de Problemas","Não Resolvidos S.A.","R$ 2.000","🔥","Receber problemas que ninguém quer e repassar para outra pessoa.","Experiência em culpar fornecedores."],
+["Analista de WhatsApp","Conexão Imediata","R$ 1.700","💬","Responder mensagens com “vou verificar” em menos de 30 segundos.","Celular pessoal obrigatório."],
+["Operador de Impressora","Imprime Aí","R$ 1.500","🖨️","Consertar impressoras sem suporte técnico e sem peças.","Responsabilidade por todo papel desaparecido."],
+["Assistente de RH do RH","People People","R$ 1.900","👥","Ajudar o RH a encontrar alguém para fazer seu trabalho.","Dinâmicas de grupo toda terça."],
+["Caçador de Leads","Growth sem Freio","Comissão","🎯","Encontrar clientes que não querem ser encontrados.","Salário emocional competitivo."],
+["Dev Full Stack Full Time Full Stress","Código Rápido","R$ 3.000 PJ","💻","Frontend, backend, mobile, DevOps e manutenção do Wi-Fi.","Notebook próprio. Café coletivo."],
+["Fiscal de Fila","Organiza Brasil","R$ 1.518","🚶","Garantir que adultos respeitem uma linha imaginária.","Treinamento de 4 horas."],
+["Especialista em Reuniões","Meet S.A.","R$ 2.200","📅","Participar de reuniões para decidir quando será a próxima reunião.","Resultados mensuráveis em ata."],
+["Tradutor de CEO","Corporate Noise","R$ 2.300","🗣️","Traduzir “vamos alinhar” para tarefas concretas.","Inglês avançado e paciência fluente."],
+["Analista de Clima Organizacional","Família Empresarial","R$ 1.900","🌡️","Manter o clima bom enquanto todos recebem demandas às 23h.","Feliz aniversário cantado obrigatoriamente."],
+["Vendedor de Curso de Vendas","Método Milionário","R$ 1.500 + comissão","📈","Vender um curso que ensina a vender este mesmo curso.","Reunião motivacional às 7h."],
+["Recepcionista Bilíngue Trilingue","Hotel Sem Fronteiras","R$ 1.700","🛎️","Português, inglês, espanhol e leitura labial desejáveis.","Escala 6x1 com sorriso obrigatório."],
+["Assistente de Logística Espiritual","Fluxo Positivo","R$ 1.650","🔮","Garantir que energias e caixas cheguem ao destino.","CR obrigatório."],
+["Analista de PowerPoint","Slides & Slides","R$ 1.800","🖼️","Transformar 3 bullets em uma apresentação de 87 slides.","Prazo médio: ontem."],
+["Gerente de Estagiários","Jovens Talentos","R$ 2.100","🧑‍💼","Cobrar estagiários por tarefas que você não sabe fazer.","Liderança sem aumento."],
+["Auxiliar de Tudo","Tudo Mesmo LTDA","R$ 1.518","🧰","Descrição da vaga: auxiliar em tudo.","Tudo inclui tudo."],
+["Especialista em Impressão Digital","Print Moderno","R$ 1.600","📄","Imprimir documentos que serão enviados por e-mail.","Metas agressivas de papel."],
+["Consultor de Consultores","Consulting Consulting","R$ 2.400","🤝","Aconselhar pessoas que aconselham empresas.","Jargão corporativo obrigatório."],
+["Analista de Segunda-Feira","Segunda S.A.","R$ 1.550","😐","Monitorar impactos psicológicos da segunda-feira.","Trabalho começa domingo à noite."],
+["Assistente de Networking","Conecta Pro","R$ 1.700","🕸️","Ir a eventos e lembrar o nome de 300 pessoas.","Extroversão mensurada por QR Code."],
+["Especialista em Urgências","É Pra Ontem","R$ 2.000","🚨","Classificar tudo como urgente e cobrar respostas imediatas.","Turno normal + urgências."],
+["Operador de Copiar e Colar","Dados Estratégicos","R$ 1.520","📋","Copiar de uma planilha e colar em outra sem questionar o propósito.","Teste prático de Ctrl+C."],
+["Analista de Motivação","Alta Performance","R$ 1.750","🚀","Manter funcionários motivados sem usar dinheiro.","Frases de LinkedIn liberadas."],
+["Assistente de Controle de Danos","Crise Contínua","R$ 2.000","🧨","Explicar para clientes por que algo deu errado.","Você será o erro se necessário."],
+["Gerente de Grupo de WhatsApp","Comunicação Ágil","R$ 1.900","📲","Fixar mensagens que ninguém lê.","Disponibilidade inclusive em férias."],
+["Pesquisador de Google","Pesquisa Avançada","R$ 1.600","🔎","Encontrar respostas na primeira página do Google.","MBA em palavras-chave."],
+["Analista de Silêncio","Open Space LTDA","R$ 1.700","🤫","Trabalhar em escritório aberto e fingir concentração.","Fones não fornecidos."],
+["Estagiário de Reuniões","Future Leaders","R$ 900","🪑","Aprender observando pessoas discutirem o mesmo assunto.","Ata não conta como experiência."],
+["Fiscal de Ar Condicionado","Temperatura Ideal","R$ 1.580","❄️","Resolver guerras entre 18°C e 26°C.","Risco ocupacional: colegas."],
+["Especialista em “Só Uma Coisinha”","Escopo Flexível","R$ 1.700","➕","Cada demanda começa com essa frase.","A quantidade de coisinhas é ilimitada."],
+["Assistente do Assistente","Suporte ao Suporte","R$ 1.600","🪜","Ajudar alguém que está ajudando outra pessoa.","Hierarquia confusa é diferencial."],
+["Analista de Planos B","Improviso Corp.","R$ 1.900","🅱️","Criar plano B para planos que nunca tiveram plano A.","Criatividade sob pânico."],
+["CEO por um Dia","Empresa Familiar","R$ 1.518","👑","Responsabilidade de CEO, salário de recepção.","Título usado apenas internamente."],
+["Estagiário de Experiência","Experience First","R$ 0 + experiência","🧪","Ganhe experiência trabalhando de graça.","Vale-transporte emocional."],
+["Coordenador de Happy Hour","Cultura Forte","R$ 1.650","🍻","Organizar diversão obrigatória após horas extras.","Presença conta para avaliação."],
+["Analista de Café Frio","Bean There","R$ 1.580","🥤","Estudar por que ninguém toma o café depois das 10h.","Beba as amostras."],
+["Especialista em Responder E-mail","Inbox Zero","R$ 1.700","📧","Responder “recebido, obrigado” em escala industrial.","Meta de 500 e-mails/dia."],
+["Operador de Campainha","Prédio Inteligente","R$ 1.518","🔔","Atender interfone e decidir se o entregador pode subir.","Decisões críticas."],
+["Gerente de Expectativas","Realidade Difícil","R$ 2.000","📉","Explicar por que o bônus não veio.","Comunicação assertiva."],
+["Analista de Feedback","Feedback 360","R$ 1.850","🔄","Dar feedback sobre o feedback recebido.","Feedback do feedback é trimestral."],
+["Consultor de Home Office","Volta Presencial","R$ 2.100","🏠","Explicar por que trabalhar em casa não é trabalhar.","Vaga 100% presencial."],
+["Especialista em Planilha Colorida","Rainbow Excel","R$ 1.650","🌈","Adicionar cores para dar a impressão de organização.","Conhecimento em amarelo avançado."],
+["Estagiário de Inteligência Artificial","AI Tudo","R$ 1.000","🤖","Fazer o trabalho que a IA não consegue.","Dizer que foi a IA que fez."],
+["Analista de Crise de Senha","Password Reset","R$ 1.600","🔑","Perguntar se a pessoa tentou desligar e ligar.","Senha: confidencial."],
+["Gerente de Assuntos Aleatórios","Random Corp.","R$ 2.300","🎲","Ser marcado em qualquer assunto desconhecido.","Responsabilidade transversal."],
+["Especialista em Desculpas","Justifica Aí","R$ 1.800","🫠","Criar justificativas convincentes para atrasos sistêmicos.","Criatividade ética opcional."],
+["Auxiliar de CEO nas Redes","Personal Brand","R$ 1.900","📸","Filmar o chefe dizendo que acorda às 4h30.","Você acorda às 4h também."],
+["Analista de Excelência","Excelência Máxima","R$ 1.750","🏆","Medir a excelência sem definir excelência.","Indicadores confidenciais."],
+["Operador de Micro-ondas","Almoço Coletivo","R$ 1.518","🍱","Gerenciar fila, tempo e explosões de marmita.","Hora do almoço é horário de pico."],
+["Assistente de Decisão","Talvez S.A.","R$ 1.700","🤷","Ajudar gestores a adiar decisões.","Relatórios inconclusivos."],
+["Engenheiro de Gambiarra","Soluções Temporárias","R$ 2.700","🔧","Criar soluções temporárias permanentes.","Fita isolante fornecida."],
+["Analista de Figurinhas","Comunicação Informal","R$ 1.600","😎","Selecionar figurinhas adequadas para grupos corporativos.","Meme literacy obrigatória."],
+["Coordenador de Planilhas","Cells United","R$ 2.200","🧮","Descobrir quem apagou a fórmula.","Backup não existe."],
+["Fiscal de Presença","Câmera Ligada S.A.","R$ 1.550","📹","Verificar se pessoas estão presentes em reuniões.","Pode ser que ninguém esteja mentalmente."],
+["Especialista em Chamados Urgentes","Ticket Hell","R$ 1.900","🎫","Resolver tickets marcados como urgentes por padrão.","SLA baseado em esperança."],
+["Analista de Copos","Água & Gestão","R$ 1.520","🥛","Controlar consumo de copos descartáveis.","Suspeitos reincidentes serão monitorados."],
+["Assistente de Pós-Venda","Depois da Venda","R$ 1.650","📞","Ligar para clientes que já não querem falar com você.","Meta de felicidade do cliente."],
+["Gerente de Alinhamento","Alinha Corp.","R$ 2.500","📐","Marcar reuniões para alinhar pessoas já alinhadas.","Desalinhamentos geram novos alinhamentos."],
+["Estagiário de Futuro","Next Gen","R$ 850","🔮","Trabalhar no presente em troca de um futuro incerto.","Possibilidade de aprendizado."],
+["Analista de Rumores","Bastidores S.A.","R$ 1.700","👂","Descobrir o que mudou antes do comunicado oficial.","Fonte: corredor."],
+["Especialista em Atualizar Sistema","Aguarde...","R$ 1.650","🔄","Informar usuários que o sistema voltará em breve.","Definição de breve: variável."],
+["Consultor de Obviedades","Óbvio & Associados","R$ 2.300","💡","Apresentar soluções óbvias em slides premium.","Terno aumenta credibilidade."],
+["Analista de Problemas Simples","Complica LTDA","R$ 1.800","🧩","Transformar tarefas simples em processos com 14 etapas.","ISO emocional desejável."],
+["Vendedor de Benefícios","Vale Talvez","R$ 1.650","🎁","Explicar benefícios que começam após 12 meses.","Plano odontológico para alguns dentes."],
+["Especialista em Excel Online","Cloud Cells","R$ 1.700","☁️","Esperar a planilha carregar e culpar a internet.","Conhecimento em nuvem."],
+["Gerente de Emergências Normais","Normalmente Urgente","R$ 2.200","⚠️","Gerenciar emergências que acontecem todos os dias.","Não existe rotina."],
+["Analista de Cultura","Somos Uma Família","R$ 1.900","🏠","Promover cultura enquanto todos procuram outro emprego.","Pizza às sextas."],
+["Assistente de Qualidade","Quase Perfeito","R$ 1.600","✔️","Garantir qualidade sem poder mudar nada.","Assinatura é responsabilidade sua."],
+["Coordenador de Estresse","Pressure Corp.","R$ 2.400","😵","Distribuir demandas igualmente para maximizar tensão.","Resiliência testada diariamente."],
+["Operador de Sistema Lento","Loading LTDA","R$ 1.520","⌛","Digitar e esperar.","Produtividade medida por tempo conectado."],
+["Analista de Feriados","Calendário Estratégico","R$ 1.750","📆","Explicar por que haverá trabalho no feriado.","Comunicado humanizado."],
+["Especialista em Metas Impossíveis","Moonshot S.A.","R$ 2.000","🌙","Bater metas criadas sem dados.","Não atingir é oportunidade de melhoria."],
+["Gerente de Senhas","Acesso Negado","R$ 1.900","🔐","Guardar senhas que ninguém pode compartilhar.","Todas expiram hoje."],
+["Estagiário de Liderança","Lidere Sem Poder","R$ 950","🧑‍✈️","Liderar colegas sem autoridade nem salário.","Excelente para currículo."],
+["Analista de Saudação","Bom Dia Corp.","R$ 1.580","👋","Garantir que todos respondam ‘bom dia’ no grupo.","Indicador de engajamento."],
+["Especialista em Resolver Depois","Procrastina Pro","R$ 1.800","⏳","Organizar tarefas que serão feitas mais tarde.","Prioridade: revisar prioridades."],
+["Consultor de Crise Financeira","Fluxo Negativo","R$ 2.100","💸","Sugerir cortes para pessoas que não podem ser cortadas.","Planilha de cenários trágicos."],
+["Assistente de Impressões","Impressões Gerais","R$ 1.520","🖨️","Descobrir qual impressora está com papel.","Missão crítica."],
+["Analista de Mudanças","Muda Tudo","R$ 1.950","🌀","Adaptar-se a processos antes de aprendê-los.","Mudanças semanais."],
+["Operador de Elevador Corporativo","Subir S.A.","R$ 1.518","🛗","Apertar botões com visão estratégica.","KPIs por andar."],
+["Gerente de Gente Cansada","Burnout Prevention","R$ 2.300","🥱","Motivar equipe cansada com palestras.","Folga não prevista."],
+["Especialista em Reenviar E-mail","Forward Corp.","R$ 1.600","↪️","Reenviar mensagens para quem deveria ter lido.","CC obrigatório."],
+["Analista de Promessas","Vai Dar Certo","R$ 1.850","🤞","Registrar promessas feitas em reuniões.","Cobrança será sua."],
+["Auxiliar Administrativo Premium","Admin Plus","R$ 1.600","🗂️","Fazer administrativo, financeiro e TI.","Premium porque tem ar-condicionado."],
+["Pesquisador de ‘Quem Fez Isso?’","Mistério S.A.","R$ 1.700","🕵️‍♂️","Investigar erros que todos negam.","Culpado geralmente é você."],
+["Especialista em Apagar Incêndio","Firefighting Corp.","R$ 2.100","🧯","Resolver emergências antes que virem processo.","Incêndios metafóricos e talvez reais."],
+["Gerente de Grupo Familiar","Família Empresarial","R$ 1.900","👨‍👩‍👧‍👦","Trabalhar onde o CEO é primo de alguém.","Conflitos resolvidos no almoço de domingo."],
+["Analista de Última Hora","Minuto Final","R$ 1.750","⏰","Entregar projetos que chegam cinco minutos antes.","Pontualidade é diferencial."],
+["Estagiário de Experiência Requisitada","Entry Level Plus","R$ 1.200","📚","Vaga de entrada com experiência de saída.","Incoerência não será discutida."],
+["Consultor de Motivação sem Dinheiro","Motiva Já","R$ 2.000","🗯️","Criar campanhas para aumentar moral sem aumentar salário.","Brindes limitados."],
+["Analista de Saídas Antecipadas","Até Mais","R$ 1.550","🚪","Monitorar quem sai cinco minutos antes.","Você não pode sair cedo."],
+["Especialista em Mudar de Lugar","Reorganiza Corp.","R$ 1.600","📦","Mover mesas para melhorar sinergia.","Mudar de volta é possível."],
+["Gerente de Ideias que Não Serão Usadas","Innovation Theater","R$ 2.500","🎭","Coletar ideias para apresentações institucionais.","Implementação não faz parte do escopo."],
+["Analista de Risco","Talvez Dê Errado","R$ 2.200","🎰","Prever problemas e ser ignorado.","Depois explicar que avisou."],
+["Assistente de Fim de Expediente","Só Mais Uma","R$ 1.650","🌇","Receber demandas às 17h58.","Expediente termina quando terminar."],
+["CEO de Pequena Área","Chefe Sem Aumento","R$ 2.100","👔","Ser responsável por tudo com título bonito.","Poder decisório limitado."],
+["Operador de Motivação Visual","Pôsteres S.A.","R$ 1.518","🖼️","Colar frases motivacionais em paredes.","‘Juntos somos mais fortes’ obrigatório."],
+["Analista de Respostas Automáticas","Do Not Reply","R$ 1.700","🤖","Criar e-mails automáticos para problemas humanos.","Humanização é prioridade."],
+["Estagiário de Estagiários","Intern²","R$ 700","🪆","Ajudar novos estagiários a entender que não sabem nada.","Bolsa compatível com desespero."],
+["Especialista em Segunda Via","Imprime de Novo","R$ 1.520","2️⃣","Imprimir documentos que foram impressos errado.","Primeira via também é sua culpa."],
+["Coordenador de Reuniões Sem Fim","Loop Meeting","R$ 2.300","🔁","Evitar que reuniões terminem cedo.","Objetivo: preencher agenda."],
+["Analista de Boa Vontade","Extra Mile","R$ 1.600","🙂","Fazer favores fora da função com sorriso.","Recusar afeta espírito de equipe."],
+["Gerente de Responsabilidade","Alguém Tem Que Ser","R$ 2.600","🫵","Assinar documentos quando ninguém quer assinar.","Bônus: ansiedade."],
+["Especialista em ‘Já Está Pronto?’","Deadline Corp.","R$ 1.700","👀","Perguntar repetidamente pelo status de tarefas.","Você não pode ajudar a fazê-las."],
+["Assistente de Sistema Indisponível","503 S.A.","R$ 1.580","📵","Informar que a instabilidade está sendo tratada.","A equipe é você."],
+["Analista de Pequenos Problemas","Pequeno S.A.","R$ 1.750","🔍","Resolver coisas pequenas que se tornam enormes.","Escopo cresce sozinho."],
+["Diretor de Nada","Título Bonito LTDA","R$ 2.900","🎩","Cargo impressionante, responsabilidades misteriosas.","LinkedIn ficará ótimo."],
+["Vaga Misteriosa","Empresa Confidencial","Remuneração competitiva","❓","Não podemos dizer empresa, função, salário ou horário.","Mas buscamos alguém apaixonado por desafios."]
+];
+
+let index=0, accepted=0, rejected=0, dragStart=null, currentX=0;
+const wrap=document.getElementById('cardWrap');
+
+function render(){
+  if(index>=jobs.length){ finish(); return; }
+  const [role,company,salary,emoji,desc,detail]=jobs[index];
+  wrap.innerHTML=`
+  <div class="card" id="card">
+    <div class="nope" id="nope">NÃO</div><div class="like" id="like">MATCH</div>
+    <div class="top"><div class="company-mark">${emoji}</div><div class="badge">VAGA ${String(index+1).padStart(3,'0')} / 100</div></div>
+    <div class="card-body">
+      <div class="role">${role}</div><div class="company">${company}</div>
+      <div class="salary">💰 ${salary}</div>
+      <div class="tags"><span class="tag">CLT*</span><span class="tag">PRESENCIAL</span><span class="tag">ALTA PRESSÃO</span><span class="tag">“FAMÍLIA”</span></div>
+      <div class="desc">${desc}<br><br><b>Detalhes:</b> ${detail}</div>
+    </div>
+  </div>`;
+  bindDrag();
+}
+function bindDrag(){
+ const c=document.getElementById('card');
+ c.addEventListener('pointerdown',e=>{dragStart=e.clientX;c.setPointerCapture(e.pointerId)});
+ c.addEventListener('pointermove',e=>{
+   if(dragStart===null)return; currentX=e.clientX-dragStart;
+   c.style.transform=`translateX(${currentX}px) rotate(${currentX/18}deg)`;
+   document.getElementById('like').style.opacity=Math.max(0,currentX/100);
+   document.getElementById('nope').style.opacity=Math.max(0,-currentX/100);
+ });
+ c.addEventListener('pointerup',()=>{if(Math.abs(currentX)>110) swipe(currentX>0?1:-1);else resetCard();dragStart=null});
+}
+function resetCard(){const c=document.getElementById('card');if(c){c.style.transition='transform .25s';c.style.transform='';setTimeout(()=>c.style.transition='',250)}currentX=0}
+function swipe(dir,superLike=false){
+ const c=document.getElementById('card'); if(!c)return;
+ if(superLike){dir=1}
+ c.style.transition='transform .35s ease, opacity .35s'; c.style.transform=`translateX(${dir*700}px) rotate(${dir*35}deg)`;c.style.opacity=0;
+ if(dir>0){accepted++; if(Math.random()<.12 || superLike) setTimeout(()=>showMatch(jobs[index]),250)} else rejected++;
+ index++; currentX=0; updateStats(); setTimeout(render,330);
+}
+function updateStats(){
+ document.getElementById('count').textContent=index;
+ document.getElementById('matches').textContent=accepted;
+ document.getElementById('rejected').textContent=rejected;
+ document.getElementById('desperation').textContent=Math.min(99,12+accepted*3+Math.floor(index/4))+'%';
+ document.getElementById('bar').style.width=(index/100*100)+'%';
+}
+function showMatch(job){document.getElementById('matchText').innerHTML=`Você e <b>${job[0]}</b> curtiram um ao outro. A empresa está muito animada porque você aceitou sem perguntar sobre o salário.`;document.getElementById('match').classList.add('show')}
+function closeMatch(){document.getElementById('match').classList.remove('show')}
+function finish(){
+ wrap.innerHTML=`<div class="card" style="display:grid;place-items:center;text-align:center;padding:35px"><div><div style="font-size:70px">🎉</div><h2 style="font-size:38px">VOCÊ SOBREVIVEU.</h2><p style="color:#aaa;line-height:1.6">Você analisou 100 vagas e aceitou ${accepted}.<br>Seu nível final de desespero é <b style="color:#ff4458">irreversível</b>.</p><button onclick="location.reload()" style="padding:15px 20px;border:0;border-radius:12px;background:#ff4458;color:white;font-weight:900;cursor:pointer">COMEÇAR A DESEMPREGAR NOVAMENTE</button></div></div>`;
+}
+render(); updateStats();
+</script>
+</body>
+</html>
