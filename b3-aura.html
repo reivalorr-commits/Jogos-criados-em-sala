@@ -1,0 +1,2512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Aura Exchange — Day Trade Simulator</title>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #080808;
+    color: #f4f4f4;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+    height: 72px;
+
+    border-bottom: 1px solid #292929;
+
+    display: flex;
+    align-items: center;
+
+    background: #0b0b0b;
+}
+
+.header-inner {
+    width: min(1400px, 94%);
+    margin: auto;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 17px;
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+    color: #f5c400;
+}
+
+.logo span {
+    color: #777;
+}
+
+.market-status {
+    color: #aaa;
+    font-family: monospace;
+    font-size: 11px;
+}
+
+.market-status::before {
+    content: "●";
+    color: #f5c400;
+    margin-right: 7px;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+main {
+    width: min(1400px, 94%);
+    margin: auto;
+
+    padding: 30px 0 60px;
+}
+
+.dashboard {
+    display: grid;
+
+    grid-template-columns:
+        1fr 330px;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.panel {
+    background: #101010;
+
+    border: 1px solid #282828;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.panel-header {
+    height: 52px;
+
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #242424;
+
+    background: #111;
+}
+
+.panel-title {
+    font-size: 11px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    color: #ddd;
+}
+
+.panel-subtitle {
+    font-family: monospace;
+
+    color: #777;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   PORTFOLIO
+========================================================= */
+
+.portfolio {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+}
+
+.stat {
+    background: #101010;
+
+    border: 1px solid #282828;
+
+    padding: 17px;
+
+    border-radius: 8px;
+}
+
+.stat-label {
+    color: #666;
+
+    font-size: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.5px;
+}
+
+.stat-value {
+    margin-top: 7px;
+
+    font-family: monospace;
+
+    font-size: 22px;
+
+    font-weight: bold;
+}
+
+.yellow {
+    color: #f5c400;
+}
+
+.gray {
+    color: #aaa;
+}
+
+
+/* =========================================================
+   CHART
+========================================================= */
+
+.chart-container {
+    position: relative;
+
+    height: 480px;
+
+    background:
+        linear-gradient(
+            #111 1px,
+            transparent 1px
+        );
+
+    background-size:
+        100% 48px;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.chart-info {
+    position: absolute;
+
+    top: 14px;
+    left: 18px;
+
+    pointer-events: none;
+}
+
+.selected-name {
+    color: #f5c400;
+
+    font-weight: 900;
+
+    font-size: 14px;
+}
+
+.selected-price {
+    margin-top: 5px;
+
+    font-family: monospace;
+
+    font-size: 24px;
+
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   ORDER PANEL
+========================================================= */
+
+.order {
+    padding: 18px;
+}
+
+.selected-coin {
+    border: 1px solid #333;
+
+    padding: 14px;
+
+    margin-bottom: 15px;
+
+    background: #0c0c0c;
+}
+
+.selected-coin-name {
+    font-weight: bold;
+
+    color: #f5c400;
+
+    font-size: 16px;
+}
+
+.selected-coin-price {
+    margin-top: 5px;
+
+    font-family: monospace;
+
+    color: white;
+}
+
+.order-label {
+    color: #666;
+
+    font-size: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 7px;
+}
+
+input[type="number"] {
+    width: 100%;
+
+    height: 43px;
+
+    padding: 10px;
+
+    background: #080808;
+
+    border: 1px solid #333;
+
+    color: white;
+
+    border-radius: 5px;
+
+    outline: none;
+
+    font-family: monospace;
+}
+
+input[type="number"]:focus {
+    border-color: #f5c400;
+}
+
+.trade-buttons {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+button {
+    height: 45px;
+
+    border: 1px solid #444;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    font-weight: 900;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    transition: .15s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+.buy {
+    background: #f5c400;
+
+    color: #080808;
+
+    border-color: #f5c400;
+}
+
+.sell {
+    background: #1b1b1b;
+
+    color: #fff;
+}
+
+button:active {
+    transform: scale(.98);
+}
+
+
+/* =========================================================
+   COINS
+========================================================= */
+
+.coins {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    padding: 12px;
+}
+
+.coin {
+    padding: 13px;
+
+    background: #0c0c0c;
+
+    border: 1px solid #252525;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+.coin:hover {
+    border-color: #555;
+}
+
+.coin.active {
+    border-color: #f5c400;
+
+    box-shadow:
+        inset 3px 0 #f5c400;
+}
+
+.coin-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.coin-name {
+    font-size: 12px;
+
+    font-weight: 900;
+
+    color: #eee;
+}
+
+.coin-price {
+    font-family: monospace;
+
+    color: #fff;
+}
+
+.coin-bottom {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 8px;
+
+    font-family: monospace;
+
+    font-size: 10px;
+
+    color: #777;
+}
+
+.change-up {
+    color: #f5c400;
+}
+
+.change-down {
+    color: #888;
+}
+
+
+/* =========================================================
+   HOLDINGS
+========================================================= */
+
+.holdings {
+    padding: 12px;
+}
+
+.holding {
+    padding: 12px;
+
+    border-bottom: 1px solid #222;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-family: monospace;
+
+    font-size: 11px;
+}
+
+.holding:last-child {
+    border-bottom: none;
+}
+
+.holding-name {
+    color: #bbb;
+}
+
+.holding-value {
+    color: white;
+}
+
+
+/* =========================================================
+   POLYNOMIAL PANEL
+========================================================= */
+
+.math {
+    padding: 18px;
+
+    border-top: 1px solid #242424;
+}
+
+.math-title {
+    color: #666;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 10px;
+}
+
+.polynomial {
+    color: #f5c400;
+
+    font-family: monospace;
+
+    font-size: 12px;
+
+    line-height: 1.8;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   TICKER
+========================================================= */
+
+.ticker {
+    margin-top: 18px;
+
+    height: 32px;
+
+    border-top: 1px solid #222;
+
+    border-bottom: 1px solid #222;
+
+    background: #0c0c0c;
+
+    display: flex;
+
+    align-items: center;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+}
+
+.ticker-content {
+    font-family: monospace;
+
+    font-size: 10px;
+
+    color: #777;
+
+    animation:
+        ticker 30s linear infinite;
+}
+
+@keyframes ticker {
+
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media(max-width: 600px) {
+
+    .portfolio {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 350px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="header-inner">
+
+        <div class="logo">
+            AURA<span>EXCHANGE</span>
+        </div>
+
+        <div class="market-status">
+            MARKET OPEN // SIMULATION
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+
+    <!-- =====================================================
+         PORTFOLIO
+    ====================================================== -->
+
+    <div class="portfolio">
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Dinheiro disponível
+            </div>
+
+            <div
+                class="stat-value yellow"
+                id="cash"
+            >
+                R$ 10.000,00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Patrimônio
+            </div>
+
+            <div
+                class="stat-value"
+                id="equity"
+            >
+                R$ 10.000,00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Ganho / Perda
+            </div>
+
+            <div
+                class="stat-value yellow"
+                id="profit"
+            >
+                +0.00%
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard">
+
+
+        <!-- =================================================
+             ESQUERDA
+        ================================================== -->
+
+        <div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+                        AURA MARKET // LIVE CHART
+                    </div>
+
+                    <div
+                        class="panel-subtitle"
+                        id="tick"
+                    >
+                        TICK 000000
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="chart"
+                    ></canvas>
+
+
+                    <div class="chart-info">
+
+                        <div
+                            class="selected-name"
+                            id="chartName"
+                        >
+                            AURA
+                        </div>
+
+                        <div
+                            class="selected-price"
+                            id="chartPrice"
+                        >
+                            R$ 100,00
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="ticker">
+
+                <div
+                    class="ticker-content"
+                    id="tickerContent"
+                >
+                    AURAEX MARKET DATA // POLYNOMIAL ENGINE //
+                    CORRELATION MATRIX ACTIVE //
+                    SPECTRAL VOLATILITY ONLINE //
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             DIREITA
+        ================================================== -->
+
+        <div>
+
+
+            <!-- ORDER -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+                        ORDER TERMINAL
+                    </div>
+
+                    <div class="panel-subtitle">
+                        DAY TRADE
+                    </div>
+
+                </div>
+
+
+                <div class="order">
+
+
+                    <div class="selected-coin">
+
+                        <div
+                            class="selected-coin-name"
+                            id="selectedName"
+                        >
+                            AURA
+                        </div>
+
+                        <div
+                            class="selected-coin-price"
+                            id="selectedPrice"
+                        >
+                            R$ 100,00
+                        </div>
+
+                    </div>
+
+
+                    <div class="order-label">
+                        Quantidade
+                    </div>
+
+                    <input
+                        id="quantity"
+                        type="number"
+                        min="1"
+                        value="1"
+                    >
+
+
+                    <div class="trade-buttons">
+
+                        <button
+                            class="buy"
+                            onclick="buy()"
+                        >
+                            COMPRAR
+                        </button>
+
+                        <button
+                            class="sell"
+                            onclick="sell()"
+                        >
+                            VENDER
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- COINS -->
+
+            <div
+                class="panel"
+                style="margin-top:18px;"
+            >
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+                        AURACOINS
+                    </div>
+
+                    <div class="panel-subtitle">
+                        5 ASSETS
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="coins"
+                    id="coins"
+                ></div>
+
+            </div>
+
+
+            <!-- HOLDINGS -->
+
+            <div
+                class="panel"
+                style="margin-top:18px;"
+            >
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+                        POSIÇÕES
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="holdings"
+                    id="holdings"
+                ></div>
+
+            </div>
+
+
+            <!-- MATH -->
+
+            <div
+                class="panel"
+                style="margin-top:18px;"
+            >
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+                        MARKET MODEL
+                    </div>
+
+                </div>
+
+
+                <div class="math">
+
+                    <div class="math-title">
+                        POLINÔMIO ATIVO
+                    </div>
+
+                    <div
+                        class="polynomial"
+                        id="polynomial"
+                    >
+                        f(x) = ...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   AURA EXCHANGE
+   =========================================================
+
+   O mercado é inteiramente local.
+
+   Cada moeda possui:
+
+   - preço
+   - polinômio
+   - volatilidade
+   - fase
+   - posição
+
+   O preço é determinado por uma função:
+
+       P(t) =
+       base
+       + polinomio(t)
+       + onda
+       + mercado
+       + correlação
+
+   As moedas compartilham um componente
+   de mercado.
+
+   Isso cria movimentos correlacionados.
+
+========================================================= */
+
+
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+
+const INITIAL_CASH = 10000;
+
+let cash = INITIAL_CASH;
+
+let selectedCoin = 0;
+
+let tick = 0;
+
+
+/* =========================================================
+   COINS
+========================================================= */
+
+const coins = [
+
+    {
+        symbol: "AURA",
+        name: "Aura Coin",
+
+        base: 100,
+
+        volatility: 0.72,
+
+        phase: 0.2,
+
+        polynomial: [
+            0.0000009,
+            -0.00011,
+            0.003,
+            0
+        ],
+
+        holdings: 0,
+
+        history: []
+    },
+
+    {
+        symbol: "MILOS",
+        name: "Milos Coin",
+
+        base: 74,
+
+        volatility: 1.1,
+
+        phase: 1.7,
+
+        polynomial: [
+            -0.0000007,
+            0.00016,
+            -0.004,
+            0
+        ],
+
+        holdings: 0,
+
+        history: []
+    },
+
+    {
+        symbol: "WAIFU",
+        name: "Waifu Coin",
+
+        base: 132,
+
+        volatility: 0.48,
+
+        phase: 3.1,
+
+        polynomial: [
+            0.0000005,
+            -0.00009,
+            0.005,
+            0
+        ],
+
+        holdings: 0,
+
+        history: []
+    },
+
+    {
+        symbol: "RIZZ",
+        name: "Rizz Coin",
+
+        base: 48,
+
+        volatility: 1.45,
+
+        phase: 4.5,
+
+        polynomial: [
+            -0.0000003,
+            0.0002,
+            -0.003,
+            0
+        ],
+
+        holdings: 0,
+
+        history: []
+    },
+
+    {
+        symbol: "NPC",
+        name: "NPC Coin",
+
+        base: 61,
+
+        volatility: 0.95,
+
+        phase: 5.8,
+
+        polynomial: [
+            0.0000008,
+            -0.00013,
+            0.002,
+            0
+        ],
+
+        holdings: 0,
+
+        history: []
+    }
+
+];
+
+
+/* =========================================================
+   FORMAT
+========================================================= */
+
+function money(value) {
+
+    return value.toLocaleString(
+        "pt-BR",
+        {
+            style: "currency",
+            currency: "BRL"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   POLINÔMIO
+========================================================= */
+
+function polynomial(
+    coefficients,
+    x
+) {
+
+    let result = 0;
+
+    /*
+    Horner's method.
+
+    Mais eficiente que calcular
+    cada potência separadamente.
+    */
+
+    for (
+        let i = 0;
+        i < coefficients.length;
+        i++
+    ) {
+
+        result =
+            result * x +
+            coefficients[i];
+
+    }
+
+    return result;
+
+}
+
+
+/* =========================================================
+   MARKET WAVE
+========================================================= */
+
+function marketWave(t) {
+
+    /*
+    Movimento geral do mercado.
+
+    Todas as moedas sentem isso.
+    */
+
+    return (
+
+        Math.sin(t * 0.021) * 2.4 +
+
+        Math.sin(t * 0.008) * 3.5 +
+
+        Math.sin(t * 0.057) * 0.8
+
+    );
+
+}
+
+
+/* =========================================================
+   CORRELAÇÃO ENTRE MOEDAS
+========================================================= */
+
+function correlationEffect(
+    coinIndex,
+    t
+) {
+
+    let result = 0;
+
+
+    for (
+        let i = 0;
+        i < coins.length;
+        i++
+    ) {
+
+        if (
+            i === coinIndex
+        ) continue;
+
+
+        /*
+        Cada moeda influencia
+        as outras em intensidade
+        diferente.
+        */
+
+        const distance =
+            Math.abs(
+                i -
+                coinIndex
+            );
+
+
+        const correlation =
+            0.16 /
+            (1 + distance);
+
+
+        result +=
+            Math.sin(
+                t *
+                (
+                    0.015 +
+                    i * 0.003
+                ) +
+                coins[i].phase
+            ) *
+            correlation;
+
+    }
+
+
+    return result * 10;
+
+}
+
+
+/* =========================================================
+   RANDOM WALK DETERMINÍSTICO
+========================================================= */
+
+function noise(
+    coinIndex,
+    t
+) {
+
+    /*
+    Ruído suave.
+
+    Não usamos Math.random()
+    para que o mercado seja
+    reproduzível e não fique
+    saltando loucamente.
+    */
+
+    return (
+
+        Math.sin(
+            t * 1.71 +
+            coinIndex * 17
+        ) *
+
+        Math.sin(
+            t * 0.37 +
+            coinIndex
+        )
+
+    ) * 0.7;
+
+}
+
+
+/* =========================================================
+   CALCULAR PREÇO
+========================================================= */
+
+function calculatePrice(
+    coin,
+    index,
+    t
+) {
+
+    /*
+    Normalização temporal.
+
+    */
+
+    const x =
+        (t - 300) / 100;
+
+
+    /*
+    Polinômio.
+
+    */
+
+    const poly =
+        polynomial(
+            coin.polynomial,
+            x
+        );
+
+
+    /*
+    Ondas individuais.
+    */
+
+    const wave =
+
+        Math.sin(
+            t * 0.043 +
+            coin.phase
+        ) * 2.5 +
+
+        Math.sin(
+            t * 0.013 +
+            coin.phase * 2
+        ) * 4;
+
+
+    /*
+    Mercado geral.
+    */
+
+    const market =
+        marketWave(t);
+
+
+    /*
+    Correlação.
+    */
+
+    const correlation =
+        correlationEffect(
+            index,
+            t
+        );
+
+
+    /*
+    Ruído.
+    */
+
+    const random =
+        noise(
+            index,
+            t
+        ) *
+        coin.volatility;
+
+
+    /*
+    Mudança percentual.
+    */
+
+    const percentMove =
+
+        poly +
+
+        wave +
+
+        market +
+
+        correlation +
+
+        random;
+
+
+    /*
+    Limita a variação.
+
+    */
+
+    const safeMove =
+        Math.max(
+            -65,
+            Math.min(
+                65,
+                percentMove
+            )
+        );
+
+
+    return Math.max(
+        1,
+        coin.base *
+        (
+            1 +
+            safeMove / 100
+        )
+    );
+
+}
+
+
+/* =========================================================
+   ATUALIZAR MERCADO
+========================================================= */
+
+function updateMarket() {
+
+    tick++;
+
+
+    for (
+        let i = 0;
+        i < coins.length;
+        i++
+    ) {
+
+        const coin =
+            coins[i];
+
+
+        const price =
+            calculatePrice(
+                coin,
+                i,
+                tick
+            );
+
+
+        coin.price =
+            price;
+
+
+        coin.history.push(
+            price
+        );
+
+
+        /*
+        Guarda apenas os últimos
+        160 pontos.
+        */
+
+        if (
+            coin.history.length >
+            160
+        ) {
+
+            coin.history.shift();
+
+        }
+
+    }
+
+
+    updateInterface();
+
+}
+
+
+/* =========================================================
+   SELECIONAR MOEDA
+========================================================= */
+
+function selectCoin(index) {
+
+    selectedCoin =
+        index;
+
+    updateInterface();
+
+}
+
+
+/* =========================================================
+   COMPRA
+========================================================= */
+
+function buy() {
+
+    const coin =
+        coins[selectedCoin];
+
+
+    const quantity =
+        Math.floor(
+            Number(
+                document.getElementById(
+                    "quantity"
+                ).value
+            )
+        );
+
+
+    if (
+        !quantity ||
+        quantity <= 0
+    ) {
+
+        return;
+
+    }
+
+
+    const cost =
+        coin.price *
+        quantity;
+
+
+    if (
+        cost > cash
+    ) {
+
+        flashMessage(
+            "DINHEIRO INSUFICIENTE"
+        );
+
+        return;
+
+    }
+
+
+    cash -= cost;
+
+
+    coin.holdings +=
+        quantity;
+
+
+    updateInterface();
+
+}
+
+
+/* =========================================================
+   VENDA
+========================================================= */
+
+function sell() {
+
+    const coin =
+        coins[selectedCoin];
+
+
+    const quantity =
+        Math.floor(
+            Number(
+                document.getElementById(
+                    "quantity"
+                ).value
+            )
+        );
+
+
+    if (
+        !quantity ||
+        quantity <= 0
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        quantity >
+        coin.holdings
+    ) {
+
+        flashMessage(
+            "POSIÇÃO INSUFICIENTE"
+        );
+
+        return;
+
+    }
+
+
+    const revenue =
+        coin.price *
+        quantity;
+
+
+    cash += revenue;
+
+
+    coin.holdings -=
+        quantity;
+
+
+    updateInterface();
+
+}
+
+
+/* =========================================================
+   FLASH MESSAGE
+========================================================= */
+
+function flashMessage(text) {
+
+    const old =
+        document.getElementById(
+            "flash"
+        );
+
+
+    if (old) {
+        old.remove();
+    }
+
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.id =
+        "flash";
+
+
+    element.textContent =
+        text;
+
+
+    element.style.position =
+        "fixed";
+
+    element.style.top =
+        "90px";
+
+    element.style.left =
+        "50%";
+
+    element.style.transform =
+        "translateX(-50%)";
+
+    element.style.padding =
+        "14px 24px";
+
+    element.style.background =
+        "#f5c400";
+
+    element.style.color =
+        "#000";
+
+    element.style.fontWeight =
+        "900";
+
+    element.style.fontFamily =
+        "monospace";
+
+    element.style.zIndex =
+        "999";
+
+
+    document.body.appendChild(
+        element
+    );
+
+
+    setTimeout(
+        () => element.remove(),
+        1200
+    );
+
+}
+
+
+/* =========================================================
+   PATRIMÔNIO
+========================================================= */
+
+function calculateEquity() {
+
+    let value =
+        cash;
+
+
+    for (
+        const coin of coins
+    ) {
+
+        value +=
+            coin.holdings *
+            coin.price;
+
+    }
+
+
+    return value;
+
+}
+
+
+/* =========================================================
+   INTERFACE
+========================================================= */
+
+function updateInterface() {
+
+    const equity =
+        calculateEquity();
+
+
+    const profit =
+        (
+            equity -
+            INITIAL_CASH
+        ) /
+        INITIAL_CASH *
+        100;
+
+
+    document.getElementById(
+        "cash"
+    ).textContent =
+        money(cash);
+
+
+    document.getElementById(
+        "equity"
+    ).textContent =
+        money(equity);
+
+
+    const profitElement =
+        document.getElementById(
+            "profit"
+        );
+
+
+    profitElement.textContent =
+        (
+            profit >= 0
+                ? "+"
+                : ""
+        ) +
+        profit.toFixed(2) +
+        "%";
+
+
+    profitElement.style.color =
+        profit >= 0
+            ? "#f5c400"
+            : "#888";
+
+
+    /*
+    Moedas.
+    */
+
+    renderCoins();
+
+
+    /*
+    Posições.
+    */
+
+    renderHoldings();
+
+
+    /*
+    Selecionada.
+    */
+
+    const coin =
+        coins[selectedCoin];
+
+
+    document.getElementById(
+        "selectedName"
+    ).textContent =
+        coin.symbol;
+
+
+    document.getElementById(
+        "selectedPrice"
+    ).textContent =
+        money(coin.price);
+
+
+    document.getElementById(
+        "chartName"
+    ).textContent =
+        coin.symbol;
+
+
+    document.getElementById(
+        "chartPrice"
+    ).textContent =
+        money(coin.price);
+
+
+    /*
+    Polinômio.
+    */
+
+    document.getElementById(
+        "polynomial"
+    ).textContent =
+        polynomialString(
+            coin
+        );
+
+
+    /*
+    Tick.
+    */
+
+    document.getElementById(
+        "tick"
+    ).textContent =
+        "TICK " +
+        String(tick)
+            .padStart(
+                6,
+                "0"
+            );
+
+
+    drawChart();
+
+}
+
+
+/* =========================================================
+   RENDER COINS
+========================================================= */
+
+function renderCoins() {
+
+    const container =
+        document.getElementById(
+            "coins"
+        );
+
+
+    container.innerHTML = "";
+
+
+    coins.forEach(
+        (coin, index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "coin" +
+                (
+                    index ===
+                    selectedCoin
+                        ? " active"
+                        : ""
+                );
+
+
+            const previous =
+                coin.history.length > 1
+                    ? coin.history[
+                        coin.history.length - 2
+                    ]
+                    : coin.price;
+
+
+            const change =
+                (
+                    coin.price -
+                    previous
+                ) /
+                previous *
+                100;
+
+
+            div.innerHTML = `
+
+                <div class="coin-top">
+
+                    <div class="coin-name">
+                        ${coin.symbol}
+                    </div>
+
+                    <div class="coin-price">
+                        ${money(coin.price)}
+                    </div>
+
+                </div>
+
+                <div class="coin-bottom">
+
+                    <span>
+                        ${coin.name}
+                    </span>
+
+                    <span
+                        class="${
+                            change >= 0
+                                ? "change-up"
+                                : "change-down"
+                        }"
+                    >
+                        ${
+                            change >= 0
+                                ? "+"
+                                : ""
+                        }${change.toFixed(2)}%
+                    </span>
+
+                </div>
+
+            `;
+
+
+            div.onclick =
+                () =>
+                    selectCoin(index);
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HOLDINGS
+========================================================= */
+
+function renderHoldings() {
+
+    const container =
+        document.getElementById(
+            "holdings"
+        );
+
+
+    container.innerHTML = "";
+
+
+    coins.forEach(
+        coin => {
+
+            const value =
+                coin.holdings *
+                coin.price;
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "holding";
+
+
+            div.innerHTML = `
+
+                <span class="holding-name">
+                    ${coin.symbol}
+                    × ${coin.holdings}
+                </span>
+
+                <span class="holding-value">
+                    ${money(value)}
+                </span>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   POLINÔMIO EM TEXTO
+========================================================= */
+
+function polynomialString(
+    coin
+) {
+
+    const c =
+        coin.polynomial;
+
+
+    return `
+        f(x) =
+        ${c[0].toFixed(7)}x³
+        ${c[1] >= 0 ? "+" : ""}
+        ${c[1].toFixed(5)}x²
+        ${c[2] >= 0 ? "+" : ""}
+        ${c[2].toFixed(4)}x
+        ${c[3] >= 0 ? "+" : ""}
+        ${c[3].toFixed(3)}
+    `;
+
+}
+
+
+/* =========================================================
+   CHART
+========================================================= */
+
+function drawChart() {
+
+    const canvas =
+        document.getElementById(
+            "chart"
+        );
+
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    const ratio =
+        window.devicePixelRatio ||
+        1;
+
+
+    canvas.width =
+        rect.width *
+        ratio;
+
+
+    canvas.height =
+        rect.height *
+        ratio;
+
+
+    const context =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    context.scale(
+        ratio,
+        ratio
+    );
+
+
+    const width =
+        rect.width;
+
+
+    const height =
+        rect.height;
+
+
+    context.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const coin =
+        coins[selectedCoin];
+
+
+    const history =
+        coin.history;
+
+
+    if (
+        history.length < 2
+    ) {
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       GRID
+    ----------------------------------------- */
+
+    context.strokeStyle =
+        "#1e1e1e";
+
+    context.lineWidth =
+        1;
+
+
+    for (
+        let y = 0;
+        y < height;
+        y += 48
+    ) {
+
+        context.beginPath();
+
+        context.moveTo(
+            0,
+            y
+        );
+
+        context.lineTo(
+            width,
+            y
+        );
+
+        context.stroke();
+
+    }
+
+
+    for (
+        let x = 0;
+        x < width;
+        x += 80
+    ) {
+
+        context.beginPath();
+
+        context.moveTo(
+            x,
+            0
+        );
+
+        context.lineTo(
+            x,
+            height
+        );
+
+        context.stroke();
+
+    }
+
+
+    /* -----------------------------------------
+       RANGE
+    ----------------------------------------- */
+
+    let min =
+        Math.min(
+            ...history
+        );
+
+
+    let max =
+        Math.max(
+            ...history
+        );
+
+
+    const padding =
+        (max - min) *
+        0.15;
+
+
+    min -= padding;
+    max += padding;
+
+
+    if (
+        max === min
+    ) {
+
+        max += 1;
+        min -= 1;
+
+    }
+
+
+    /* -----------------------------------------
+       AREA
+    ----------------------------------------- */
+
+    const gradient =
+        context.createLinearGradient(
+            0,
+            0,
+            0,
+            height
+        );
+
+
+    gradient.addColorStop(
+        0,
+        "rgba(245,196,0,.18)"
+    );
+
+
+    gradient.addColorStop(
+        1,
+        "rgba(245,196,0,0)"
+    );
+
+
+    context.beginPath();
+
+
+    history.forEach(
+        (price, index) => {
+
+            const x =
+                index /
+                (history.length - 1) *
+                width;
+
+
+            const y =
+                height -
+                (
+                    (
+                        price -
+                        min
+                    ) /
+                    (
+                        max -
+                        min
+                    )
+                ) *
+                (
+                    height -
+                    30
+                ) -
+                15;
+
+
+            if (
+                index === 0
+            ) {
+
+                context.moveTo(
+                    x,
+                    y
+                );
+
+            } else {
+
+                context.lineTo(
+                    x,
+                    y
+                );
+
+            }
+
+        }
+    );
+
+
+    context.lineTo(
+        width,
+        height
+    );
+
+
+    context.lineTo(
+        0,
+        height
+    );
+
+
+    context.closePath();
+
+
+    context.fillStyle =
+        gradient;
+
+
+    context.fill();
+
+
+    /* -----------------------------------------
+       LINE
+    ----------------------------------------- */
+
+    context.beginPath();
+
+
+    history.forEach(
+        (price, index) => {
+
+            const x =
+                index /
+                (history.length - 1) *
+                width;
+
+
+            const y =
+                height -
+                (
+                    (
+                        price -
+                        min
+                    ) /
+                    (
+                        max -
+                        min
+                    )
+                ) *
+                (
+                    height -
+                    30
+                ) -
+                15;
+
+
+            if (
+                index === 0
+            ) {
+
+                context.moveTo(
+                    x,
+                    y
+                );
+
+            } else {
+
+                context.lineTo(
+                    x,
+                    y
+                );
+
+            }
+
+        }
+    );
+
+
+    context.strokeStyle =
+        "#f5c400";
+
+    context.lineWidth =
+        2;
+
+
+    context.shadowColor =
+        "#f5c400";
+
+    context.shadowBlur =
+        8;
+
+
+    context.stroke();
+
+
+    context.shadowBlur =
+        0;
+
+
+    /* -----------------------------------------
+       CURRENT PRICE LINE
+    ----------------------------------------- */
+
+    const current =
+        history[
+            history.length - 1
+        ];
+
+
+    const currentY =
+        height -
+        (
+            (
+                current -
+                min
+            ) /
+            (
+                max -
+                min
+            )
+        ) *
+        (
+            height -
+            30
+        ) -
+        15;
+
+
+    context.setLineDash([
+        5,
+        5
+    ]);
+
+
+    context.strokeStyle =
+        "#777";
+
+
+    context.beginPath();
+
+    context.moveTo(
+        0,
+        currentY
+    );
+
+    context.lineTo(
+        width,
+        currentY
+    );
+
+    context.stroke();
+
+
+    context.setLineDash([]);
+
+
+    /* -----------------------------------------
+       PRICE LABEL
+    ----------------------------------------- */
+
+    context.fillStyle =
+        "#f5c400";
+
+    context.font =
+        "11px monospace";
+
+
+    context.fillText(
+        money(current),
+        width - 100,
+        currentY - 8
+    );
+
+}
+
+
+/* =========================================================
+   LOOP
+========================================================= */
+
+/*
+Atualização do mercado.
+
+A cada 180ms temos um novo tick.
+*/
+
+setInterval(
+    updateMarket,
+    180
+);
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+/*
+Preenche o histórico inicial
+para o gráfico não começar vazio.
+*/
+
+for (
+    let i = 0;
+    i < 160;
+    i++
+) {
+
+    tick++;
+
+
+    for (
+        let j = 0;
+        j < coins.length;
+        j++
+    ) {
+
+        const coin =
+            coins[j];
+
+
+        const price =
+            calculatePrice(
+                coin,
+                j,
+                tick
+            );
+
+
+        coin.price =
+            price;
+
+
+        coin.history.push(
+            price
+        );
+
+    }
+
+}
+
+
+/*
+Render inicial.
+*/
+
+updateInterface();
+
+
+/*
+Resize.
+*/
+
+window.addEventListener(
+    "resize",
+    drawChart
+);
+
+</script>
+
+</body>
+
+</html>
