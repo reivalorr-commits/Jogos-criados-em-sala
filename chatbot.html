@@ -1,0 +1,2425 @@
+Claro. Abaixo está a versão completa, limpa e pronta para colar no VS Code. Mantive o conceito de DFT/Fourier, afirmações, estabilização e um sistema de pontuação bem mais equilibrado, para não ficar preso em “perdeu aura”.
+
+Também fiz o histórico das últimas mensagens influenciar levemente o limiar adaptativo, então a “personalidade” do bot vai mudando durante a conversa.
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fourier Aura AI</title>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            #5b00ff25,
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 75%,
+            #00ffff18,
+            transparent 30%
+        ),
+        #050507;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+
+    height: 70px;
+
+    border-bottom:
+        1px solid #ffffff12;
+
+    background:
+        #050507dd;
+
+    backdrop-filter:
+        blur(18px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-inner {
+
+    width:
+        min(1050px, 92%);
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+}
+
+.logo {
+
+    color: #00ffff;
+
+    font-size: 14px;
+
+    font-weight: 1000;
+
+    letter-spacing: 3px;
+
+    text-shadow:
+        0 0 15px #00ffff;
+
+}
+
+.status {
+
+    color: #00ff88;
+
+    font-size: 10px;
+
+    font-family: monospace;
+
+}
+
+.status::before {
+
+    content: "●";
+
+    margin-right: 6px;
+
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+main {
+
+    width:
+        min(1050px, 92%);
+
+    margin: auto;
+
+    padding:
+        55px 0 70px;
+
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 40px;
+
+}
+
+.title h1 {
+
+    margin: 0;
+
+    font-size:
+        clamp(40px, 8vw, 82px);
+
+    line-height: .9;
+
+    font-weight: 1000;
+
+    font-style: italic;
+
+    letter-spacing: -5px;
+
+    text-transform: uppercase;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00ffff,
+            #ffffff,
+            #ff00cc,
+            #00ffff
+        );
+
+    background-size:
+        300%;
+
+    -webkit-background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+    animation:
+        gradientMove 4s linear infinite;
+
+}
+
+@keyframes gradientMove {
+
+    from {
+        background-position: 0%;
+    }
+
+    to {
+        background-position: 300%;
+    }
+
+}
+
+.title p {
+
+    color: #666;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================================================
+   CHAT CONTAINER
+========================================================= */
+
+.chat {
+
+    border:
+        1px solid #ffffff15;
+
+    border-radius:
+        24px;
+
+    overflow:
+        hidden;
+
+    background:
+        #ffffff05;
+
+    box-shadow:
+        0 0 80px #00ffff08,
+        inset 0 0 80px #ff00cc05;
+
+}
+
+
+/* =========================================================
+   CHAT HEADER
+========================================================= */
+
+.chat-header {
+
+    height: 58px;
+
+    padding:
+        0 22px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    border-bottom:
+        1px solid #ffffff12;
+
+}
+
+.chat-title {
+
+    font-size:
+        12px;
+
+    font-weight:
+        1000;
+
+    letter-spacing:
+        2px;
+
+}
+
+.model {
+
+    color:
+        #00ffff;
+
+    font-size:
+        10px;
+
+    font-family:
+        monospace;
+
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.messages {
+
+    min-height:
+        390px;
+
+    max-height:
+        560px;
+
+    overflow-y:
+        auto;
+
+    padding:
+        25px;
+
+}
+
+.message {
+
+    margin-bottom:
+        18px;
+
+    animation:
+        messageIn .3s ease;
+
+}
+
+@keyframes messageIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+.user {
+
+    display:
+        flex;
+
+    justify-content:
+        flex-end;
+
+}
+
+.bot {
+
+    display:
+        flex;
+
+    justify-content:
+        flex-start;
+
+}
+
+.bubble {
+
+    max-width:
+        78%;
+
+    padding:
+        15px 20px;
+
+    border-radius:
+        18px;
+
+    line-height:
+        1.45;
+
+}
+
+.user .bubble {
+
+    color:
+        #aaa;
+
+    background:
+        #ffffff0b;
+
+    border:
+        1px solid #ffffff12;
+
+    font-size:
+        14px;
+
+}
+
+.bot .bubble {
+
+    color:
+        white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00ffff12,
+            #ff00cc12
+        );
+
+    border:
+        1px solid #00ffff25;
+
+    font-size:
+        clamp(20px, 4vw, 31px);
+
+    font-weight:
+        1000;
+
+    text-shadow:
+        0 0 15px #00ffff,
+        0 0 30px #ff00cc;
+
+    animation:
+        auraPulse 1.6s infinite alternate;
+
+}
+
+@keyframes auraPulse {
+
+    from {
+
+        box-shadow:
+            0 0 8px #00ffff08;
+
+    }
+
+    to {
+
+        box-shadow:
+            0 0 30px #ff00cc20;
+
+    }
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.input-area {
+
+    padding:
+        17px;
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    border-top:
+        1px solid #ffffff12;
+
+}
+
+input {
+
+    flex:
+        1;
+
+    min-width:
+        0;
+
+    padding:
+        16px;
+
+    border-radius:
+        14px;
+
+    border:
+        1px solid #ffffff18;
+
+    outline:
+        none;
+
+    background:
+        #00000055;
+
+    color:
+        white;
+
+    font-size:
+        15px;
+
+    transition:
+        .2s;
+
+}
+
+input:focus {
+
+    border-color:
+        #00ffff;
+
+    box-shadow:
+        0 0 20px #00ffff12;
+
+}
+
+button {
+
+    border:
+        none;
+
+    border-radius:
+        14px;
+
+    padding:
+        0 25px;
+
+    color:
+        white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #009dff,
+            #6d00ff,
+            #ff00cc
+        );
+
+    font-weight:
+        1000;
+
+    cursor:
+        pointer;
+
+    transition:
+        .15s;
+
+}
+
+button:hover {
+
+    transform:
+        scale(1.04);
+
+    box-shadow:
+        0 0 30px #ff00cc44;
+
+}
+
+button:active {
+
+    transform:
+        scale(.95);
+
+}
+
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.metrics {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap:
+        12px;
+
+    margin-top:
+        18px;
+
+}
+
+.metric {
+
+    padding:
+        17px;
+
+    border-radius:
+        15px;
+
+    border:
+        1px solid #ffffff12;
+
+    background:
+        #ffffff05;
+
+}
+
+.metric-label {
+
+    color:
+        #555;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1px;
+
+    text-transform:
+        uppercase;
+
+}
+
+.metric-value {
+
+    margin-top:
+        8px;
+
+    font-family:
+        monospace;
+
+    font-size:
+        21px;
+
+    font-weight:
+        bold;
+
+}
+
+#score {
+
+    color:
+        #00ffff;
+
+}
+
+#affirmations {
+
+    color:
+        #ffcc00;
+
+}
+
+#frequency {
+
+    color:
+        #ff00cc;
+
+}
+
+#stability {
+
+    color:
+        #00ff88;
+
+}
+
+
+/* =========================================================
+   SPECTRUM
+========================================================= */
+
+.spectrum {
+
+    height:
+        110px;
+
+    margin-top:
+        12px;
+
+    border-radius:
+        15px;
+
+    border:
+        1px solid #ffffff12;
+
+    background:
+        #000;
+
+    overflow:
+        hidden;
+
+}
+
+canvas {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+}
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.info {
+
+    margin-top:
+        18px;
+
+    padding:
+        18px;
+
+    border-radius:
+        15px;
+
+    border:
+        1px solid #ffffff0d;
+
+    background:
+        #ffffff03;
+
+    color:
+        #444;
+
+    font-family:
+        monospace;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.8;
+
+}
+
+.info span {
+
+    color:
+        #777;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+
+    margin-top:
+        25px;
+
+    text-align:
+        center;
+
+    color:
+        #2d2d2d;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width: 700px) {
+
+    .metrics {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+    .input-area {
+
+        flex-direction:
+            column;
+
+    }
+
+    button {
+
+        height:
+            50px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="header-inner">
+
+        <div class="logo">
+            FOURIER AURA AI
+        </div>
+
+        <div class="status">
+            AURA ENGINE ONLINE
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+
+    <div class="title">
+
+        <h1>
+            CHAT DE AURA
+        </h1>
+
+        <p>
+            ANÁLISE ESPECTRAL DE AFIRMAÇÕES HUMANAS
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         CHAT
+    ====================================================== -->
+
+    <div class="chat">
+
+
+        <div class="chat-header">
+
+            <div class="chat-title">
+                AURA CONVERSATIONAL ENGINE
+            </div>
+
+            <div class="model">
+                FAI-v5.6-FOURIER
+            </div>
+
+        </div>
+
+
+        <div
+            class="messages"
+            id="messages"
+        >
+
+            <div class="message bot">
+
+                <div class="bubble">
+                    irmao, ai voce ganhou aura
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="input-area">
+
+            <input
+                id="userInput"
+                type="text"
+                maxlength="500"
+                placeholder="mande uma afirmação..."
+                autocomplete="off"
+            >
+
+            <button id="send">
+                ANALISAR
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         MÉTRICAS
+    ====================================================== -->
+
+    <div class="metrics">
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                SCORE ESPECTRAL
+            </div>
+
+            <div
+                class="metric-value"
+                id="score"
+            >
+                0.00
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                AFIRMAÇÕES
+            </div>
+
+            <div
+                class="metric-value"
+                id="affirmations"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                FREQUÊNCIA DOMINANTE
+            </div>
+
+            <div
+                class="metric-value"
+                id="frequency"
+            >
+                0 Hz
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                ESTABILIDADE
+            </div>
+
+            <div
+                class="metric-value"
+                id="stability"
+            >
+                0%
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         FOURIER GRAPH
+    ====================================================== -->
+
+    <div class="spectrum">
+
+        <canvas
+            id="spectrumCanvas"
+        ></canvas>
+
+    </div>
+
+
+    <!-- =====================================================
+         DEBUG / SCIENCE PANEL
+    ====================================================== -->
+
+    <div class="info">
+
+        <div>
+            <span>PROCESSAMENTO:</span>
+            ALFABETO → VETOR → DFT → ENERGIA ESPECTRAL
+        </div>
+
+        <div>
+            <span>DECISÃO:</span>
+            SCORE + ESTABILIDADE + HISTÓRICO
+        </div>
+
+        <div>
+            <span>LIMIAR:</span>
+            ADAPTATIVO
+        </div>
+
+        <div>
+            <span>MODELO:</span>
+            DETERMINÍSTICO / EXPERIMENTAL
+        </div>
+
+    </div>
+
+
+    <footer>
+
+        FOURIER AURA AI • NOMINAL SPECTRAL RESEARCH LAB
+        • RESULTADOS CIENTIFICAMENTE QUESTIONÁVEIS
+
+    </footer>
+
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   FOURIER AURA AI
+   =========================================================
+
+   PIPELINE:
+
+   TEXTO
+      ↓
+   LETRAS
+      ↓
+   NÚMEROS 1-26
+      ↓
+   DFT
+      ↓
+   ESPECTRO
+      ↓
+   ENERGIA
+      ↓
+   AFIRMAÇÕES
+      ↓
+   ESTABILIZAÇÃO
+      ↓
+   HISTÓRICO
+      ↓
+   LIMIAR
+      ↓
+   AURA
+
+========================================================= */
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const input =
+    document.getElementById("userInput");
+
+const sendButton =
+    document.getElementById("send");
+
+const messages =
+    document.getElementById("messages");
+
+const scoreElement =
+    document.getElementById("score");
+
+const affirmationsElement =
+    document.getElementById("affirmations");
+
+const frequencyElement =
+    document.getElementById("frequency");
+
+const stabilityElement =
+    document.getElementById("stability");
+
+const canvas =
+    document.getElementById("spectrumCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+/* =========================================================
+   HISTÓRICO
+========================================================= */
+
+const auraHistory = [];
+
+
+/* =========================================================
+   ALFABETO
+========================================================= */
+
+const alphabet =
+    "abcdefghijklmnopqrstuvwxyz";
+
+
+/* =========================================================
+   HASH
+========================================================= */
+
+function hashText(text) {
+
+    let hash = 0;
+
+    for (
+        let i = 0;
+        i < text.length;
+        i++
+    ) {
+
+        hash =
+            ((hash << 5) - hash) +
+            text.charCodeAt(i);
+
+        hash |= 0;
+
+    }
+
+    return Math.abs(hash);
+
+}
+
+
+/* =========================================================
+   TEXTO → NÚMEROS
+========================================================= */
+
+function textToNumbers(text) {
+
+    const clean =
+        text
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .replace(
+                /[^a-z]/g,
+                ""
+            );
+
+
+    const values = [];
+
+
+    for (
+        const char of clean
+    ) {
+
+        const index =
+            alphabet.indexOf(char);
+
+
+        if (index !== -1) {
+
+            values.push(
+                index + 1
+            );
+
+        }
+
+    }
+
+
+    return values;
+
+}
+
+
+/* =========================================================
+   DFT
+========================================================= */
+
+function dft(values) {
+
+    const N =
+        values.length;
+
+
+    const real =
+        new Array(N).fill(0);
+
+    const imag =
+        new Array(N).fill(0);
+
+
+    for (
+        let k = 0;
+        k < N;
+        k++
+    ) {
+
+        for (
+            let n = 0;
+            n < N;
+            n++
+        ) {
+
+            const angle =
+                (
+                    2 *
+                    Math.PI *
+                    k *
+                    n
+                ) / N;
+
+
+            real[k] +=
+                values[n] *
+                Math.cos(angle);
+
+
+            imag[k] -=
+                values[n] *
+                Math.sin(angle);
+
+        }
+
+    }
+
+
+    const magnitude = [];
+
+
+    for (
+        let k = 0;
+        k < N;
+        k++
+    ) {
+
+        magnitude[k] =
+            Math.sqrt(
+                real[k] ** 2 +
+                imag[k] ** 2
+            );
+
+    }
+
+
+    return magnitude;
+
+}
+
+
+/* =========================================================
+   AFIRMAÇÕES
+========================================================= */
+
+function countAffirmations(text) {
+
+    const words = [
+
+        "sim",
+        "sou",
+        "tenho",
+        "sei",
+        "posso",
+        "consigo",
+        "ganhei",
+        "venci",
+        "certeza",
+        "obviamente",
+        "sempre",
+        "nunca",
+        "vou",
+        "quero",
+        "é",
+        "estou",
+        "tenho certeza",
+        "com certeza"
+
+    ];
+
+
+    const clean =
+        text
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            );
+
+
+    let count = 0;
+
+
+    for (
+        const word of words
+    ) {
+
+        const escaped =
+            word.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+            );
+
+
+        const regex =
+            new RegExp(
+                "\\b" +
+                escaped +
+                "\\b",
+                "g"
+            );
+
+
+        const matches =
+            clean.match(regex);
+
+
+        if (matches) {
+
+            count +=
+                matches.length;
+
+        }
+
+    }
+
+
+    /*
+    ! = afirmação forte
+    */
+
+    count +=
+        (
+            text.match(/!/g) || []
+        ).length;
+
+
+    return count;
+
+}
+
+
+/* =========================================================
+   POLARIDADE SEMÂNTICA SIMPLES
+========================================================= */
+
+function semanticBonus(text) {
+
+    const positive = [
+
+        "bom",
+        "boa",
+        "melhor",
+        "forte",
+        "ganhei",
+        "venci",
+        "lenda",
+        "rei",
+        "rainha",
+        "aura",
+        "brabo",
+        "braba",
+        "top",
+        "perfeito",
+        "perfeita",
+        "sucesso",
+        "confiante",
+        "confiança"
+
+    ];
+
+
+    const negative = [
+
+        "ruim",
+        "perdi",
+        "perder",
+        "fraco",
+        "fraca",
+        "horrivel",
+        "horrível",
+        "burro",
+        "burra",
+        "fracasso",
+        "medo",
+        "triste",
+        "lixo",
+        "pessimo",
+        "péssimo",
+        "pior"
+
+    ];
+
+
+    const clean =
+        text
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            );
+
+
+    let score = 0;
+
+
+    for (
+        const word of positive
+    ) {
+
+        if (
+            clean.includes(word)
+        ) {
+
+            score += 8;
+
+        }
+
+    }
+
+
+    for (
+        const word of negative
+    ) {
+
+        if (
+            clean.includes(word)
+        ) {
+
+            score -= 8;
+
+        }
+
+    }
+
+
+    return score;
+
+}
+
+
+/* =========================================================
+   SCORE FOURIER
+========================================================= */
+
+function calculateScore(
+    values,
+    spectrum,
+    affirmations,
+    text
+) {
+
+    if (
+        values.length === 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    /* ---------------------------------
+       MÉDIA ALFABÉTICA
+    --------------------------------- */
+
+    const average =
+        values.reduce(
+            (a, b) => a + b,
+            0
+        ) / values.length;
+
+
+    /*
+    Centro do alfabeto = 13.5
+
+    Transformamos isso em
+    aproximadamente -25/+25.
+    */
+
+    const alphabetEffect =
+        (
+            average - 13.5
+        ) * 3.0;
+
+
+    /* ---------------------------------
+       ENERGIA FOURIER
+    --------------------------------- */
+
+    let energy = 0;
+
+
+    for (
+        const value of spectrum
+    ) {
+
+        energy +=
+            value * value;
+
+    }
+
+
+    energy /=
+        spectrum.length;
+
+
+    const spectralEnergy =
+        Math.sqrt(energy);
+
+
+    const energyEffect =
+        Math.sin(
+            spectralEnergy * 0.08
+        ) * 10;
+
+
+    /* ---------------------------------
+       FREQUÊNCIA DOMINANTE
+    --------------------------------- */
+
+    let dominant =
+        0;
+
+
+    for (
+        let i = 1;
+        i < spectrum.length / 2;
+        i++
+    ) {
+
+        if (
+            spectrum[i] >
+            spectrum[dominant]
+        ) {
+
+            dominant = i;
+
+        }
+
+    }
+
+
+    /*
+    A frequência gera oscilação
+    e não uma penalidade fixa.
+    */
+
+    const frequencyEffect =
+        Math.sin(
+            dominant * 1.73
+        ) * 12;
+
+
+    /* ---------------------------------
+       AFIRMAÇÕES
+    --------------------------------- */
+
+    const affirmationEffect =
+        Math.min(
+            affirmations * 7,
+            35
+        );
+
+
+    /* ---------------------------------
+       VARIAÇÃO DAS LETRAS
+    --------------------------------- */
+
+    let variation = 0;
+
+
+    for (
+        let i = 0;
+        i < values.length;
+        i++
+    ) {
+
+        variation +=
+            Math.sin(
+                values[i] * 2.31 +
+                i * 1.73
+            );
+
+    }
+
+
+    variation =
+        (
+            variation /
+            values.length
+        ) * 10;
+
+
+    /* ---------------------------------
+       SEMÂNTICA
+    --------------------------------- */
+
+    const semantic =
+        semanticBonus(text);
+
+
+    /* ---------------------------------
+       PEQUENO EFEITO DE COMPRIMENTO
+    --------------------------------- */
+
+    const lengthEffect =
+        Math.sin(
+            values.length * 0.61
+        ) * 5;
+
+
+    /* ---------------------------------
+       SCORE
+    --------------------------------- */
+
+    let score =
+        alphabetEffect +
+        energyEffect +
+        frequencyEffect +
+        affirmationEffect +
+        variation +
+        semantic +
+        lengthEffect;
+
+
+    /*
+    Limita entre -100 e +100.
+    */
+
+    score =
+        Math.max(
+            -100,
+            Math.min(
+                100,
+                score
+            )
+        );
+
+
+    return score;
+
+}
+
+
+/* =========================================================
+   ESTABILIZAÇÃO
+========================================================= */
+
+function stabilize(
+    values,
+    affirmations,
+    text
+) {
+
+    const results = [];
+
+
+    const iterations =
+        Math.min(
+            16,
+            Math.max(
+                8,
+                values.length
+            )
+        );
+
+
+    for (
+        let i = 0;
+        i < iterations;
+        i++
+    ) {
+
+        /*
+        Pequena perturbação.
+
+        O sinal continua praticamente
+        igual, mas permite medir
+        estabilidade.
+        */
+
+        const sample =
+            values.map(
+                (value, index) => {
+
+                    return value +
+                        Math.sin(
+                            index * 0.73 +
+                            i * 1.19
+                        ) * 0.25;
+
+                }
+            );
+
+
+        const spectrum =
+            dft(sample);
+
+
+        const score =
+            calculateScore(
+                sample,
+                spectrum,
+                affirmations,
+                text
+            );
+
+
+        results.push(
+            score
+        );
+
+    }
+
+
+    /* ---------------------------------
+       MÉDIA
+    --------------------------------- */
+
+    const average =
+        results.reduce(
+            (a, b) => a + b,
+            0
+        ) /
+        results.length;
+
+
+    /* ---------------------------------
+       DESVIO
+    --------------------------------- */
+
+    let variance = 0;
+
+
+    for (
+        const value of results
+    ) {
+
+        variance +=
+            (
+                value - average
+            ) ** 2;
+
+    }
+
+
+    variance /=
+        results.length;
+
+
+    const deviation =
+        Math.sqrt(
+            variance
+        );
+
+
+    /* ---------------------------------
+       ESTABILIDADE
+    --------------------------------- */
+
+    const stability =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                100 -
+                deviation * 8
+            )
+        );
+
+
+    return {
+
+        score:
+            average,
+
+        stability
+
+    };
+
+}
+
+
+/* =========================================================
+   LIMIAR ADAPTATIVO
+========================================================= */
+
+function calculateThreshold() {
+
+    /*
+    Sem histórico:
+    limiar neutro.
+
+    Depois das mensagens:
+    o sistema observa a média recente.
+
+    Se o usuário estiver ganhando
+    muita aura, o limite sobe.
+
+    Se estiver perdendo muita aura,
+    o limite desce.
+
+    Isso cria uma espécie de
+    "humor" do chatbot.
+    */
+
+    if (
+        auraHistory.length === 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    const recent =
+        auraHistory.slice(-6);
+
+
+    const average =
+        recent.reduce(
+            (a, b) => a + b,
+            0
+        ) /
+        recent.length;
+
+
+    /*
+    O histórico influencia no máximo
+    ±12 pontos.
+    */
+
+    return Math.max(
+        -12,
+        Math.min(
+            12,
+            average * 0.18
+        )
+    );
+
+}
+
+
+/* =========================================================
+   CHAT MESSAGE
+========================================================= */
+
+function addMessage(
+    text,
+    type
+) {
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+
+    message.className =
+        "message " + type;
+
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+
+    bubble.className =
+        "bubble";
+
+
+    bubble.textContent =
+        text;
+
+
+    message.appendChild(
+        bubble
+    );
+
+
+    messages.appendChild(
+        message
+    );
+
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+
+/* =========================================================
+   ANIMAÇÃO DO SCORE
+========================================================= */
+
+function animateScore(
+    target
+) {
+
+    const start =
+        parseFloat(
+            scoreElement.textContent
+        ) || 0;
+
+
+    const duration =
+        550;
+
+
+    const startTime =
+        performance.now();
+
+
+    function frame(time) {
+
+        const progress =
+            Math.min(
+                1,
+                (
+                    time -
+                    startTime
+                ) / duration
+            );
+
+
+        const eased =
+            1 -
+            Math.pow(
+                1 - progress,
+                3
+            );
+
+
+        const value =
+            start +
+            (
+                target -
+                start
+            ) *
+            eased;
+
+
+        scoreElement.textContent =
+            value.toFixed(2);
+
+
+        if (
+            progress < 1
+        ) {
+
+            requestAnimationFrame(
+                frame
+            );
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        frame
+    );
+
+}
+
+
+/* =========================================================
+   FREQUÊNCIA DOMINANTE
+========================================================= */
+
+function dominantFrequency(
+    spectrum
+) {
+
+    if (
+        !spectrum.length
+    ) {
+
+        return 0;
+
+    }
+
+
+    let index = 0;
+
+
+    for (
+        let i = 1;
+        i < spectrum.length / 2;
+        i++
+    ) {
+
+        if (
+            spectrum[i] >
+            spectrum[index]
+        ) {
+
+            index = i;
+
+        }
+
+    }
+
+
+    return index;
+
+}
+
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+function drawSpectrum(
+    spectrum
+) {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    canvas.width =
+        rect.width * 2;
+
+    canvas.height =
+        rect.height * 2;
+
+
+    ctx.setTransform(
+        2,
+        0,
+        0,
+        2,
+        0,
+        0
+    );
+
+
+    const width =
+        rect.width;
+
+    const height =
+        rect.height;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    if (
+        spectrum.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const visible =
+        Math.min(
+            spectrum.length / 2,
+            80
+        );
+
+
+    let max =
+        0;
+
+
+    for (
+        let i = 0;
+        i < visible;
+        i++
+    ) {
+
+        max =
+            Math.max(
+                max,
+                spectrum[i]
+            );
+
+    }
+
+
+    if (
+        max === 0
+    ) {
+
+        max = 1;
+
+    }
+
+
+    const barWidth =
+        width / visible;
+
+
+    for (
+        let i = 0;
+        i < visible;
+        i++
+    ) {
+
+        const normalized =
+            spectrum[i] / max;
+
+
+        const barHeight =
+            normalized *
+            height *
+            .88;
+
+
+        const gradient =
+            ctx.createLinearGradient(
+                0,
+                height,
+                0,
+                height - barHeight
+            );
+
+
+        gradient.addColorStop(
+            0,
+            "#00ffff"
+        );
+
+        gradient.addColorStop(
+            .5,
+            "#6d00ff"
+        );
+
+        gradient.addColorStop(
+            1,
+            "#ff00cc"
+        );
+
+
+        ctx.fillStyle =
+            gradient;
+
+
+        ctx.fillRect(
+            i * barWidth,
+            height - barHeight,
+            Math.max(
+                1,
+                barWidth - 1.5
+            ),
+            barHeight
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PROCESSAMENTO PRINCIPAL
+========================================================= */
+
+function processMessage() {
+
+    const text =
+        input.value.trim();
+
+
+    if (
+        !text
+    ) {
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    /*
+    Mostra mensagem do usuário.
+    */
+
+    addMessage(
+        text,
+        "user"
+    );
+
+
+    /*
+    Converte texto.
+    */
+
+    const values =
+        textToNumbers(
+            text
+        );
+
+
+    /*
+    Se não houver letras.
+    */
+
+    if (
+        values.length === 0
+    ) {
+
+        addMessage(
+            "irmao, ai voce perdeu aura",
+            "bot"
+        );
+
+        input.value = "";
+
+        return;
+
+    }
+
+
+    /*
+    Conta afirmações.
+    */
+
+    const affirmations =
+        countAffirmations(
+            text
+        );
+
+
+    /*
+    Fourier original.
+    */
+
+    const spectrum =
+        dft(
+            values
+        );
+
+
+    /*
+    Estabiliza.
+    */
+
+    const result =
+        stabilize(
+            values,
+            affirmations,
+            text
+        );
+
+
+    /*
+    Histórico.
+    */
+
+    auraHistory.push(
+        result.score
+    );
+
+
+    /*
+    Mantém apenas as últimas
+    10 análises.
+    */
+
+    if (
+        auraHistory.length > 10
+    ) {
+
+        auraHistory.shift();
+
+    }
+
+
+    /*
+    Calcula limiar.
+    */
+
+    const threshold =
+        calculateThreshold();
+
+
+    /*
+    Score final levando em
+    consideração o estado atual.
+    */
+
+    const finalScore =
+        result.score -
+        threshold;
+
+
+    /*
+    Atualiza interface.
+    */
+
+    animateScore(
+        finalScore
+    );
+
+
+    affirmationsElement.textContent =
+        affirmations;
+
+
+    stabilityElement.textContent =
+        Math.round(
+            result.stability
+        ) + "%";
+
+
+    const frequency =
+        dominantFrequency(
+            spectrum
+        );
+
+
+    frequencyElement.textContent =
+        frequency + " Hz";
+
+
+    /*
+    Desenha Fourier.
+    */
+
+    drawSpectrum(
+        spectrum
+    );
+
+
+    /*
+    ==========================================
+    DECISÃO
+    ==========================================
+    */
+
+    const LIMIT = 0;
+
+
+    let response;
+
+
+    if (
+        finalScore >= LIMIT
+    ) {
+
+        response =
+            "irmao, ai voce ganhou aura";
+
+    } else {
+
+        response =
+            "irmao, ai voce perdeu aura";
+
+    }
+
+
+    /*
+    Pequeno atraso.
+    */
+
+    setTimeout(
+        () => {
+
+            addMessage(
+                response,
+                "bot"
+            );
+
+        },
+        300
+    );
+
+
+    input.value = "";
+
+    input.focus();
+
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+sendButton.addEventListener(
+    "click",
+    processMessage
+);
+
+
+input.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            processMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   RESPONSIVIDADE DO CANVAS
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        /*
+        O gráfico será redesenhado
+        na próxima mensagem.
+        */
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
