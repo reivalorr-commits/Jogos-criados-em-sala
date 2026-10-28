@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clicker do Capitalismo™</title>
+<style>
+:root{--bg:#10130f;--panel:#1b211a;--panel2:#232b21;--line:#354233;--green:#a8f06a;--gold:#ffd166;--red:#ff7777;--muted:#aab5a2;--text:#f1f5ed}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#263421 0%,var(--bg) 58%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.wrap{max-width:1200px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.brand h1{margin:0;font-size:clamp(1.6rem,4vw,2.6rem);letter-spacing:-1.5px}.brand h1 span{color:var(--green)}.brand p{margin:4px 0 0;color:var(--muted)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--gold);font-size:.85rem;background:#171d15}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.stat,.panel{background:linear-gradient(145deg,#20281e,#171d16);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 30px #0002}.stat{padding:14px 16px}.stat small{display:block;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}.stat strong{font-size:clamp(1.15rem,2.4vw,1.8rem);display:block;margin-top:4px;color:var(--green);overflow-wrap:anywhere}.stat .sub{color:var(--muted);font-size:.8rem}
+.layout{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(360px,1.3fr);gap:16px;align-items:start}.panel{padding:18px}.panel h2{font-size:1.05rem;margin:0 0 4px}.hint{color:var(--muted);font-size:.87rem;margin:0 0 14px}
+.workzone{display:flex;flex-direction:column;align-items:center;text-align:center;min-height:420px;justify-content:center;position:relative;overflow:hidden}.workzone:before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:#a8f06a0b;filter:blur(8px)}
+.money-button{position:relative;width:min(230px,68vw);aspect-ratio:1;border-radius:50%;border:2px solid #d3ff9a;background:radial-gradient(circle at 35% 25%,#e4ffc3,#a8f06a 32%,#5eaa39 72%,#2e6720);color:#172510;box-shadow:0 12px 0 #2a4c20,0 18px 45px #8de94c22,inset 0 4px 12px #fff9;transition:transform .08s,filter .15s;display:flex;flex-direction:column;justify-content:center;align-items:center;user-select:none}
+.money-button:hover{filter:brightness(1.07)}.money-button:active,.money-button.pressed{transform:translateY(7px) scale(.98);box-shadow:0 5px 0 #2a4c20,inset 0 4px 12px #fff9}
+.coin{font-size:4.4rem;line-height:1;text-shadow:0 3px #ffffff66}.clicklabel{font-weight:900;font-size:1.1rem;margin-top:8px}.clicksub{font-size:.8rem;font-weight:700;opacity:.75}
+.workcaption{margin:24px 0 0;color:var(--muted);font-size:.92rem}.workcaption b{color:var(--gold)}.quote{min-height:44px;margin-top:10px;color:#d3dfca;font-style:italic}
+.float{position:absolute;pointer-events:none;font-weight:900;color:var(--green);text-shadow:0 2px 8px #000;animation:rise .8s ease-out forwards;z-index:4}@keyframes rise{to{transform:translateY(-80px) scale(1.2);opacity:0}}
+.shophead{display:flex;justify-content:space-between;align-items:center;gap:10px}.shophead span{color:var(--muted);font-size:.8rem}.shoplist{display:grid;gap:9px;max-height:650px;overflow:auto;padding-right:3px}
+.item{display:grid;grid-template-columns:52px 1fr auto;gap:11px;align-items:center;background:#151b14;border:1px solid #303d2c;border-radius:13px;padding:11px;transition:border-color .15s,transform .15s}.item:hover{border-color:#64834e}.item.locked{opacity:.58}.itemicon{height:48px;width:48px;border-radius:12px;display:grid;place-items:center;background:#273523;font-size:1.7rem}.item h3{margin:0;font-size:.95rem}.item p{margin:3px 0;color:var(--muted);font-size:.78rem}.item .owned{color:var(--green);font-size:.75rem;font-weight:700}.buy{background:var(--green);color:#172510;border:0;border-radius:9px;padding:9px 11px;font-weight:900;min-width:94px}.buy:disabled{background:#3a4436;color:#8b9884;cursor:not-allowed}.buy small{display:block;font-size:.68rem;font-weight:700}
+.lower{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.feed{display:grid;gap:8px}.feedline{display:flex;gap:9px;align-items:flex-start;background:#151b14;border-radius:10px;padding:10px;color:#d4dfcd;font-size:.85rem}.feedline span{font-size:1.1rem}.achievement{display:flex;align-items:center;gap:10px;border:1px solid #303d2c;background:#151b14;border-radius:10px;padding:10px;margin-top:8px}.achievement .achicon{font-size:1.4rem;filter:grayscale(1);opacity:.45}.achievement.done{border-color:#6d944d}.achievement.done .achicon{filter:none;opacity:1}.achievement b{display:block;font-size:.85rem}.achievement small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.secondary{background:#273124;color:var(--text);border:1px solid #46553e;border-radius:9px;padding:8px 11px}.danger{color:#ffb0a8;border-color:#70433c}.footer{text-align:center;color:#778573;font-size:.78rem;margin:22px 0 5px}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(120px);background:#e6ffc8;color:#172510;padding:12px 18px;border-radius:12px;font-weight:800;box-shadow:0 8px 30px #0006;transition:transform .25s;z-index:20;max-width:90vw;text-align:center}.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.workzone{min-height:370px}.shoplist{max-height:none}.stats{grid-template-columns:repeat(2,1fr)}.lower{grid-template-columns:1fr}.wrap{padding:13px}.panel{padding:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Clicker do <span>Capitalismo™</span></h1><p>Trabalhe. Consuma. Repita. Chame isso de liberdade.</p></div>
+    <div class="pill">📈 Simulador fictício de consumismo</div>
+  </header>
+
+  <section class="stats">
+    <div class="stat"><small>Patrimônio disponível</small><strong id="money">R$ 0</strong><div class="sub" id="status">A luta começa agora.</div></div>
+    <div class="stat"><small>Renda automática</small><strong id="income">R$ 0/s</strong><div class="sub">Dinheiro trabalhando (supostamente)</div></div>
+    <div class="stat"><small>Cliques realizados</small><strong id="clicks">0</strong><div class="sub">Sua produtividade está sendo monitorada.</div></div>
+    <div class="stat"><small>Consumo acumulado</small><strong id="spent">R$ 0</strong><div class="sub" id="networth">Seu banco acredita em você.</div></div>
+  </section>
+
+  <main class="layout">
+    <section class="panel workzone" id="workzone">
+      <h2 style="position:relative">Bata seu ponto emocional</h2>
+      <p class="hint" style="position:relative">Cada clique é um pequeno passo para comprar algo de que você não precisa.</p>
+      <button class="money-button" id="clicker" aria-label="Trabalhar para ganhar dinheiro">
+        <span class="coin">💸</span><span class="clicklabel">VENDER SUA ALMA</span><span class="clicksub" id="clickValue">+ R$ 1 por clique</span>
+      </button>
+      <p class="workcaption">Meta corporativa: <b id="goal">ficar minimamente confortável</b></p>
+      <div class="quote" id="quote">“Você não está cansado. Está pouco monetizado.”</div>
+      <div class="actions" style="justify-content:center;position:relative">
+        <button class="secondary" id="bonusBtn">🎲 Roleta do mercado</button>
+        <button class="secondary" id="prestigeBtn" title="Reinicia a carreira em troca de bônus permanente">🔄 Rebranding da vida</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="shophead"><div><h2>🛒 Shopping da produtividade</h2><p class="hint">Invista em você. Principalmente se você for o produto.</p></div><span id="shopCount">0 itens</span></div>
+      <div class="shoplist" id="shop"></div>
+    </section>
+  </main>
+
+  <section class="lower">
+    <div class="panel"><h2>📣 Últimas notícias do mercado</h2><p class="hint">Informações de procedência duvidosa, mas com muita confiança.</p><div class="feed" id="feed"></div></div>
+    <div class="panel"><h2>🏆 Certificações de sucesso</h2><p class="hint">Seu valor como pessoa, agora quantificado.</p><div id="achievements"></div>
+      <div class="actions"><button class="secondary" id="saveBtn">💾 Salvar agora</button><button class="secondary" id="exportBtn">📤 Exportar save</button><button class="secondary danger" id="resetBtn">🧨 Pedir demissão</button></div>
+    </div>
+  </section>
+  <div class="footer">Clicker do Capitalismo™ • Nenhuma economia real foi prejudicada nesta simulação. Provavelmente.</div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = n => {
+  if (!Number.isFinite(n)) return "R$ ∞";
+  if (n >= 1e12) return "R$ " + (n/1e12).toFixed(2).replace(".",",") + " tri";
+  if (n >= 1e9) return "R$ " + (n/1e9).toFixed(2).replace(".",",") + " bi";
+  if (n >= 1e6) return "R$ " + (n/1e6).toFixed(2).replace(".",",") + " mi";
+  if (n >= 1e4) return "R$ " + n.toLocaleString("pt-BR",{maximumFractionDigits:0});
+  return "R$ " + n.toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2});
+};
+const items = [
+ {id:"coffee",icon:"☕",name:"Café gourmet superfaturado",desc:"Você paga R$ 28 para sentir que está vencendo.",base:15,rate:0,click:1,unlock:0},
+ {id:"course",icon:"📚",name:"Curso de alta performance",desc:"Aprenda a vender cursos sobre vender cursos.",base:75,rate:0,click:3,unlock:30},
+ {id:"chair",icon:"🪑",name:"Cadeira gamer ergonômica",desc:"Resolve sua postura e cria uma nova parcela.",base:180,rate:1,click:0,unlock:80},
+ {id:"sidegig",icon:"📦",name:"Loja de dropshipping",desc:"Você não tem estoque. Nem paz.",base:450,rate:4,click:0,unlock:250},
+ {id:"employee",icon:"🧑‍💻",name:"Estagiário não remunerado",desc:"Gera valor. Recebe experiência e biscoito.",base:1100,rate:12,click:0,unlock:700},
+ {id:"influencer",icon:"📱",name:"Ring light de influencer",desc:"Transforme sua rotina em publicidade nativa.",base:3600,rate:40,click:0,unlock:2500},
+ {id:"crypto",icon:"🪙",name:"Cripto-moeda duvidosa",desc:"O whitepaper é um emoji e uma promessa.",base:12000,rate:150,click:0,unlock:8000},
+ {id:"franchise",icon:"🍔",name:"Franquia de hambúrguer gourmet",desc:"Pão brioche, margem espremida e branding.",base:55000,rate:650,click:0,unlock:30000},
+ {id:"ai",icon:"🤖",name:"IA que substitui sua equipe",desc:"Automatiza tudo, inclusive sua justificativa.",base:250000,rate:3200,click:0,unlock:150000},
+ {id:"bank",icon:"🏦",name:"Banco digital com neon",desc:"Uma fintech, três letras e uma rodada série A.",base:1500000,rate:18000,click:0,unlock:800000},
+ {id:"island",icon:"🏝️",name:"Ilha fiscal particular",desc:"Otimização tributária com vista para o mar.",base:12000000,rate:140000,click:0,unlock:7000000},
+ {id:"planet",icon:"🪐",name:"Planeta privatizado",desc:"Agora até o pôr do sol tem assinatura premium.",base:150000000,rate:1800000,click:0,unlock:80000000}
+];
+const quotes = [
+ "“Você não está cansado. Está pouco monetizado.”",
+ "“Se não pode comprar felicidade, parcele em 12 vezes.”",
+ "“Trabalhe enquanto eles dormem. Durma no expediente.”",
+ "“A paixão é ótima. Já tentou transformar em renda passiva?”",
+ "“Seu limite é o céu. Seu limite do cartão é outra história.”",
+ "“Não é consumismo se você chamar de investimento emocional.”",
+ "“O dinheiro não compra tudo. Mas compra uma cadeira melhor para chorar.”",
+ "“Você merece. O algoritmo de anúncios confirmou.”"
+];
+const news = [
+ ["📉","Mercado descobre que jovens também precisam comer."],
+ ["💼","CEO recomenda equilíbrio entre vida e trabalho em palestra de 4 horas."],
+ ["🛍️","Estudo fictício: comprar organizadores ajuda a organizar compras."],
+ ["📈","Ações da empresa 'Confia™' sobem após CEO pedir confiança."],
+ ["🧠","Especialistas recomendam descanso. Cursos de produtividade discordam."],
+ ["💳","Cartão aprovado! Seu futuro eu foi notificado."],
+ ["🏠","Imóveis valorizam; morar dentro de uma caixa vira tendência."],
+ ["🤖","Robô faz seu trabalho. Você ganha tempo para procurar outro trabalho."]
+];
+const achievements = [
+ {id:"first",icon:"👶",name:"Primeiro boleto",desc:"Ganhe seus primeiros R$ 10.",test:s=>s.money+s.spent>=10},
+ {id:"click100",icon:"🖱️",name:"Dedo corporativo",desc:"Clique 100 vezes.",test:s=>s.clicks>=100},
+ {id:"shop5",icon:"🛍️",name:"Cliente VIP do próprio salário",desc:"Compre 5 itens.",test:s=>s.totalBought>=5},
+ {id:"income100",icon:"💹",name:"Renda passiva (quase)",desc:"Chegue a R$ 100/s.",test:s=>getRate(s)>=100},
+ {id:"million",icon:"🤑",name:"Milionário de planilha",desc:"Acumule R$ 1 milhão entre saldo e gastos.",test:s=>s.money+s.spent>=1e6},
+ {id:"planet",icon:"🌌",name:"Dono do problema",desc:"Compre um planeta.",test:s=>(s.owned.planet||0)>0},
+ {id:"prestige",icon:"🔁",name:"Empreendedor serial",desc:"Faça um rebranding da vida.",test:s=>s.prestige>=1}
+];
+const defaultState = () => ({money:0,spent:0,clicks:0,owned:{},totalBought:0,prestige:0,bonusUntil:0,achieved:[],lastTick:Date.now(),lastNews:0});
+let state = defaultState();
+let toastTimer;
+function getRate(s=state){return items.reduce((sum,it)=>sum+(s.owned[it.id]||0)*it.rate,0)*(1+(s.prestige||0)*.15);}
+function getClickValue(){return (1+items.reduce((sum,it)=>sum+(state.owned[it.id]||0)*it.click,0))*(1+state.prestige*.1)*(Date.now()<state.bonusUntil?2:1);}
+function cost(it){return Math.ceil(it.base*Math.pow(1.16,state.owned[it.id]||0));}
+function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2400);}
+function addFeed(icon,msg){const el=document.createElement("div");el.className="feedline";const i=document.createElement("span");i.textContent=icon;const t=document.createElement("div");t.textContent=msg;el.append(i,t);$("feed").prepend(el);while($("feed").children.length>5)$("feed").lastElementChild.remove();}
+function renderShop(){
+ const shop=$("shop");shop.innerHTML="";
+ let available=0;
+ items.forEach(it=>{
+   const owned=state.owned[it.id]||0, price=cost(it), unlocked=state.money>=it.unlock||owned>0||state.prestige>0;
+   if(unlocked)available++;
+   const row=document.createElement("div");row.className="item"+(!unlocked?" locked":"");
+   const icon=document.createElement("div");icon.className="itemicon";icon.textContent=it.icon;
+   const info=document.createElement("div");const h=document.createElement("h3");h.textContent=it.name;
+   const d=document.createElement("p");d.textContent=it.desc;
+   const own=document.createElement("div");own.className="owned";own.textContent="Possui: "+owned+(it.rate? " • +"+fmt(it.rate)+"/s":"")+(it.click?" • +"+fmt(it.click)+"/clique":"");
+   info.append(h,d,own);
+   const btn=document.createElement("button");btn.className="buy";btn.disabled=!unlocked||state.money<price;btn.innerHTML=fmt(price)+'<small>COMPRAR</small>';btn.setAttribute("aria-label","Comprar "+it.name+" por "+fmt(price));btn.onclick=()=>buy(it.id);
+   row.append(icon,info,btn);shop.append(row);
+ });
+ $("shopCount").textContent=available+" de "+items.length+" desbloqueados";
+}
+function renderAchievements(){
+ const root=$("achievements");root.innerHTML="";
+ achievements.forEach(a=>{const done=state.achieved.includes(a.id);const row=document.createElement("div");row.className="achievement"+(done?" done":"");const ic=document.createElement("span");ic.className="achicon";ic.textContent=a.icon;const txt=document.createElement("div");const b=document.createElement("b");b.textContent=a.name;const sm=document.createElement("small");sm.textContent=a.desc;txt.append(b,sm);row.append(ic,txt);root.append(row);});
+}
+function checkAchievements(){
+ achievements.forEach(a=>{if(!state.achieved.includes(a.id)&&a.test(state)){state.achieved.push(a.id);toast("🏆 Conquista desbloqueada: "+a.name);addFeed(a.icon,"Conquista desbloqueada: "+a.name+". Agora isso vai para o LinkedIn.");}});
+}
+function update(){
+ $("money").textContent=fmt(state.money);$("income").textContent=fmt(getRate())+"/s";$("clicks").textContent=state.clicks.toLocaleString("pt-BR");$("spent").textContent=fmt(state.spent);
+ $("clickValue").textContent="+ "+fmt(getClickValue())+" por clique";
+ $("status").textContent=state.money<100?"A luta começa agora.":state.money<10000?"Você já pode comprar uma personalidade.":state.money<1e6?"O sistema começou a parecer interessante.":"Você virou aquilo que criticava.";
+ $("networth").textContent="Gastos acumulados: "+fmt(state.spent);
+ $("goal").textContent=state.money<1000?"comprar um café sem parcelar":state.money<1e5?"parecer bem-sucedido no LinkedIn":state.money<1e7?"ter renda passiva e ansiedade ativa":"comprar o planeta vizinho";
+ renderShop();renderAchievements();checkAchievements();
+}
+function floatText(text){
+ const zone=$("workzone"),b=$("clicker"),r=b.getBoundingClientRect(),z=zone.getBoundingClientRect(),el=document.createElement("div");el.className="float";el.textContent=text;
+ el.style.left=(r.left-z.left+r.width*.48+(Math.random()*60-30))+"px";el.style.top=(r.top-z.top+20)+"px";zone.append(el);setTimeout(()=>el.remove(),850);
+}
+function clickWork(){const value=getClickValue();state.money+=value;state.clicks++;$("clicker").classList.add("pressed");setTimeout(()=>$("clicker").classList.remove("pressed"),90);floatText("+"+fmt(value));if(state.clicks%10===0)addFeed("⌨️","Você clicou "+state.clicks+" vezes. O RH chama isso de engajamento.");update();}
+function buy(id){const it=items.find(x=>x.id===id);if(!it)return;const price=cost(it);if(state.money<price)return;state.money-=price;state.spent+=price;state.owned[id]=(state.owned[id]||0)+1;state.totalBought++;toast(it.icon+" Compra realizada! Sua fatura agradece.");addFeed(it.icon,"Comprou: "+it.name+". "+(it.rate?"Renda automática aumentada.":"Sua autoestima recebeu um upgrade temporário."));update();save(false);}
+function bonus(){
+ const options=[
+  {name:"Bônus de produtividade",fn:()=>{const v=Math.max(10,getRate()*20+getClickValue()*10);state.money+=v;toast("💰 Bônus corporativo: "+fmt(v));}},
+  {name:"Bolha especulativa",fn:()=>{const v=Math.max(5,state.money*.18);state.money+=v;toast("📈 Sua carteira subiu "+fmt(v)+". Não faça perguntas.");}},
+  {name:"Compra por impulso",fn:()=>{if(state.money>0){const v=Math.min(state.money,Math.max(5,state.money*.12));state.money-=v;state.spent+=v;toast("🛍️ Você comprou algo inútil por "+fmt(v)+". Parabéns!");}else toast("💳 Compra recusada. O banco também tem limites.");}},
+  {name:"Semana de 4 dias (com 5 dias de trabalho)",fn:()=>{state.bonusUntil=Date.now()+30000;toast("⚡ Dobro por clique durante 30 segundos!");}},
+  {name:"Reunião que poderia ser e-mail",fn:()=>{const loss=Math.min(state.money,Math.max(1,state.money*.08));state.money-=loss;state.spent+=loss;toast("📅 Reunião de 3 horas custou "+fmt(loss)+" em produtividade.");}}
+ ];
+ const o=options[Math.floor(Math.random()*options.length)];o.fn();addFeed("🎲","Roleta do mercado: "+o.name+".");update();
+}
+function prestige(){
+ const total=state.money+state.spent;
+ if(total<100000){toast("🔒 Precisa movimentar R$ 100 mil para vender sua história de superação.");return;}
+ if(!confirm("Fazer rebranding da vida? Seu saldo e compras serão zerados, mas você ganha +15% de renda permanente. Esta ação não pode ser desfeita."))return;
+ const p=state.prestige+1;state=defaultState();state.prestige=p;state.lastTick=Date.now();toast("🔄 Nova empresa, mesma ansiedade. Bônus permanente: +"+(p*15)+"%.");addFeed("🔄","Você fez um rebranding da vida. A história agora é sobre resiliência.");save(false);update();
+}
+function save(show=true){try{state.lastTick=Date.now();localStorage.setItem("clickerCapitalismoSave",JSON.stringify(state));if(show)toast("💾 Progresso salvo neste navegador.");}catch(e){if(show)toast("Não foi possível salvar neste navegador.");}}
+function load(){try{const raw=localStorage.getItem("clickerCapitalismoSave");if(raw){const s=JSON.parse(raw);if(s&&typeof s.money==="number"&&s.owned){state={...defaultState(),...s,owned:{...s.owned},achieved:Array.isArray(s.achieved)?s.achieved:[]};const elapsed=Math.min(8*60*60,Math.max(0,(Date.now()-(s.lastTick||Date.now()))/1000));const offline=Math.floor(getRate()*elapsed*.25);if(offline>0){state.money+=offline;setTimeout(()=>toast("🌙 Enquanto você estava fora, seu império gerou "+fmt(offline)+" (25% da renda por até 8h)."),700);}}}}catch(e){state=defaultState();}}
+function reset(){if(!confirm("Tem certeza? Todo o progresso salvo será apagado. Nem o sindicato pode impedir."))return;localStorage.removeItem("clickerCapitalismoSave");state=defaultState();addFeed("🧨","Você pediu demissão. O mercado abriu outra vaga.");update();toast("Progresso apagado. Segunda-feira começa de novo.");}
+function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="meu-save-capitalismo.json";a.click();URL.revokeObjectURL(url);toast("📤 Save exportado.");}
+$("clicker").addEventListener("click",clickWork);$("bonusBtn").addEventListener("click",bonus);$("prestigeBtn").addEventListener("click",prestige);$("saveBtn").addEventListener("click",()=>save(true));$("resetBtn").addEventListener("click",reset);$("exportBtn").addEventListener("click",exportSave);
+load();update();addFeed("📊","Bolsa abre em alta. Especialistas recomendam comprar na alta e explicar depois.");addFeed("☕","Café gourmet disponível. Seu salário já está comprometido.");
+setInterval(()=>{const now=Date.now(),elapsed=Math.min((now-state.lastTick)/1000,3);state.lastTick=now;if(elapsed>0){state.money+=getRate()*elapsed;update();}},1000);
+setInterval(()=>save(false),10000);
+setInterval(()=>{const n=news[Math.floor(Math.random()*news.length)];addFeed(n[0],n[1]);},22000);
+setInterval(()=>{if(state.bonusUntil&&Date.now()>state.bonusUntil){state.bonusUntil=0;update();}},1000);
+window.addEventListener("beforeunload",()=>save(false));
+})();
+</script>
+</body>
+</html>
